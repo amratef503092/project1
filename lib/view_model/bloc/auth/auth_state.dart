@@ -71,4 +71,30 @@ class UploadImageStateLoading extends AuthState{
   String message;
   UploadImageStateLoading(this.message);
 }
-//
+//end image state
+// start get Admin
+class GetAdminsStateSuccessful extends AuthState{
+  String message;
+  GetAdminsStateSuccessful(this.message);
+}
+class GetAdminsStateError extends AuthState{
+  String message;
+  GetAdminsStateError(this.message);
+}
+class GetAdminsStateLoading extends AuthState{
+  String message;
+  GetAdminsStateLoading(this.message);
+}
+// end admin
+class SendMessageStateLoading extends AuthState{
+  String message;
+  SendMessageStateLoading(this.message);
+}
+class SendMessageStateError extends AuthState{
+  String message;
+  SendMessageStateError(this.message);
+}
+class SendMessageStateSuccessful extends AuthState{
+  String message;
+  SendMessageStateSuccessful(this.message);
+}

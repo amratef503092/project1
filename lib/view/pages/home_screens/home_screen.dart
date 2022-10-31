@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
               return LoginScreen();
             },));
               }, disable: true,color: Colors.black),
-          CustomButton(widget: Text("Sigin up"),
+          CustomButton(widget: const Text("Sigin up"),
               function: (){
             return RegisterScreen();
               }, color: Colors.black,

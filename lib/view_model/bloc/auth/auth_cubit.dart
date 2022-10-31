@@ -172,13 +172,78 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> pickImageCamera(BuildContext context) async
-  {
+  Future<void> pickImageCamera(BuildContext context) async {
     final XFile? image = await _picker.pickImage(source: ImageSource.camera);
     if (image == null) {
     } else {
       print(image.path);
       await uploadFile(image, context).then((value) {});
     }
+  }
+
+  List<UserModel> adminData = [];
+
+  Future<void> getAdmin() async {
+    emit(GetAdminsStateLoading('loading'));
+    FirebaseFirestore.instance
+        .collection('users')
+        .where('role', isEqualTo: '1')
+        .get()
+        .then((value) {
+      print(value.docs.length);
+      value.docChanges.forEach((element) {
+        adminData.add(UserModel.fromMap(element.doc.data()!));
+      });
+      emit(GetAdminsStateSuccessful('loading'));
+    }).catchError((onError) {
+      print('Amr');
+      emit(GetAdminsStateError('loading'));
+    });
+  }
+
+  // send message firebase
+  Future<void> sendMessage({
+    required String userid,
+    required String message,
+    required String senderID,
+    required String senderName,
+    required String receiverId,
+    required String receiverName,
+  }) async {
+    emit(SendMessageStateLoading('loading'));
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userid)
+        .collection('messages')
+        .add({
+      'message': message,
+      'senderName': senderName,
+      'senderID': senderID,
+      'receiverName': receiverName,
+      'receiverID': receiverId,
+      'time': DateTime.now().toString(),
+    }).then((value) {
+      print(value);
+      emit(SendMessageStateSuccessful('Successful'));
+    }).catchError((onError) {
+      emit(SendMessageStateError('onError'));
+    });
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(receiverId)
+        .collection('messages')
+        .add({
+      'message': message,
+      'senderName': senderName,
+      'senderID': senderID,
+      'receiverName': receiverName,
+      'receiverID': receiverId,
+      'time': DateTime.now().toString(),
+    }).then((value) {
+      print(value);
+      emit(SendMessageStateSuccessful('Successful'));
+    }).catchError((onError) {
+      emit(SendMessageStateError('onError'));
+    });
   }
 }
