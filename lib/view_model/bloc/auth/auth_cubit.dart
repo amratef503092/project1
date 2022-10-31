@@ -2,6 +2,7 @@ import 'dart:io' as io;
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -245,5 +246,20 @@ class AuthCubit extends Cubit<AuthState> {
     }).catchError((onError) {
       emit(SendMessageStateError('onError'));
     });
+  }
+  Future<void>pickFile() async{
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc'],
+    );
+    if(result!=null){
+      io.File file = io.File(result.files.single.path.toString());
+      FirebaseStorage.instance.ref().child('files').putFile(file).then((p0) {
+        p0.ref.getDownloadURL().then((value) {
+          print(value);
+        });
+
+      });
+    }
   }
 }

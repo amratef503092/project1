@@ -149,7 +149,23 @@ class _ChatScreenState extends State<ChatScreen> {
                             //
                             // cubit.messageController.clear();
                           },
+                        )),
+                    CircleAvatar(
+                        backgroundColor: const Color(0xff39424C),
+                        radius: 25,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.send,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            cubit.pickFile();
+                            // cubit.sendMessage(text: cubit.messageController.text , time:DateTime.now().toString() );
+                            //
+                            // cubit.messageController.clear();
+                          },
                         ))
+
                   ],
                 ),
               ]),
