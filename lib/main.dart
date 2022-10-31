@@ -6,6 +6,7 @@ import 'package:graduation_project/code/resource/routes_manager.dart';
 import 'package:graduation_project/code/resource/theme_manager.dart';
 import 'package:graduation_project/view/pages/auth/login_screen.dart';
 import 'package:graduation_project/view/pages/auth/register_screen.dart';
+import 'package:graduation_project/view/pages/home_screens/home_screen.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: getTheme(),
-            home: LoginScreen(),
+            home: HomeScreen(),
           ),
         );
       },

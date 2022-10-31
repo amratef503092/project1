@@ -1,9 +1,15 @@
+import 'dart:io' as io;
+
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/code/constants_value.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 
 import '../../../model/user_model.dart';
@@ -15,6 +21,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   static AuthCubit get(context) => BlocProvider.of<AuthCubit>(context);
   UserModel? userModel;
+  final ImagePicker _picker = ImagePicker();
 
   // login function start
   Future<void> login({required String email, required String password}) async {
@@ -101,21 +108,77 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(UpdateDataLoadingState());
 
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(userID)
-        .update({
-          'name': name,
-          'phone': phone,
-          'age': age,
-          'email': email,
-        })
-        .then((value) {
+    FirebaseFirestore.instance.collection('users').doc(userID).update({
+      'name': name,
+      'phone': phone,
+      'age': age,
+      'email': email,
+    }).then((value) {
       emit(UpdateDataSuccessfulState('done'));
-
-    })
-        .catchError((onError) {
-          emit(UpdateDataErrorState('some thing Error'));
+    }).catchError((onError) {
+      emit(UpdateDataErrorState('some thing Error'));
     });
+  }
+
+  Future<void> uploadFile(XFile? file, BuildContext context) async {
+    emit(UploadImageStateLoading('loading'));
+    if (file == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No file was selected'),
+        ),
+      );
+
+      return;
+    }
+
+    UploadTask uploadTask;
+
+    // Create a Reference to the file
+    Reference ref = FirebaseStorage.instance.ref().child('/${file.name}');
+
+    final metadata = SettableMetadata(
+      contentType: 'image/jpeg',
+      customMetadata: {'picked-file-path': file.path},
+    );
+
+    if (kIsWeb) {
+      uploadTask = ref.putData(await file.readAsBytes(), metadata);
+    } else {
+      print('Amr2');
+      ref.putFile(io.File(file.path), metadata).then((p0) => {
+            ref.getDownloadURL().then((value) {
+              // here modify the profile pic
+              userModel!.photo = value;
+              FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userID)
+                  .update({'photo': value}).then((value) {
+                emit(UploadImageStateSuccessful('upload done'));
+              }).catchError((onError) {
+                emit(UploadImageStateError('Error'));
+              });
+            })
+          });
+    }
+  }
+
+  Future<void> pickImageGallary(BuildContext context) async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image == null) {
+    } else {
+      print(image.path);
+      await uploadFile(image, context).then((value) {});
+    }
+  }
+
+  Future<void> pickImageCamera(BuildContext context) async
+  {
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+    if (image == null) {
+    } else {
+      print(image.path);
+      await uploadFile(image, context).then((value) {});
+    }
   }
 }

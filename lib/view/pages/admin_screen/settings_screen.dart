@@ -63,13 +63,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircleAvatar(
-                        radius: 50.r,
+                        radius: 100.r,
                         backgroundImage: NetworkImage((authCubit
                                     .userModel!.photo ==
                                 '')
                             ? 'https://firebasestorage.googleapis.com/v0/b/pharmacy-f7702.appspot.com/o/images.jpg?alt=media&token=0aa2b534-e0cf-4ccc-814f-28c57a12d383'
                             : authCubit.userModel!.photo),
                       ),
+
+                      Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround
+                      ,children: [
+                        (state is UploadImageStateLoading)
+                            ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                            : CustomButton(
+                              disable: true,
+                              size: Size(200,20),
+                              widget: Text("Select from gallery"),
+                              function: () {
+                                AuthCubit.get(context)
+                                    .pickImageGallary(context);
+                              },
+                              color: Colors.black),
+
+                        (state is UploadImageStateLoading)
+                            ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                            :  CustomButton(
+                            size: Size(200,20),
+
+                                  disable: true,
+                              widget: Text("Select from camera"),
+                              function: () {
+                                AuthCubit.get(context)
+                                    .pickImageCamera(context);
+                              },
+                              color: Colors.black),
+
+                      ],),
                       Form(
                         key: formKey,
                         child: Column(
@@ -121,7 +155,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               enable: enable,
                             ),
                             (state is RegisterLoadingState)
-                                ? Center(
+                                ? const Center(
                                     child: CircularProgressIndicator(),
                                   )
                                 : CustomButton(
@@ -137,7 +171,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     disable: true,
                                   ),
                             (state is UpdateDataLoadingState)
-                                ? Center(
+                                ? const Center(
                                     child: CircularProgressIndicator(),
                                   )
                                 : CustomButton(
@@ -155,7 +189,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     size: Size(300.w, 50.h),
                                     radius: 20.r,
                                     disable: enable,
-                                  )
+                                  ),
+
                           ],
                         ),
                       )

@@ -26,7 +26,7 @@ class CustomButton extends StatelessWidget {
           backgroundColor: color,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.r)),
-          fixedSize: Size(366.w, 64.h),
+          fixedSize: size,
         ),
         onPressed: disable
             ? () {

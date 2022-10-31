@@ -58,3 +58,17 @@ class UpdateDataErrorState extends AuthState{
   UpdateDataErrorState(this.message);
 }
 // start Register state
+//
+class UploadImageStateSuccessful extends AuthState{
+  String message;
+  UploadImageStateSuccessful(this.message);
+}
+class UploadImageStateError extends AuthState{
+  String message;
+  UploadImageStateError(this.message);
+}
+class UploadImageStateLoading extends AuthState{
+  String message;
+  UploadImageStateLoading(this.message);
+}
+//

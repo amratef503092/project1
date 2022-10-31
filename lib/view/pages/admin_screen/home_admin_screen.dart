@@ -34,9 +34,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             SizedBox(height: 100.h,),
             CircleAvatar(
               radius: 80.r,
-                backgroundImage: NetworkImage(
-                    'https://firebasestorage.googleapis.com/v0/b/pharmacy-f7702.appspot.com/o/images.jpg?alt=media&token=0aa2b534-e0cf-4ccc-814f-28c57a12d383')),
-            SizedBox(height: 50.h,),
+                backgroundImage: NetworkImage(authCubit.userModel!.photo  ),),
+              SizedBox(height: 50.h,),
             ListTile(
               leading: Icon(Icons.perm_identity),
               title: Text("Create Admin"),
