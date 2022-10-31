@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "705148124862",
+    "project_id": "pharmacy-f7702",
+    "storage_bucket": "pharmacy-f7702.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705148124862:android:e42a2cfbac56445964a8ef",
+        "android_client_info": {
+          "package_name": "com.example.graduation_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "705148124862-fpnj6lq7vvappc07mfj3i21kue6iroct.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvTsgTCHx6xdOrK_JPvdIt8KJ6cxWb9es"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "705148124862-fpnj6lq7vvappc07mfj3i21kue6iroct.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

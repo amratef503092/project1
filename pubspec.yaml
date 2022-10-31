@@ -41,6 +41,12 @@ dependencies:
   dio: ^4.0.4
   flutter_screenutil: ^5.5.4
   google_fonts: ^3.0.1
+  firebase_core: ^2.1.1
+  firebase_auth: ^4.1.0
+  form_field_validator: ^1.1.0
+  firebase_storage: ^11.0.3
+  cloud_firestore_odm: ^1.0.0-dev.38
+  image_picker: ^0.8.6
 
 
 dev_dependencies:

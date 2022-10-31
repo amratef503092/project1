@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:graduation_project/view/pages/auth/login_screen.dart';
+import '../../view/pages/auth/register_screen.dart';
 import '../../view/pages/home_screens/home_screen.dart';
+import '../../view_model/database/network/end_points.dart';
 
 class Routes {
   static const String loginRoute = "/login";
   static const String homeScreen = "/Home";
-  static const String registerRoute = "/register";
+  static const String registerRoute = "/";
   static const String forgotPasswordRoute = "/forgotPassword";
   static const String mainRoute = "/main";
   static const String storeDetailsRoute = "/storeDetails";
@@ -13,8 +16,11 @@ class Routes {
 class RouteGenerator {
   static Route<dynamic> getRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
-      case Routes.homeScreen:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+      case Routes.registerRoute:
+        return MaterialPageRoute(builder: (_) =>  RegisterScreen());
+      case Routes.loginRoute:
+        return MaterialPageRoute(builder: (_) =>  LoginScreen());
+
       default:
         return unDefinedRoute();
     }
