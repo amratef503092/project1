@@ -1,9 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_project/code/constants_value.dart';
 import 'package:graduation_project/view/pages/ChatScreen.dart';
 import 'package:graduation_project/view/pages/admin_screen/settings_screen.dart';
+import 'package:graduation_project/view/pages/auth/login_screen.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'create_admin.dart';
 
@@ -83,6 +87,21 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         ));
                   },
                 ),
+                ListTile(
+                  leading: Icon(Icons.logout),
+                  title: Text("Logout"),
+                  onTap: () async{
+                  await  FirebaseFirestore.instance.collection('users').doc(userID).update({
+                      'status': 'offline',
+                    }).then((value) {
+                      userID = null;
+                      FirebaseAuth.instance.signOut();
+                  }).then((value) {
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginScreen(),), (route) => false);
+                  });
+                  },
+                ),
+
               ],
             ),
           ),
@@ -115,7 +134,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                      Text(
                                          "Name : ${authCubit.adminData[index].name}"),
                                      Text("Phone : ${authCubit.adminData[index].phone}"),
-                                     authCubit.adminData[index].online
+                                     authCubit.adminData[index].online == "online"
                                          ? Row(
                                        children: [
                                          Text("Status : "),

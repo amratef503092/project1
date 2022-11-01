@@ -43,11 +43,23 @@ class _CreateAdminState extends State<CreateAdmin> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+
+                  Image(
+                    image: AssetImage('assets/images/logo.png'),
+                    height: 100.h,
+                  ),
+                  SizedBox(
+                    height: 50.h,
+                  ),
+                  Text("Create New Admin",style: TextStyle(fontSize: 30,fontWeight: FontWeight.w900),),
                   CustomTextField(
                     controller: emailController,
                     fieldValidator: emailValidator,
                     hint: 'email',
                     iconData: Icons.email,
+                  ),
+                  SizedBox(
+                    height: 20.h,
                   ),
                   CustomTextField(
                     controller: passwordController,
@@ -61,6 +73,9 @@ class _CreateAdminState extends State<CreateAdmin> {
                         showPassword = !showPassword;
                       });
                     },
+                  ),
+                  SizedBox(
+                    height: 20.h,
                   ),
                   CustomTextField(
                     controller: nameController,
@@ -79,6 +94,9 @@ class _CreateAdminState extends State<CreateAdmin> {
                     hint: 'name',
                     iconData: Icons.perm_identity,
                   ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
                   CustomTextField(
                     textInputType: TextInputType.number,
                     controller: ageController,
@@ -90,12 +108,18 @@ class _CreateAdminState extends State<CreateAdmin> {
                     hint: 'age',
                     iconData: Icons.date_range,
                   ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
                   CustomTextField(
                     textInputType: TextInputType.phone,
                     controller: phoneController,
                     fieldValidator: phoneValidator,
                     hint: 'phone',
                     iconData: Icons.phone,
+                  ),
+                  SizedBox(
+                    height: 20.h,
                   ),
                   (state is RegisterLoadingState)
                       ? Center(
@@ -114,7 +138,6 @@ class _CreateAdminState extends State<CreateAdmin> {
                         );
                       }
                     },
-                    color: Colors.black,
                     widget: Text("Register"),
                     size: Size(300.w, 50.h),
                     radius: 20.r,

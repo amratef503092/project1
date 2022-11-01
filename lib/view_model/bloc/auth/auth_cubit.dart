@@ -189,6 +189,7 @@ class AuthCubit extends Cubit<AuthState> {
   List<UserModel> adminData = [];
 
   Future<void> getAdmin() async {
+    adminData = [];
     emit(GetAdminsStateLoading('loading'));
     FirebaseFirestore.instance
         .collection('users')
