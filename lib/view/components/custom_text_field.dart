@@ -27,34 +27,31 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 25.0.w),
-      child: TextFormField(
+    return TextFormField(
 
-        controller: controller,
-        validator: (value) => fieldValidator(value),
-        keyboardType : textInputType,
-        enabled: enable,
-        decoration: InputDecoration(
+      controller: controller,
+      validator: (value) => fieldValidator(value),
+      keyboardType : textInputType,
+      enabled: enable,
+      decoration: InputDecoration(
 
-          icon: Icon(iconData),
-            errorBorder:  UnderlineInputBorder(
-                borderSide: BorderSide(color: ColorManage.redError)),
-            enabledBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(color: ColorManage.gray)),
-            hintText: hint,
-            suffix: (passwordTwo)
-                ? GestureDetector(
-              child: (password)
-                  ? const Icon(Icons.visibility_outlined)
-                  : const Icon(Icons.visibility_off),
-              onTap: () {
-                function!();
-              },
-            )
-                : SizedBox()),
-        obscureText: password,
-      ),
+        icon: Icon(iconData),
+          errorBorder:  UnderlineInputBorder(
+              borderSide: BorderSide(color: ColorManage.redError)),
+          enabledBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: ColorManage.gray)),
+          hintText: hint,
+          suffix: (passwordTwo)
+              ? GestureDetector(
+            child: (password)
+                ? const Icon(Icons.visibility_outlined)
+                : const Icon(Icons.visibility_off),
+            onTap: () {
+              function!();
+            },
+          )
+              : SizedBox()),
+      obscureText: password,
     );
   }
 }
