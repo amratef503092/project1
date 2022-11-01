@@ -10,6 +10,7 @@ import 'package:graduation_project/view/pages/auth/login_screen.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 
+import 'approve_screen.dart';
 import 'create_admin.dart';
 
 class AdminHomeScreen extends StatefulWidget {
@@ -74,6 +75,13 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                       ListTile(
                         leading: Icon(Icons.work),
                         title: Text("Approve company"),
+                        onTap: (){
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ApproveScreen(),
+                              ));
+                        },
                       ),
 
                       ListTile(

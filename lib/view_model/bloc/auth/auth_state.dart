@@ -124,3 +124,19 @@ class AddPharmacyDetailsStateSuccessful extends AuthState{
   String message;
   AddPharmacyDetailsStateSuccessful(this.message);
 }
+class GetDataToApprovedStateSuccessful extends AuthState{
+  String message;
+  GetDataToApprovedStateSuccessful(this.message);
+}
+class GetDataToApprovedStateSuccessfulEmpty extends AuthState{
+  String message;
+  GetDataToApprovedStateSuccessfulEmpty(this.message);
+}
+class GetDataToApprovedStateError extends AuthState{
+  String message;
+  GetDataToApprovedStateError(this.message);
+}
+class GetDataToApprovedStateLoading extends AuthState{
+  String message;
+  GetDataToApprovedStateLoading(this.message);
+}

@@ -302,4 +302,32 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AddPharmacyDetailsStateError('onError'));
     });
   }
+  List<DetailsModelPharmacy>detailsModelPharmacyAdminApproved =[];
+  Future<void> getDataToApproved() async{
+    detailsModelPharmacyAdminApproved = []  ;
+    emit(GetDataToApprovedStateLoading('loading'));
+    FirebaseFirestore.instance.collection('users').where('role',isEqualTo: '2').get().then((value) {
+      value.docChanges.forEach((element) {
+        FirebaseFirestore.instance.collection('users').doc(element.doc.id).collection('details').get().then((value) {
+          value.docChanges.forEach((element) {
+            if(element.doc.data()!['approved']==false){
+              detailsModelPharmacyAdminApproved.add(DetailsModelPharmacy.fromMap(element.doc.data()!));
+            }
+          });
+
+        });
+
+      });
+      print(detailsModelPharmacyAdminApproved[0].address);
+      if(detailsModelPharmacyAdminApproved.isEmpty){
+        emit(GetDataToApprovedStateSuccessfulEmpty('Successful'));
+      }else{
+        emit(GetDataToApprovedStateSuccessful('Successful'));
+
+      }
+    }).catchError((onError){
+      emit(GetDataToApprovedStateSuccessful('onError'));
+    });
+  }
+
 }
