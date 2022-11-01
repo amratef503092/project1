@@ -9,6 +9,7 @@ import '../../../code/resource/validator.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_text_field.dart';
 import '../../components/custom_texts.dart';
+import '../pharmacy_pages/home_pharmacy.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -48,8 +49,38 @@ class _LoginScreenState extends State<LoginScreen> {
             }
 
           } else if (state.role == '2') {
+            if(state.ban){
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('You are banned'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }else{
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomePharmacyScreen(),
+                  ),
+                      (route) => false);
+            }
             print('Amr 2');
           } else {
+            if(state.ban){
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('You are banned'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }else{
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AdminHomeScreen(),
+                  ),
+                      (route) => false);
+            }
             print('Amr 3');
           }
         }

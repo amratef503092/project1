@@ -99,3 +99,28 @@ class SendMessageStateSuccessful extends AuthState{
   String message;
   SendMessageStateSuccessful(this.message);
 }
+// get pharmacy details
+class GetPharmacyDetailsStateLoading extends AuthState{
+  String message;
+  GetPharmacyDetailsStateLoading(this.message);
+}
+class GetPharmacyDetailsStateError extends AuthState{
+  String message;
+  GetPharmacyDetailsStateError(this.message);
+}
+class GetPharmacyDetailsStateSuccessful extends AuthState{
+  String message;
+  GetPharmacyDetailsStateSuccessful(this.message);
+}
+class AddPharmacyDetailsStateLoading extends AuthState{
+  String message;
+  AddPharmacyDetailsStateLoading(this.message);
+}
+class AddPharmacyDetailsStateError extends AuthState{
+  String message;
+  AddPharmacyDetailsStateError(this.message);
+}
+class AddPharmacyDetailsStateSuccessful extends AuthState{
+  String message;
+  AddPharmacyDetailsStateSuccessful(this.message);
+}

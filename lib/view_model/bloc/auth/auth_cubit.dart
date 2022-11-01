@@ -13,6 +13,7 @@ import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 
+import '../../../model/details_model.dart';
 import '../../../model/user_model.dart';
 
 part 'auth_state.dart';
@@ -41,13 +42,13 @@ class AuthCubit extends Cubit<AuthState> {
           .collection('users')
           .doc(value.user!.uid)
           .get()
-          .then((value) async{
+          .then((value) async {
         userModel = UserModel.fromMap(value.data()!);
         print(value['online']);
-         await CacheHelper.put(key: 'role', value: userModel!.role);
+        await CacheHelper.put(key: 'role', value: userModel!.role);
 
         emit(LoginSuccessfulState(
-            role: value['role'], message: 'login success',ban: value['ban']));
+            role: value['role'], message: 'login success', ban: value['ban']));
       });
     }).catchError((onError) {
       print(onError);
@@ -75,7 +76,8 @@ class AuthCubit extends Cubit<AuthState> {
           email: email,
           id: value.user!.uid,
           online: false,
-          photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH6PjyUR8U-UgBWkOzFe38qcO29regN43tlGGk4sRd&s',
+          photo:
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH6PjyUR8U-UgBWkOzFe38qcO29regN43tlGGk4sRd&s',
           role: role,
           name: name);
 
@@ -252,20 +254,52 @@ class AuthCubit extends Cubit<AuthState> {
       emit(SendMessageStateError('onError'));
     });
   }
-  Future<void>pickFile() async{
+
+  Future<void> pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'doc'],
     );
-    if(result!=null){
+    if (result != null) {
       io.File file = io.File(result.files.single.path.toString());
       FirebaseStorage.instance.ref().child('files').putFile(file).then((p0) {
         p0.ref.getDownloadURL().then((value) {
           print(value);
         });
-
       });
     }
   }
 
+  DetailsModelPharmacy? detailsModelPharmacy;
+
+  Future<void> getPharmacyDetails() async {
+    emit(GetPharmacyDetailsStateLoading('loading'));
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userID)
+        .collection('details')
+        .get()
+        .then((value) {
+
+        detailsModelPharmacy = DetailsModelPharmacy.fromMap(value.docs[0].data());
+
+      emit(GetPharmacyDetailsStateSuccessful('Successful'));
+    }).catchError((onError) {
+      print(onError);
+      emit(GetPharmacyDetailsStateError('onError'));
+    });
+  }
+  Future<void>addPharmacyDetails({required String dis,required String address,
+  })async{
+    emit(AddPharmacyDetailsStateLoading('loading'));
+    FirebaseFirestore.instance.collection('users').doc(userID).collection('details').add({
+      'dis':dis,
+      'address':address,
+      'approved':false,
+    }).then((value) {
+      emit(AddPharmacyDetailsStateSuccessful('Successful'));
+    }).catchError((onError) {
+      emit(AddPharmacyDetailsStateError('onError'));
+    });
+  }
 }

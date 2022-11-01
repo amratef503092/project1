@@ -13,6 +13,7 @@ class CustomTextField extends StatelessWidget {
     this.iconData,
     this.textInputType = TextInputType.text,
     this.enable = true,
+    this.maxLine = 1,
     Key? key,
   }) : super(key: key);
   final TextEditingController controller;
@@ -24,6 +25,7 @@ class CustomTextField extends StatelessWidget {
   final IconData ?iconData;
   final TextInputType textInputType;
   final bool enable;
+  final int maxLine ;
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +35,8 @@ class CustomTextField extends StatelessWidget {
       validator: (value) => fieldValidator(value),
       keyboardType : textInputType,
       enabled: enable,
+      maxLines: maxLine,
       decoration: InputDecoration(
-
         icon: Icon(iconData),
           errorBorder:  UnderlineInputBorder(
               borderSide: BorderSide(color: ColorManage.redError)),
