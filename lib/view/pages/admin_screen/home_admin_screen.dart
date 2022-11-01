@@ -75,10 +75,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         leading: Icon(Icons.work),
                         title: Text("Approve company"),
                       ),
-                      ListTile(
-                        leading: Icon(Icons.chat),
-                        title: Text("Messages"),
-                      ),
+
                       ListTile(
                         leading: Icon(Icons.settings),
                         title: Text("Settings"),
@@ -98,7 +95,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               .collection('users')
                               .doc(userID)
                               .update({
-                            'status': 'offline',
+                            'online': 'offline',
                           }).then((value) async {
                             userID = null;
                             await CacheHelper.removeData(key: 'id');
