@@ -28,11 +28,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   TextEditingController phoneController = TextEditingController();
   bool showPassword = false;
+  int selectedValue = 1;
+  String dropdownvalue = 'User';
+
+// List of items in our dropdown menu
+  var items = [
+    'User',
+    'Pharmacy',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         // TODO: implement listener
+        if (state is RegisterSuccessfulState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Create Account Successful"),
+            backgroundColor: Colors.green,
+          ));
+
+          Navigator.pop(context);
+        } else if (state is RegisterErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Some thing Error"),
+            backgroundColor: Colors.red,
+          ));
+        }
       },
       builder: (context, state) {
         var authCubit = AuthCubit.get(context);
@@ -53,9 +75,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           image: AssetImage('assets/images/logo.png'),
                           height: 100.h,
                         ),
-                        SizedBox(height: 30.h,),
+                        SizedBox(
+                          height: 30.h,
+                        ),
 
-                        Text("Register",style: TextStyle(fontSize: 30,fontWeight: FontWeight.w900),),
+                        Text(
+                          "Register",
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.w900),
+                        ),
                         text(text: 'Email'),
                         CustomTextField(
                           controller: emailController,
@@ -63,7 +91,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           hint: 'email',
                           iconData: Icons.email,
                         ),
-                        SizedBox(height: 20,),
+                        SizedBox(
+                          height: 20,
+                        ),
 
                         text(text: 'password'),
                         CustomTextField(
@@ -73,13 +103,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           iconData: Icons.lock,
                           password: showPassword,
                           passwordTwo: true,
-                          function: (){
+                          function: () {
                             setState(() {
                               showPassword = !showPassword;
                             });
                           },
                         ),
-                        SizedBox(height: 20,),
+                        SizedBox(
+                          height: 20,
+                        ),
 
                         text(text: 'Name'),
                         CustomTextField(
@@ -99,7 +131,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           hint: 'name',
                           iconData: Icons.perm_identity,
                         ),
-                        SizedBox(height: 20,),
+                        SizedBox(
+                          height: 20,
+                        ),
 
                         text(text: 'Age'),
                         CustomTextField(
@@ -113,7 +147,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           hint: 'age',
                           iconData: Icons.date_range,
                         ),
-                        SizedBox(height: 20,),
+                        SizedBox(
+                          height: 20,
+                        ),
 
                         text(text: 'Phone'),
 
@@ -124,7 +160,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           hint: 'phone',
                           iconData: Icons.phone,
                         ),
-                        SizedBox(height: 20,),
+                        // creat drop down button
+                        DropdownButton(
+                          // Initial Value
+                          value: dropdownvalue,
+
+                          // Down Arrow Icon
+                          icon: const Icon(Icons.keyboard_arrow_down),
+
+                          // Array list of items
+                          items: items.map((String items) {
+                            return DropdownMenuItem(
+                              value: items,
+                              child: Text(items),
+                            );
+                          }).toList(),
+                          // After selecting the desired option,it will
+                          // change button value to selected value
+                          onChanged: (String? newValue) {
+                            print(newValue);
+                            setState(() {
+                              dropdownvalue = newValue!;
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
                         (state is RegisterLoadingState)
                             ? Center(
                                 child: CircularProgressIndicator(),
@@ -133,12 +195,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 function: () {
                                   if (formKey.currentState!.validate()) {
                                     authCubit.register(
-                                        email: emailController.text,
-                                        password: passwordController.text,
-                                        phone: phoneController.text,
-                                        name: nameController.text,
-                                        age: ageController.text,
-                                      role: '3'// will change
+                                      email: emailController.text,
+                                      password: passwordController.text,
+                                      phone: phoneController.text,
+                                      name: nameController.text,
+                                      age: ageController.text,
+                                      role: dropdownvalue == 'User'
+                                          ? '3'
+                                          : '2', // will change
                                     );
                                   }
                                 },
@@ -160,4 +224,3 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
-

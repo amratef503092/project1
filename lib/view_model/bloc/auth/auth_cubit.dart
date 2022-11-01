@@ -47,7 +47,7 @@ class AuthCubit extends Cubit<AuthState> {
          await CacheHelper.put(key: 'role', value: userModel!.role);
 
         emit(LoginSuccessfulState(
-            role: value['role'], message: 'login success'));
+            role: value['role'], message: 'login success',ban: value['ban']));
       });
     }).catchError((onError) {
       print(onError);
@@ -85,7 +85,7 @@ class AuthCubit extends Cubit<AuthState> {
           .set(userModel!.toMap());
       emit(RegisterSuccessfulState('Register success'));
     }).catchError((onError) {
-      emit(LoginErrorState('Register Error'));
+      emit(RegisterErrorState('Register Error'));
     });
   }
 

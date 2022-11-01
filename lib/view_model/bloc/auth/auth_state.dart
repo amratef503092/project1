@@ -11,7 +11,8 @@ class LoginLoadingState extends AuthState{
 class LoginSuccessfulState extends AuthState{
   String message;
   String role;
-  LoginSuccessfulState({required this.message,required this.role});
+  bool ban;
+  LoginSuccessfulState({required this.message,required this.role , required this.ban});
 }
 class LoginErrorState extends AuthState{
   String message;

@@ -31,12 +31,22 @@ class _LoginScreenState extends State<LoginScreen> {
       listener: (context, state) {
         if (state is LoginSuccessfulState) {
           if (state.role == '1') {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AdminHomeScreen(),
+            if(state.ban){
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('You are banned'),
+                  backgroundColor: Colors.red,
                 ),
-                (route) => false);
+              );
+            }else{
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AdminHomeScreen(),
+                  ),
+                      (route) => false);
+            }
+
           } else if (state.role == '2') {
             print('Amr 2');
           } else {
