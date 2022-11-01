@@ -95,7 +95,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               .collection('users')
                               .doc(userID)
                               .update({
-                            'online': 'offline',
+                            'online': 'false',
                           }).then((value) async {
                             userID = null;
                             await CacheHelper.removeData(key: 'id');
@@ -145,10 +145,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                         "Name : ${authCubit.adminData[index].name}"),
                                     Text(
                                         "Phone : ${authCubit.adminData[index].phone}"),
-                                    authCubit.adminData[index].online ==
-                                            "online"
+                                    authCubit.adminData[index].online
                                         ? Row(
-                                            children: [
+                                            children: const [
                                               Text("Status : "),
                                               Text(
                                                 "online",

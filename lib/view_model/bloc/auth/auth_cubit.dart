@@ -75,7 +75,7 @@ class AuthCubit extends Cubit<AuthState> {
           email: email,
           id: value.user!.uid,
           online: false,
-          photo: '',
+          photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH6PjyUR8U-UgBWkOzFe38qcO29regN43tlGGk4sRd&s',
           role: role,
           name: name);
 

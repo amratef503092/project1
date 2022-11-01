@@ -135,7 +135,11 @@ class _CreateAdminState extends State<CreateAdmin> {
                             name: nameController.text,
                             age: ageController.text,
                           role: '1'
-                        );
+                        ).then((value) {
+                          AuthCubit.get(context).getAdmin().then((value) {
+                            Navigator.pop(context);
+                          });
+                        });
                       }
                     },
                     widget: Text("Register"),
