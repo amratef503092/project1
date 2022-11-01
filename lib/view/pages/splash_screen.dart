@@ -4,6 +4,7 @@ import 'package:graduation_project/view/pages/admin_screen/home_admin_screen.dar
 import 'package:graduation_project/view/pages/auth/login_screen.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 
+import '../../code/constants_value.dart';
 import '../../view_model/database/local/cache_helper.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -19,19 +20,20 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 3)).then((value) async {
       String? token = await CacheHelper.getDataString(key: 'id');
+
       if (token != null) {
-        FirebaseFirestore.instance
+      await  FirebaseFirestore.instance
             .collection('users')
             .doc(token)
             .get()
             .then((value) {
-              if(value.data()!['role']=='1')
+              if(role=='1')
               {
-                AuthCubit.get(context).getUserData();
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return AdminHomeScreen();
                 },));
-              }else if(value.data()!['role']=='1'){
+              }else if(role=='2'){
+              
                 // company
                 // Navigator.push(context, MaterialPageRoute(builder: (context) {
                 //   return AdminHomeScreen();
@@ -65,13 +67,18 @@ class _SplashScreenState extends State<SplashScreen> {
                 image: AssetImage('assets/images/splash-bg.png'),
               ),
             ),
-            child: Center(
-                child: Image(
-              image: AssetImage(
-                'assets/images/logo.png',
-              ),
-              height: 100,
-            )),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+              Center(
+                  child: Image(
+                    image: AssetImage(
+                      'assets/images/logo.png',
+                    ),
+                    height: 100,
+                  )),
+              Center(child: CircularProgressIndicator())
+            ],)
           )),
     );
   }

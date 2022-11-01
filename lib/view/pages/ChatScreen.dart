@@ -31,27 +31,7 @@ class _ChatScreenState extends State<ChatScreen> {
       builder: (context, state) {
         var cubit = AuthCubit.get(context);
         return Scaffold(
-          appBar: AppBar(
-            elevation: 0,
-            leading: Padding(
-              padding: EdgeInsets.all(4.0),
-              child: CircleAvatar(
-                backgroundColor: const Color(0xff9A9FA4),
-                radius: 4,
-                child: IconButton(
-                  onPressed: () {
-
-
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    size: 25,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          appBar: AppBar(),
           body: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -131,12 +111,12 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                     CircleAvatar(
-                        backgroundColor: const Color(0xff39424C),
+                        backgroundColor:buttonColor,
                         radius: 25,
                         child: IconButton(
                           icon: const Icon(
                             Icons.send,
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
                           onPressed: () {
                             cubit.sendMessage(userid: userID.toString(),
@@ -151,12 +131,12 @@ class _ChatScreenState extends State<ChatScreen> {
                           },
                         )),
                     CircleAvatar(
-                        backgroundColor: const Color(0xff39424C),
+                        backgroundColor: buttonColor,
                         radius: 25,
                         child: IconButton(
                           icon: const Icon(
-                            Icons.send,
-                            color: Colors.black,
+                            Icons.file_copy,
+                            color: Colors.white,
                           ),
                           onPressed: () {
                             cubit.pickFile();

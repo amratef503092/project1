@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../code/constants_value.dart';
 class CustomButton extends StatelessWidget {
   const CustomButton({
     required this.widget,
     required this.function,
-    required this.color,
+     this.color = buttonColor,
     this.radius = 16,
     this.disable =false,
     this.size = const Size(366, 64),

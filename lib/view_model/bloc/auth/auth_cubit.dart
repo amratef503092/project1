@@ -36,17 +36,21 @@ class AuthCubit extends Cubit<AuthState> {
           .doc(value.user!.uid)
           .update({'online': true});
       await CacheHelper.put(key: 'id', value: value.user!.uid);
+
       FirebaseFirestore.instance
           .collection('users')
           .doc(value.user!.uid)
           .get()
-          .then((value) {
+          .then((value) async{
         userModel = UserModel.fromMap(value.data()!);
         print(value['online']);
+         await CacheHelper.put(key: 'role', value: userModel!.role);
+
         emit(LoginSuccessfulState(
             role: value['role'], message: 'login success'));
       });
     }).catchError((onError) {
+      print(onError);
       emit(LoginErrorState('login Error'));
     });
   }

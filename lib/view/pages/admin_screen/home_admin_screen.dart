@@ -18,6 +18,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   @override
   void initState() {
     // TODO: implement initState
+    if(AuthCubit.get(context).userModel==null){
+      context.read<AuthCubit>().getUserData();
+    }
+
     context.read<AuthCubit>().getAdmin();
     super.initState();
   }
@@ -33,9 +37,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         var authCubit = AuthCubit.get(context);
         return Scaffold(
           appBar: AppBar(
-              title: Text("Admin Panel ${authCubit.userModel!.name}"),
+              title: Text("Admin Panel "),
               centerTitle: true),
-          drawer: Drawer(
+          drawer: (AuthCubit.get(context).userModel==null
+          )?Center(child: CircularProgressIndicator(),):Drawer(
             child: Column(
               children: [
                 SizedBox(
@@ -84,7 +89,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           body: SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              child: (state is GetAdminsStateLoading)
+              child: (AuthCubit.get(context).userModel==null)
                   ? Center(
                       child: CircularProgressIndicator(),
                     )
@@ -109,8 +114,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                    children: [
                                      Text(
                                          "Name : ${authCubit.adminData[index].name}"),
-                                     Text("Phone : " +
-                                         authCubit.adminData[index].phone),
+                                     Text("Phone : ${authCubit.adminData[index].phone}"),
                                      authCubit.adminData[index].online
                                          ? Row(
                                        children: [
