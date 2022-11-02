@@ -12,7 +12,8 @@ class LoginSuccessfulState extends AuthState{
   String message;
   String role;
   bool ban;
-  LoginSuccessfulState({required this.message,required this.role , required this.ban});
+  bool approved;
+  LoginSuccessfulState({required this.message,required this.role , required this.ban,required this.approved});
 }
 class LoginErrorState extends AuthState{
   String message;
@@ -123,20 +124,4 @@ class AddPharmacyDetailsStateError extends AuthState{
 class AddPharmacyDetailsStateSuccessful extends AuthState{
   String message;
   AddPharmacyDetailsStateSuccessful(this.message);
-}
-class GetDataToApprovedStateSuccessful extends AuthState{
-  String message;
-  GetDataToApprovedStateSuccessful(this.message);
-}
-class GetDataToApprovedStateSuccessfulEmpty extends AuthState{
-  String message;
-  GetDataToApprovedStateSuccessfulEmpty(this.message);
-}
-class GetDataToApprovedStateError extends AuthState{
-  String message;
-  GetDataToApprovedStateError(this.message);
-}
-class GetDataToApprovedStateLoading extends AuthState{
-  String message;
-  GetDataToApprovedStateLoading(this.message);
 }

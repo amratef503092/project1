@@ -42,9 +42,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         // print(userID.toString()+ "from sql");
         var authCubit = AuthCubit.get(context);
         return Scaffold(
-          appBar: AppBar(title: Text("Admin Panel "), centerTitle: true),
+          appBar: AppBar(title: const Text("Admin Panel "), centerTitle: true),
           drawer: (AuthCubit.get(context).userModel == null)
-              ? Center(
+              ? const Center(
                   child: CircularProgressIndicator(),
                 )
               : Drawer(
@@ -62,42 +62,43 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         height: 50.h,
                       ),
                       ListTile(
-                        leading: Icon(Icons.perm_identity),
-                        title: Text("Create Admin"),
+                        leading: const Icon(Icons.perm_identity),
+                        title: const Text("Create Admin"),
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
-                              return CreateAdmin();
+                              return const CreateAdmin();
                             },
                           ));
                         },
                       ),
                       ListTile(
-                        leading: Icon(Icons.work),
-                        title: Text("Approve company"),
+                        leading: const Icon(Icons.work),
+                        title: const Text("Approve company"),
                         onTap: (){
+
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ApproveScreen(),
+                                builder: (context) => const ApproveScreen(),
                               ));
                         },
                       ),
 
                       ListTile(
-                        leading: Icon(Icons.settings),
-                        title: Text("Settings"),
+                        leading: const Icon(Icons.settings),
+                        title: const Text("Settings"),
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SettingsScreen(),
+                                builder: (context) => const SettingsScreen(),
                               ));
                         },
                       ),
                       ListTile(
-                        leading: Icon(Icons.logout),
-                        title: Text("Logout"),
+                        leading: const Icon(Icons.logout),
+                        title: const Text("Logout"),
                         onTap: () async {
                           await FirebaseFirestore.instance
                               .collection('users')
@@ -125,7 +126,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: (AuthCubit.get(context).userModel == null)
-                  ? Center(
+                  ? const Center(
                       child: CircularProgressIndicator(),
                     )
                   : ListView.builder(
@@ -165,7 +166,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                             ],
                                           )
                                         : Row(
-                                            children: [
+                                            children: const [
                                               Text("Status : "),
                                               Text(
                                                 "offline",
@@ -190,7 +191,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                             },
                                           ));
                                         },
-                                        icon: Icon(Icons.chat)),
+                                        icon: const Icon(Icons.chat)),
                                     IconButton(
                                         onPressed: () {
                                           showDialog(
@@ -200,7 +201,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                                   "You want Delete Account ?"),
                                               content: Column(
                                                 mainAxisSize: MainAxisSize.min,
-                                                children: [
+                                                children: const [
                                                   Text(
                                                       "If You click ok you will Ban this Account")
                                                 ],
@@ -247,7 +248,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                             ),
                                           );
                                         },
-                                        icon: Icon(Icons.edit)),
+                                        icon: const Icon(Icons.edit)),
                                   ],
                                 )
                               ],

@@ -21,6 +21,7 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
   @override
   void initState() {
     // TODO: implement initState
+    context.read<AuthCubit>().getUserData();
     context.read<AuthCubit>().getPharmacyDetails();
     super.initState();
   }
@@ -40,12 +41,54 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : (state is GetPharmacyDetailsStateSuccessful)
-                  ? (AuthCubit.get(context).detailsModelPharmacy == null)
+                  : (AuthCubit.get(context).detailsModelPharmacy == null)
                       ? Form(
                           key: formKey,
                           child: Column(
                             children: [
+                              CircleAvatar(
+                                radius: 100.r,
+                                backgroundImage: NetworkImage((AuthCubit.get(
+                                                context)
+                                            .userModel!
+                                            .photo ==
+                                        '')
+                                    ? 'https://firebasestorage.googleapis.com/v0/b/pharmacy-f7702.appspot.com/o/images.jpg?alt=media&token=0aa2b534-e0cf-4ccc-814f-28c57a12d383'
+                                    : AuthCubit.get(context).userModel!.photo),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround
+                                ,children: [
+                                (state is UploadImageStateLoading)
+                                    ? const Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                                    : CustomButton(
+                                  disable: true,
+                                  size: Size(170.w,40.h),
+                                  widget: Text("Select from gallery"),
+                                  function: () {
+                                    AuthCubit.get(context)
+                                        .pickImageGallary(context);
+                                  },
+                                ),
+
+                                (state is UploadImageStateLoading)
+                                    ? const Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                                    :  CustomButton(
+                                  size: Size(170.w,40.h),
+
+                                  disable: true,
+                                  widget: Text("Select from camera"),
+                                  function: () {
+                                    AuthCubit.get(context)
+                                        .pickImageCamera(context);
+                                  },
+                                ),
+
+                              ],),
                               CustomTextField(
                                   controller: descriptionController,
                                   maxLine: 10,
@@ -82,17 +125,16 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                                       address: addressController.text,
                                     )
                                         .whenComplete(() {
-                                          Future.delayed(Duration(seconds: 2),() {
-                                            setState(() {
-                                              descriptionController.text = '';
-                                              addressController.text = '';
-                                              AuthCubit.get(context)
-                                                  .getPharmacyDetails();
-                                            });
-                                          },);
-
+                                      Future.delayed(
+                                        const Duration(seconds: 2),
+                                        () {
+                                          setState(() {
+                                            descriptionController.text = '';
+                                            addressController.text = '';
+                                          });
+                                        },
+                                      );
                                     });
-
                                   }
                                 },
                                 disable: true,
@@ -104,9 +146,9 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                           ),
                         )
                       : (AuthCubit.get(context).detailsModelPharmacy!.approved)
-                          ? Text("Hi")
-                          : Text("witting to admin approve")
-                  : const Text("error"),
+                          ? Center(child: Text("Hi"))
+                          : Center(child: Text("witting to admin approve"))
+
         );
       },
     );

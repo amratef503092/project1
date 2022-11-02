@@ -14,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 
 import '../../../model/details_model.dart';
+import '../../../model/pharmacy_model.dart';
 import '../../../model/user_model.dart';
 
 part 'auth_state.dart';
@@ -48,7 +49,10 @@ class AuthCubit extends Cubit<AuthState> {
         await CacheHelper.put(key: 'role', value: userModel!.role);
 
         emit(LoginSuccessfulState(
-            role: value['role'], message: 'login success', ban: value['ban']));
+            role: value['role'],
+            message: 'login success',
+            ban: value['ban'],
+            approved: value['approved']));
       });
     }).catchError((onError) {
       print(onError);
@@ -78,7 +82,7 @@ class AuthCubit extends Cubit<AuthState> {
           online: false,
           photo:
               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH6PjyUR8U-UgBWkOzFe38qcO29regN43tlGGk4sRd&s',
-          approved: (role=='2')?false:true,
+          approved: (role == '2') ? false : true,
           role: role,
           name: name);
 
@@ -282,7 +286,7 @@ class AuthCubit extends Cubit<AuthState> {
         .get()
         .then((value) {
       for (var element in value.docs) {
-        detailsModelPharmacy =  DetailsModelPharmacy.fromMap(element.data());
+        detailsModelPharmacy = DetailsModelPharmacy.fromMap(element.data());
       }
 
       emit(GetPharmacyDetailsStateSuccessful('Successful'));
@@ -291,46 +295,28 @@ class AuthCubit extends Cubit<AuthState> {
       emit(GetPharmacyDetailsStateError('onError'));
     });
   }
-  Future<void>addPharmacyDetails({required String dis,required String address,
-  })async{
-    emit(AddPharmacyDetailsStateLoading('loading'));
-    FirebaseFirestore.instance.collection('users').doc(userID).collection('details').add({
-      'dis':dis,
-      'address':address,
-      'approved':false,
+
+  Future<void> addPharmacyDetails({
+    required String dis,
+    required String address,
+  }) async {
+    // emit(AddPharmacyDetailsStateLoading('loading'));
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userID)
+        .collection('details')
+        .add({
+      'dis': dis,
+      'address': address,
+      'approved': false,
+      'id': userID,
     }).then((value) {
-      emit(AddPharmacyDetailsStateSuccessful('Successful'));
+     getPharmacyDetails();
+      // emit(AddPharmacyDetailsStateSuccessful('Successful'));
     }).catchError((onError) {
       emit(AddPharmacyDetailsStateError('onError'));
     });
   }
-  List<DetailsModelPharmacy>detailsModelPharmacyAdminApproved =[];
-  Future<void> getDataToApproved() async{
-    detailsModelPharmacyAdminApproved = []  ;
-    emit(GetDataToApprovedStateLoading('loading'));
-    FirebaseFirestore.instance.collection('users').where('role',isEqualTo: '2').get().then((value) {
-      value.docChanges.forEach((element) {
-        FirebaseFirestore.instance.collection('users').doc(element.doc.id).collection('details').get().then((value) {
-          value.docChanges.forEach((element) {
-            if(element.doc.data()!['approved']==false)
-            {
-              detailsModelPharmacyAdminApproved.add(DetailsModelPharmacy.fromMap(element.doc.data()!));
-            }
-          });
 
-        });
-
-      });
-      print(detailsModelPharmacyAdminApproved[0].address);
-      if(detailsModelPharmacyAdminApproved.isEmpty){
-        emit(GetDataToApprovedStateSuccessfulEmpty('Successful'));
-      }else{
-        emit(GetDataToApprovedStateSuccessful('Successful'));
-
-      }
-    }).catchError((onError){
-      emit(GetDataToApprovedStateSuccessful('onError'));
-    });
-  }
 
 }

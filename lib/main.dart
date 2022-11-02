@@ -8,6 +8,7 @@ import 'package:graduation_project/view/pages/auth/login_screen.dart';
 import 'package:graduation_project/view/pages/auth/register_screen.dart';
 import 'package:graduation_project/view/pages/home_screens/home_screen.dart';
 import 'package:graduation_project/view/pages/splash_screen.dart';
+import 'package:graduation_project/view_model/bloc/approve/approve_cubit.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 
@@ -36,12 +37,15 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MultiBlocProvider(
           providers: [
+
+            BlocProvider(create: (context) => ApproveCubit(),),
+
             BlocProvider(create: (context) => AuthCubit(),)
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: getTheme(),
-            home: SplashScreen(),
+            home: const SplashScreen(),
           ),
         );
       },
