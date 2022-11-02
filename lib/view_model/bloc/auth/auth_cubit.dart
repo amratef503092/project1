@@ -78,6 +78,7 @@ class AuthCubit extends Cubit<AuthState> {
           online: false,
           photo:
               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH6PjyUR8U-UgBWkOzFe38qcO29regN43tlGGk4sRd&s',
+          approved: (role=='2')?false:true,
           role: role,
           name: name);
 
@@ -280,8 +281,9 @@ class AuthCubit extends Cubit<AuthState> {
         .collection('details')
         .get()
         .then((value) {
-
-        detailsModelPharmacy = DetailsModelPharmacy.fromMap(value.docs[0].data());
+      for (var element in value.docs) {
+        detailsModelPharmacy =  DetailsModelPharmacy.fromMap(element.data());
+      }
 
       emit(GetPharmacyDetailsStateSuccessful('Successful'));
     }).catchError((onError) {
@@ -310,7 +312,8 @@ class AuthCubit extends Cubit<AuthState> {
       value.docChanges.forEach((element) {
         FirebaseFirestore.instance.collection('users').doc(element.doc.id).collection('details').get().then((value) {
           value.docChanges.forEach((element) {
-            if(element.doc.data()!['approved']==false){
+            if(element.doc.data()!['approved']==false)
+            {
               detailsModelPharmacyAdminApproved.add(DetailsModelPharmacy.fromMap(element.doc.data()!));
             }
           });

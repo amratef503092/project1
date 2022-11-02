@@ -8,6 +8,7 @@ class UserModel{
   String role;
   String name;
   String phone;
+  bool approved;
 
   UserModel({
     required this.age,
@@ -19,6 +20,7 @@ class UserModel{
     required this.role,
     required this.name,
     required this.phone,
+    required this.approved,
   });
 
   Map<String, dynamic> toMap() {
@@ -32,6 +34,7 @@ class UserModel{
       'role': this.role,
       'name': this.name,
       'phone': this.phone,
+      'approved': this.approved,
     };
   }
 
@@ -46,6 +49,7 @@ class UserModel{
       role: map['role'] as String,
       name: map['name'] as String,
       phone: map['phone'] as String,
+      approved: map['approved'] as bool,
     );
   }
 }

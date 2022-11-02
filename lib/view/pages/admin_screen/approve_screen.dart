@@ -29,7 +29,7 @@ class _ApproveScreenState extends State<ApproveScreen> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('Approve'),
+            title: const Text('Approve'),
           ),
           body: (state is GetDataToApprovedStateSuccessful)
               ? SizedBox(
@@ -38,14 +38,14 @@ class _ApproveScreenState extends State<ApproveScreen> {
                       child: state is GetDataToApprovedStateSuccessfulEmpty
                           ? Center(
                         child: Text( AuthCubit.get(context).detailsModelPharmacyAdminApproved.length.toString()),
-                      ):Column(
-                        children:
+                      ):ListView.builder(itemBuilder: (context, index) {
+                        return Column(children:
                         [
-
-                        ],
-                      ),
+                          Text(AuthCubit.get(context).detailsModelPharmacyAdminApproved[index].address.toString()),
+                        ],);
+                      },itemCount: AuthCubit.get(context).detailsModelPharmacyAdminApproved.length,)
                     )
-              : Center(
+              : const Center(
                   child: CircularProgressIndicator(),
                 ),
         );
