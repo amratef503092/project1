@@ -28,3 +28,13 @@ class GetMoreInfoPharmacyStateSuccessful extends ApproveState{
 
 }
 class GetMoreInfoPharmacyStateError extends ApproveState{}
+
+class ApprovePharmacyStateLoading extends ApproveState{}
+class ApprovePharmacyStateSuccessful extends ApproveState{}
+class ApprovePharmacyStateError extends ApproveState{}
+
+class UploadImageStateLoading extends ApproveState{}
+class UploadImageStateSuccessful extends ApproveState{}
+class pickImageGallaryStateSuccessful extends ApproveState{}
+class pickImageCameraStateSuccessful extends ApproveState{}
+class RemoveImageStateSuccessful extends ApproveState{}

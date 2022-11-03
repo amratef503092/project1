@@ -35,52 +35,67 @@ class _ApproveScreenState extends State<ApproveScreen> {
             ? const Text('Witting data')
             : ListView.builder(
                 itemBuilder: (context, index) {
+
                   return Card(
-                    color: buttonColor,
+                    color: Colors.white,
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CircleAvatar(
                             backgroundImage: NetworkImage(
                               ApproveCubit.get(context)
                                   .pharmacyModel[index]
-                                  .photo,
+                                  .photo.toString(),
                             ),
-                            radius: 50.r,
                           ),
                           const SizedBox(
                             width: 20,
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                ApproveCubit.get(context)
+                          SizedBox(
+                            width: 200.w,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Name : ${ApproveCubit.get(context)
+                                      .pharmacyModel[index]
+                                      .name}",
+                                  style: const TextStyle(
+                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                "Email ${  ApproveCubit.get(context)
                                     .pharmacyModel[index]
-                                    .name,
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                ApproveCubit.get(context)
-                                    .pharmacyModel[index]
-                                    .email,
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                ApproveCubit.get(context)
-                                    .detailsModelPharmacyAdminApproved[index]
-                                    .dis,
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                                    .email}",
+                                  style: const TextStyle(
+                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "Discrption : ${ApproveCubit.get(context)
+                                      .detailsModelPharmacyAdminApproved[index].dis}",
+                                  style: const TextStyle(
+                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
                           ),
                           Column(children: [
-                            TextButton(onPressed: (){}, child: Text('Approve')),
-                            TextButton(onPressed: (){}, child: Text('Rejected')),
+                            TextButton(onPressed: (){
+
+                              ApproveCubit.get(context).approvePharmacy(
+
+                                userID: ApproveCubit.get(context)
+                                    .detailsModelPharmacyAdminApproved[index].id,
+                                index :index
+                              );
+
+                            }, child: const Text('Approve',style: TextStyle(color: Colors.green ,fontSize: 20),)),
 
                           ],)
                         ],

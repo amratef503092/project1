@@ -6,6 +6,8 @@ import 'package:graduation_project/view/components/custom_button.dart';
 import 'package:graduation_project/view/components/custom_text_field.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 
+import 'create_product.dart';
+
 class HomePharmacyScreen extends StatefulWidget {
   const HomePharmacyScreen({Key? key}) : super(key: key);
 
@@ -33,10 +35,90 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
         // TODO: implement listener
       },
       builder: (context, state) {
+        var authCubit = AuthCubit.get(context);
         return Scaffold(
           appBar: AppBar(
             title: const Text('Home Pharmacy'),
           ),
+            drawer: (AuthCubit.get(context).userModel == null)
+                ? const Center(
+              child: CircularProgressIndicator(),
+            )
+                : Drawer(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 100.h,
+                  ),
+                  CircleAvatar(
+                    radius: 80.r,
+                    backgroundImage:
+                    NetworkImage(authCubit.userModel!.photo),
+                  ),
+                  SizedBox(
+                    height: 50.h,
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.perm_identity),
+                    title: const Text("Create Product"),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return const CreateProduct();
+                        },
+                      ));
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.work),
+                    title: const Text("Approve company"),
+                    onTap: (){
+
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => const ApproveScreen(),
+                      //     ));
+                    },
+                  ),
+
+                  ListTile(
+                    leading: const Icon(Icons.settings),
+                    title: const Text("Settings"),
+                    onTap: () {
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => const SettingsScreen(),
+                      //     ));
+                    },
+                  ),
+                  // ListTile(
+                  //   leading: const Icon(Icons.logout),
+                  //   title: const Text("Logout"),
+                  //   onTap: () async {
+                  //     await FirebaseFirestore.instance
+                  //         .collection('users')
+                  //         .doc(userID)
+                  //         .update({
+                  //       'online': 'false',
+                  //     }).then((value) async {
+                  //       userID = null;
+                  //       await CacheHelper.removeData(key: 'id');
+                  //       FirebaseAuth.instance.signOut();
+                  //     }).then((value) {
+                  //       Navigator.pushAndRemoveUntil(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //             builder: (context) => LoginScreen(),
+                  //           ),
+                  //               (route) => false);
+                  //     });
+                  //   },
+                  // ),
+                ],
+              ),
+            ),
           body: (state is GetPharmacyDetailsStateLoading)
               ? const Center(
                   child: CircularProgressIndicator(),
