@@ -11,6 +11,7 @@ import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 import '../../../view_model/bloc/pharmacy_product/pharmacy_cubit.dart';
 import '../../../view_model/database/local/cache_helper.dart';
 import '../auth/login_screen.dart';
+import 'Edit_Product_Screen.dart';
 import 'create_product.dart';
 
 class HomePharmacyScreen extends StatefulWidget {
@@ -24,7 +25,7 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
+  PharmacyCubit pharmacyCubit = PharmacyCubit();
   @override
   void initState() {
     // TODO: implement initState
@@ -259,10 +260,11 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                     : (AuthCubit.get(context).detailsModelPharmacy!.approved)
                         ? BlocProvider(
                             create: (context) =>
-                                PharmacyCubit()..getPharmacyProduct(),
+                            pharmacyCubit..getPharmacyProduct(),
                             child: BlocConsumer<PharmacyCubit, PharmacyState>(
                               builder: (context, state) {
-                                if (state is GetProductSuccsseful) {
+                                if (PharmacyCubit.get(context).productsModel !=
+                                    null) {
                                   return Padding(
                                     padding: EdgeInsets.all(20),
                                     child: GridView.builder(
@@ -270,14 +272,15 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                                           const SliverGridDelegateWithMaxCrossAxisExtent(
                                               maxCrossAxisExtent: 200,
                                               crossAxisSpacing: 20,
+                                              childAspectRatio: 3 / 4,
                                               mainAxisSpacing: 20),
                                       itemCount: PharmacyCubit.get(context)
                                           .productsModel
-                                          .length,
+                                          !.length,
                                       itemBuilder: (context, index) {
                                         return Container(
                                           width: 200,
-                                          height: 200,
+                                          height: 300,
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(20.r),
@@ -285,21 +288,78 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                                               color: Colors.black,
                                             ),
                                           ),
-                                          child: Column(
-                                            children: [
-                                              SizedBox(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10),
+                                            child: Column(
+                                              children: [
+                                                Container(
                                                   width: 200,
                                                   height: 100,
-                                                  child: Image(
-                                                    image: NetworkImage(
-                                                        PharmacyCubit.get(
-                                                                context)
-                                                            .productsModel[
-                                                                index]
-                                                            .image),
-                                                    fit: BoxFit.cover,
-                                                  )),
-                                            ],
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20.r),
+                                                      border: Border.all(
+                                                        color: Colors.black,
+                                                      ),
+                                                      image: DecorationImage(
+                                                        image: NetworkImage(
+                                                            PharmacyCubit.get(
+                                                                    context)
+                                                                .productsModel![
+                                                                    index]
+                                                                .image),
+                                                        fit: BoxFit.cover,
+                                                      )),
+                                                ),
+                                                Text(
+                                                  'Title : ${PharmacyCubit.get(context).productsModel![index].title}',
+                                                  style: TextStyle(
+                                                      fontSize: 24.sp),
+                                                ),
+                                                Text(
+                                                  'price : ${PharmacyCubit.get(context).productsModel![index].price}',
+                                                  style: TextStyle(
+                                                      fontSize: 24.sp),
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    IconButton(
+                                                      onPressed: () {},
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red,
+                                                      ),
+                                                    ),
+                                                    IconButton(
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    BlocProvider
+                                                                        .value(
+                                                                      value:
+                                                                      pharmacyCubit,
+                                                                      child:
+                                                                          EditProductScreen(
+                                                                        index:
+                                                                            index,
+                                                                              pharmacyCubit: pharmacyCubit,
+                                                                      ),
+                                                                    )));
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.edit,
+                                                        color: Colors.blue,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         );
                                       },

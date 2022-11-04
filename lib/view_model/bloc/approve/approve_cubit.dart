@@ -14,6 +14,7 @@ import 'package:meta/meta.dart';
 
 import '../../../model/details_model.dart';
 import '../../../model/pharmacy_model.dart';
+import '../pharmacy_product/pharmacy_cubit.dart';
 
 part 'approve_state.dart';
 
@@ -142,6 +143,46 @@ class ApproveCubit extends Cubit<ApproveState> {
           });
     }
   }
+
+  Future<void> uploadFileProduct(XFile? file, BuildContext context ,String docId) async {
+    emit(UploadImageStateLoading());
+    if (file == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No file was selected'),
+        ),
+      );
+
+      return;
+    }
+
+    UploadTask uploadTask;
+
+    // Create a Reference to the file
+    Reference ref = FirebaseStorage.instance.ref().child('/${file.name}');
+
+    final metadata = SettableMetadata(
+      contentType: 'image/jpeg',
+      customMetadata: {'picked-file-path': file.path},
+    );
+
+    if (kIsWeb) {
+      uploadTask = ref.putData(await file.readAsBytes(), metadata);
+    } else {
+      print('Amr2');
+      ref.putFile(io.File(file.path), metadata).then((p0) => {
+        ref.getDownloadURL().then((value) async {
+          await FirebaseFirestore.instance.collection('product').doc(docId).update({'image': value}).then((value) {
+            emit(UploadImageStateSuccessful());
+
+          });
+
+          // here modify the profile pic
+        })
+      });
+    }
+  }
+
    XFile? image;
   Future<void> pickImageGallary(BuildContext context) async {
    image = await _picker.pickImage(source: ImageSource.gallery);
