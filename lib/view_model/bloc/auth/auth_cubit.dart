@@ -14,7 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 
 import '../../../model/details_model.dart';
-import '../../../model/pharmacy_model.dart';
+import '../../../model/product_model.dart';
 import '../../../model/user_model.dart';
 
 part 'auth_state.dart';
@@ -311,12 +311,14 @@ class AuthCubit extends Cubit<AuthState> {
       'approved': false,
       'id': userID,
     }).then((value) {
-     getPharmacyDetails();
+      getPharmacyDetails();
       // emit(AddPharmacyDetailsStateSuccessful('Successful'));
     }).catchError((onError) {
       emit(AddPharmacyDetailsStateError('onError'));
     });
   }
+
+  List<ProductModel> productsModel = [];
 
 
 }

@@ -31,14 +31,35 @@ final List<String> items = [
   'Medical equipment',
 ];
 String? selectedValue;
-
 class _CreateProductState extends State<CreateProduct> {
-GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+GlobalKey<FormState> formKey = GlobalKey<FormState>();
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    titleController.text = '';
+    descriptionController.text = '';
+    costController.text = '';
+    quantityController.text;
+    ApproveCubit.get(context).image = null;
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ApproveCubit, ApproveState>(
       listener: (context, state) {
+        if(state is AddProductSuccessfulState){
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Product Added Successfully'),
+            ),
+          );
+        }
         // TODO: implement listener
       },
       builder: (context, state) {
@@ -88,7 +109,7 @@ GlobalKey<FormState> formKey = GlobalKey<FormState>();
                         CustomButton(
                           disable: true,
                           size: Size(170.w, 40.h),
-                          widget: Text("Select from gallery"),
+                          widget: const Text("Select from gallery"),
                           function: () {
                             ApproveCubit.get(context).pickImageGallary(context);
                           },
@@ -96,7 +117,7 @@ GlobalKey<FormState> formKey = GlobalKey<FormState>();
                         CustomButton(
                           size: Size(170.w, 40.h),
                           disable: true,
-                          widget: Text("Select from camera"),
+                          widget: const Text("Select from camera"),
                           function: () {
                             ApproveCubit.get(context).pickImageCamera(context);
                           },
@@ -210,12 +231,20 @@ GlobalKey<FormState> formKey = GlobalKey<FormState>();
                           ),
                           CustomButton(
                             function: () {
-                              if (formKey.currentState!.validate()) {
-                                // AuthCubit.get(context).update(
-                                //     email: emailController.text,
-                                //     phone: phoneController.text,
-                                //     age: ageController.text,
-                                //     name: nameController.text);
+                              if (formKey.currentState!.validate()&&approveCubit.image!=null&&selectedValue!=null) {
+                                ApproveCubit.get(context).addProduct(
+                                    title: titleController.text,
+                                    description: descriptionController.text,
+                                    price: int.parse(costController.text),
+                                  quantity: int.parse(quantityController.text),
+                                  context: context,
+                                  type: selectedValue!,
+                                );
+                              }else if(selectedValue==null){
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please Select Type")));
+                              }else{
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please Select Image")));
+
                               }
                             },
                             widget: Text("Post Product"),

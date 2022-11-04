@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_project/code/constants_value.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
@@ -103,7 +104,7 @@ class ApproveCubit extends Cubit<ApproveState> {
     });
   }
 
-  Future<void> uploadFile(XFile? file, BuildContext context) async {
+  Future<void> uploadFile(XFile? file, BuildContext context ,String docId) async {
     emit(UploadImageStateLoading());
     if (file == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -130,8 +131,11 @@ class ApproveCubit extends Cubit<ApproveState> {
     } else {
       print('Amr2');
       ref.putFile(io.File(file.path), metadata).then((p0) => {
-            ref.getDownloadURL().then((value) {
-              emit(UploadImageStateSuccessful());
+            ref.getDownloadURL().then((value) async {
+              await FirebaseFirestore.instance.collection('product').doc(docId).update({'image': value}).then((value) {
+                emit(UploadImageStateSuccessful());
+
+              });
 
               // here modify the profile pic
             })
@@ -159,5 +163,38 @@ class ApproveCubit extends Cubit<ApproveState> {
     image = null;
     emit(RemoveImageStateSuccessful());
   }
+  Future<void> addProduct({
+  required String title,
+    required String description,
+    required int price,
+    required int quantity,
+    required BuildContext context,
+    required String type,
 
+}) async{
+    String ? docId;
+    emit(AddProductStateLoading());
+    await FirebaseFirestore.instance.collection('product').add({
+      'title':title,
+      'price':price,
+      'image':quantity,
+      'description':description,
+      'pharmacyID':userID,
+      'quantity':quantity,
+      'type':type,
+    }).then((value) async{
+      docId = value.id;
+      await FirebaseFirestore.instance.collection('product').doc(value.id).update({
+        'id':value.id,
+      }).then((value)
+      {
+
+        uploadFile(image, context,docId!);
+        emit(AddProductSuccessfulState());
+    }).catchError((onError){
+      emit(AddProductStateError());
+    });
+  });
+
+}
 }

@@ -38,3 +38,10 @@ class UploadImageStateSuccessful extends ApproveState{}
 class pickImageGallaryStateSuccessful extends ApproveState{}
 class pickImageCameraStateSuccessful extends ApproveState{}
 class RemoveImageStateSuccessful extends ApproveState{}
+
+class AddProductSuccessfulState extends ApproveState{
+}
+class AddProductStateLoading extends ApproveState{
+}
+class AddProductStateError extends ApproveState{
+}
