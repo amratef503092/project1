@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:graduation_project/view/pages/admin_screen/home_admin_screen.dart';
 import 'package:graduation_project/view/pages/auth/login_screen.dart';
 import 'package:graduation_project/view/pages/pharmacy_pages/home_pharmacy.dart';
+import 'package:graduation_project/view/pages/user/user_home_screen.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 
 import '../../code/constants_value.dart';
@@ -20,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3)).then((value) async {
-      String? token = await CacheHelper.getDataString(key: 'id');
+      String? token =  CacheHelper.getDataString(key: 'id');
 
       if (token != null) {
       await  FirebaseFirestore.instance
@@ -40,8 +41,9 @@ class _SplashScreenState extends State<SplashScreen> {
                 },), (route) => false);
               }else{
                 // user
-                // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                //   return AdminHomeScreen();
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
+                  return HomeUserScreen();
+                },), (route) => false);
               }
         });
       } else {

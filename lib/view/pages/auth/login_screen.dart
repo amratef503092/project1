@@ -10,6 +10,7 @@ import '../../components/custom_button.dart';
 import '../../components/custom_text_field.dart';
 import '../../components/custom_texts.dart';
 import '../pharmacy_pages/home_pharmacy.dart';
+import '../user/user_home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -77,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AdminHomeScreen(),
+                    builder: (context) => const HomeUserScreen(),
                   ),
                       (route) => false);
             }
@@ -97,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Form(
                   key: formKey,
                   child: Padding(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -141,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 20.h,
                         ),
                         (state is LoginLoadingState)
-                            ? Center(
+                            ? const Center(
                                 child: CircularProgressIndicator(),
                               )
                             : CustomButton(

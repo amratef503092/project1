@@ -12,6 +12,7 @@ import 'package:graduation_project/view_model/bloc/approve/approve_cubit.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 import 'package:graduation_project/view_model/bloc/pharmacy_product/pharmacy_cubit.dart';
 import 'package:graduation_project/view_model/bloc/services/services_cubit.dart';
+import 'package:graduation_project/view_model/bloc/user_cubit/user_cubit.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 
 import 'code/BlocObserver.dart';
@@ -43,7 +44,8 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => ApproveCubit(),),
             BlocProvider(create: (context) => AuthCubit(),),
             BlocProvider(create: (context) => PharmacyCubit(),),
-            BlocProvider(create: (context) => ServicesCubit()..getServices(),)
+            BlocProvider(create: (context) => ServicesCubit()..getServices(),),
+            BlocProvider(create: (context) => UserCubit()..getMedicine()..getPharmacy(),)
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
