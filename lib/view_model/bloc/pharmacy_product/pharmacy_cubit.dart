@@ -106,5 +106,16 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       });
     }
   }
+  Future<void>deleteProduct({required String id}) async
+  {
+    emit(DeleteProductLoading());
+    await FirebaseFirestore.instance.collection('product').doc(id).delete().then((value) {
+      getPharmacyProduct();
+      emit(DeleteProductSuccessful('Successful'));
+    }).catchError((onError) {
+      print(onError);
+      emit(DeleteProductError('onError'));
+    });
+  }
 
 }

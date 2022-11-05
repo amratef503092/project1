@@ -40,7 +40,8 @@ class MyApp extends StatelessWidget {
           providers: [
 
             BlocProvider(create: (context) => ApproveCubit(),),
-            BlocProvider(create: (context) => AuthCubit(),)
+            BlocProvider(create: (context) => AuthCubit(),),
+            BlocProvider(create: (context) => PharmacyCubit(),)
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,

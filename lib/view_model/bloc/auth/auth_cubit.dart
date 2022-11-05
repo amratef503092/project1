@@ -119,8 +119,11 @@ class AuthCubit extends Cubit<AuthState> {
     // required String role,
   }) async {
     emit(UpdateDataLoadingState());
-
-    FirebaseFirestore.instance.collection('users').doc(userID).update({
+    print(userID);
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(CacheHelper.getDataString(key: 'id'))
+        .update({
       'name': name,
       'phone': phone,
       'age': age,
@@ -319,6 +322,4 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   List<ProductModel> productsModel = [];
-
-
 }

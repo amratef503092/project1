@@ -6,13 +6,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/code/constants_value.dart';
 import 'package:graduation_project/view/components/custom_button.dart';
 import 'package:graduation_project/view/components/custom_text_field.dart';
+import 'package:graduation_project/view/pages/pharmacy_pages/get_pharmacy_services.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 
 import '../../../view_model/bloc/pharmacy_product/pharmacy_cubit.dart';
 import '../../../view_model/database/local/cache_helper.dart';
 import '../auth/login_screen.dart';
 import 'Edit_Product_Screen.dart';
+import 'add_service_screen.dart';
 import 'create_product.dart';
+import 'edit_pharmacy_info.dart';
 
 class HomePharmacyScreen extends StatefulWidget {
   const HomePharmacyScreen({Key? key}) : super(key: key);
@@ -46,6 +49,13 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
         return Scaffold(
             appBar: AppBar(
               title: const Text('Home Pharmacy'),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      pharmacyCubit.getPharmacyProduct();
+                    },
+                    icon: const Icon(Icons.refresh))
+              ],
             ),
             drawer: (AuthCubit.get(context).userModel == null)
                 ? const Center(
@@ -76,27 +86,38 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                             ));
                           },
                         ),
-                        ListTile(
-                          leading: const Icon(Icons.work),
-                          title: const Text("Approve company"),
-                          onTap: () {
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder: (context) => const ApproveScreen(),
-                            //     ));
-                          },
-                        ),
 
                         ListTile(
                           leading: const Icon(Icons.settings),
                           title: const Text("Settings"),
                           onTap: () {
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder: (context) => const SettingsScreen(),
-                            //     ));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const EditPharamcyScreen(),
+                                ));
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.home_repair_service),
+                          title: const Text("service"),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const AddServiceScreen(),
+                                ));
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.design_services_sharp),
+                          title: const Text("Show all Service"),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const GetPharmacyServices(),
+                                ));
                           },
                         ),
                         ListTile(
@@ -327,8 +348,17 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                                                       MainAxisAlignment.center,
                                                   children: [
                                                     IconButton(
-                                                      onPressed: () {},
-                                                      icon: Icon(
+                                                      onPressed: () {
+                                                        PharmacyCubit.get(
+                                                                context)
+                                                            .deleteProduct(id:  PharmacyCubit
+                                                            .get(
+                                                            context)
+                                                            .productsModel[
+                                                        index]
+                                                            .id);
+                                                      },
+                                                      icon: const Icon(
                                                         Icons.delete,
                                                         color: Colors.red,
                                                       ),
@@ -351,7 +381,7 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                                                                       ),
                                                                     )));
                                                       },
-                                                      icon: Icon(
+                                                      icon: const Icon(
                                                         Icons.edit,
                                                         color: Colors.blue,
                                                       ),

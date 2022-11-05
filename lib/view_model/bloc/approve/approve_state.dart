@@ -45,3 +45,15 @@ class AddProductStateLoading extends ApproveState{
 }
 class AddProductStateError extends ApproveState{
 }
+class CreateServicesStateLoading extends ApproveState{
+  String message;
+  CreateServicesStateLoading(this.message);
+}
+class CreateServicesStateError extends ApproveState{
+  String message;
+  CreateServicesStateError(this.message);
+}
+class CreateServicesStateSuccessful extends ApproveState{
+  String message;
+  CreateServicesStateSuccessful(this.message);
+}

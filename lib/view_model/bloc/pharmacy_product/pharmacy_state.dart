@@ -33,3 +33,15 @@ class UploadImageErrorState extends PharmacyState {
   UploadImageErrorState(this.message);
 }
 // update state end
+
+// delete state start
+class DeleteProductLoading extends PharmacyState {}
+class DeleteProductSuccessful extends PharmacyState {
+  final String message;
+  DeleteProductSuccessful(this.message);
+}
+class DeleteProductError extends PharmacyState {
+  final String message;
+  DeleteProductError(this.message);
+}
+// delete state end
