@@ -19,4 +19,11 @@ class GetPharmacyErrorState extends UserState {
   final String error;
   GetPharmacyErrorState(this.error);
 }
+// getPharmacy state end
+class BuyProductLoadingState extends UserState {}
+class BuyProductSuccessfulState extends UserState {}
+class BuyProductErrorState extends UserState {
+  final String error;
+  BuyProductErrorState(this.error);
+}
 

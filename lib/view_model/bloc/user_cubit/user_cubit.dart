@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/model/product_model.dart';
+import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:meta/meta.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -37,6 +38,23 @@ class UserCubit extends Cubit<UserState> {
       emit(GetPharmacySuccessfulState());
     }).catchError((onError){
       emit(GetPharmacyErrorState(onError.toString()));
+    });
+  }
+  Future<void> buyProduct({required ProductModel  productModel , required int quantity}) async{
+    int price = productModel.price * quantity;
+    emit(BuyProductLoadingState());
+    await FirebaseFirestore.instance.collection('product').doc(productModel.id).collection('orders').add({
+      'userID': CacheHelper.getDataString(key: 'id'),
+      'pharmacyID': productModel.pharmacyID,
+      'productID': productModel.id,
+      'quantity': quantity,
+      'totalPrice': price,
+      'orderDate': DateTime.now(),
+      'orderStatus': false,
+    }).then((value) {
+      emit(BuyProductSuccessfulState());
+    }).catchError((onError){
+      emit(BuyProductErrorState(onError.toString()));
     });
   }
 }

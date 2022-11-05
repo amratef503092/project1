@@ -6,6 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 import 'package:graduation_project/view_model/bloc/user_cubit/user_cubit.dart';
 
+import 'MedicineDetailsScreen.dart';
+
 class HomeUserScreen extends StatefulWidget {
   const HomeUserScreen({Key? key}) : super(key: key);
 
@@ -114,7 +116,7 @@ class _HomeUserScreenState extends State<HomeUserScreen> {
                                       ],
                                     )),
                                   )
-                                : Center(
+                                : const Center(
                                     child: CircularProgressIndicator(),
                                   );
                           },
@@ -185,7 +187,7 @@ class _HomeUserScreenState extends State<HomeUserScreen> {
                                                                     fontWeight:
                                                                     FontWeight.w900),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                 width: 20,
                                                               ),
                                                             ],
@@ -211,7 +213,91 @@ class _HomeUserScreenState extends State<HomeUserScreen> {
                         ),
                         BlocBuilder<UserCubit, UserState>(builder: (context, state) {
                           return Text("Amr");
-                        },)
+                        },),
+
+                        BlocBuilder<UserCubit, UserState>(
+                          buildWhen: (previous, current) {
+                            if(current is GetMedicineSuccessfulState){
+                              return true;
+                            }else{
+                              return false;
+                            }
+                          },
+                          builder: (context, state) {
+                            var cubit = UserCubit.get(context);
+                            return (state is GetMedicineSuccessfulState)
+                                ?  SizedBox(
+                              width: double.infinity,
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: GridView.builder(gridDelegate:  const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 200,
+                                    crossAxisSpacing: 20,
+                                    childAspectRatio: 3 / 4,
+                                    mainAxisSpacing: 20),
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount:  cubit.productModel.length,
+                                    itemBuilder: (context, index) {
+                                      return InkWell(
+                                        onTap: (){
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => MedicineDetailsScreen(productModel: cubit.productModel[index],)));
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(15.r)
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Image.network(
+                                                cubit.productModel[index].image,
+                                                fit: BoxFit.cover,
+                                              ),
+                                              Align(
+                                                  alignment: Alignment.bottomCenter,
+                                                  child: Container(
+                                                    width: double.infinity,
+                                                    color: Colors.black45,
+                                                    height: 90.h,
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                      children: [
+                                                        Text(
+                                                          "Title : ${cubit.productModel[index].title}",
+                                                          style: const TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                              FontWeight.w900),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 20,
+                                                        ),
+                                                        Text(
+                                                          "price : ${ cubit.productModel[index].price} ",
+                                                          style: const TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                              FontWeight.w900),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            )
+                                : const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                        ),
+
                       ],
                     ),
                 );
