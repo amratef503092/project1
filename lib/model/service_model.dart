@@ -1,5 +1,5 @@
 class ServiceModel {
-  final String cost;
+  final int cost;
   final String title;
   final String id;
   final String pharmacyID;
