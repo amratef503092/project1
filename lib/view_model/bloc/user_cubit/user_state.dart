@@ -26,4 +26,11 @@ class BuyProductErrorState extends UserState {
   final String error;
   BuyProductErrorState(this.error);
 }
+// get My Product state start
+class GetMyProductLoadingState extends UserState {}
+class GetMyProductSuccessfulState extends UserState {}
+class GetMyProductErrorState extends UserState {
+  final String error;
+  GetMyProductErrorState(this.error);
+}
 

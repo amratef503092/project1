@@ -4,18 +4,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/code/constants_value.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 
+import '../../../model/pharmacy_model.dart';
 
-class ChatScreen extends StatefulWidget {
-  int ? index;
-  ChatScreen(
+
+class ChatUserScreen extends StatefulWidget {
+  ChatUserScreen(
       {Key ? key,
-        required this.index});
+        required this.pahrmacyModel});
+  PharmacyModel ? pahrmacyModel;
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<ChatUserScreen> createState() => _ChatUserScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatUserScreenState extends State<ChatUserScreen> {
   final fireStore = FirebaseFirestore.instance;
   TextEditingController messageController = TextEditingController();
 
@@ -121,15 +123,15 @@ class _ChatScreenState extends State<ChatScreen> {
                           onPressed: () {
                             cubit.sendMessage(userid: userID.toString(),
                                 message: messageController.text,
-                                  senderID: userID.toString(),
+                                 senderID: userID.toString(),
                                 senderName: cubit.userModel!.name,
-                                receiverId:cubit.adminData[widget.index!].id
-                                , receiverName:cubit.adminData[widget.index!].name,
-                            type: 'text'
+                                receiverId:widget.pahrmacyModel!.id
+                              , receiverName:widget.pahrmacyModel!.name,
+                                type: 'text'
                             );
                             // cubit.sendMessage(text: cubit.messageController.text , time:DateTime.now().toString() );
                             //
-                            // cubit.messageController.clear();
+                            messageController.clear();
                           },
                         )),
                     CircleAvatar(
@@ -141,7 +143,14 @@ class _ChatScreenState extends State<ChatScreen> {
                             color: Colors.white,
                           ),
                           onPressed: () {
-                            cubit.pickFile();
+                            cubit.pickFileMessage(   userid: userID.toString(),
+                                senderID: userID.toString(),
+                                senderName: cubit.userModel!.name,
+                                receiverId:widget.pahrmacyModel!.id
+                                , receiverName:widget.pahrmacyModel!.name,
+                                type: 'pdf');
+
+
                             // cubit.sendMessage(text: cubit.messageController.text , time:DateTime.now().toString() );
                             //
                             // cubit.messageController.clear();

@@ -164,4 +164,47 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       emit(AcceptOrderError('Error'));
     });
   }
+  Future<void> getPharmacySpecificProduct({required String pharmacyID}) async
+  {
+    productsModel = [];
+    emit(GetProductLodaing());
+    await FirebaseFirestore.instance
+        .collection('product')
+        .where('pharmacyID', isEqualTo: pharmacyID)
+        .get()
+        .then((value) {
+      print(value.docs.length);
+      for (var element in value.docs) {
+        productsModel.add(ProductModel.fromMap(element.data()));
+      }
+      print(productsModel.length);
+      emit(GetProductSuccsseful('Successful'));
+    }).catchError((onError) {
+      print(onError);
+      emit(GetProductError('onError'));
+    });
+  }
+  List<ProductModel> getProductByType = [];
+
+  Future<void> getByTypes({required String type}) async
+  {
+    getProductByType = [];
+    emit(GetProductLodaing());
+    await FirebaseFirestore.instance
+        .collection('product')
+        .where('type', isEqualTo: type)
+        .get()
+        .then((value) {
+      print(value.docs.length);
+      for (var element in value.docs) {
+        getProductByType.add(ProductModel.fromMap(element.data()));
+      }
+      print(getProductByType.length);
+      emit(GetProductSuccsseful('Successful'));
+    }).catchError((onError) {
+      print(onError);
+      emit(GetProductError('onError'));
+    });
+  }
+
 }

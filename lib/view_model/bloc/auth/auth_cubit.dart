@@ -225,6 +225,7 @@ class AuthCubit extends Cubit<AuthState> {
     required String senderName,
     required String receiverId,
     required String receiverName,
+    required String type
   }) async {
     emit(SendMessageStateLoading('loading'));
     FirebaseFirestore.instance
@@ -237,6 +238,7 @@ class AuthCubit extends Cubit<AuthState> {
       'senderID': senderID,
       'receiverName': receiverName,
       'receiverID': receiverId,
+      'type': type,
       'time': DateTime.now().toString(),
     }).then((value) {
       print(value);
@@ -254,6 +256,7 @@ class AuthCubit extends Cubit<AuthState> {
       'senderID': senderID,
       'receiverName': receiverName,
       'receiverID': receiverId,
+      'type': type,
       'time': DateTime.now().toString(),
     }).then((value) {
       print(value);
@@ -262,14 +265,14 @@ class AuthCubit extends Cubit<AuthState> {
       emit(SendMessageStateError('onError'));
     });
   }
-
+  FilePickerResult? result ;
   Future<void> pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
+    result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'doc'],
     );
     if (result != null) {
-      io.File file = io.File(result.files.single.path.toString());
+      io.File file = io.File(result!.files.single.path.toString());
       FirebaseStorage.instance.ref().child('files').putFile(file).then((p0) {
         p0.ref.getDownloadURL().then((value) {
           print(value);
@@ -277,7 +280,31 @@ class AuthCubit extends Cubit<AuthState> {
       });
     }
   }
+  Future<void> pickFileMessage({required String userid,required String senderID,
+  required String senderName,
+required String receiverId,
+    required String receiverName,
+    required String type}) async {
 
+    result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc'],
+    );
+    if (result != null) {
+      io.File file = io.File(result!.files.single.path.toString());
+      FirebaseStorage.instance.ref().child('files').putFile(file).then((p0) {
+        p0.ref.getDownloadURL().then((value) {
+          sendMessage(
+              userid: userid
+              , message: value,
+              senderID: senderID, senderName: senderName,
+              receiverId: receiverId,
+              receiverName: receiverName,
+              type: type);
+        });
+      });
+    }
+  }
   DetailsModelPharmacy? detailsModelPharmacy;
 
   Future<void> getPharmacyDetails() async {

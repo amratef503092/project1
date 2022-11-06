@@ -24,9 +24,9 @@ class OrderModel
 
   Map<String, dynamic> toMap() {
     return {
-      'orderDate': this.orderDate,
-      'orderStatus': this.orderStatus,
-      'pharmacyID': this.pharmacyID,
+      'orderDate': orderDate,
+      'orderStatus': orderStatus,
+      'pharmacyID': pharmacyID,
       'productID': this.productID,
       'quantity': this.quantity,
       'totalPrice': this.totalPrice,

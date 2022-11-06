@@ -126,5 +126,8 @@ class AddPharmacyDetailsStateSuccessful extends AuthState{
   AddPharmacyDetailsStateSuccessful(this.message);
 }
 // create services start
-
+class GetUrlSuccessfulState extends AuthState{
+  String message;
+  GetUrlSuccessfulState(this.message);
+}
 // delete service end
