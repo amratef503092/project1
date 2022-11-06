@@ -182,14 +182,14 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                     IconButton(
                                         onPressed: () {
                                           // chat screen
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                            builder: (context) {
-                                              return ChatScreen(
-                                                index: index,
-                                              );
-                                            },
-                                          ));
+                                          // Navigator.push(context,
+                                          //     MaterialPageRoute(
+                                          //   builder: (context) {
+                                          //     return ChatScreen(
+                                          //       index: index,
+                                          //     );
+                                          //   },
+                                          // ));
                                         },
                                         icon: const Icon(Icons.chat)),
                                     IconButton(

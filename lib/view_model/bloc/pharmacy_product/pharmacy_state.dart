@@ -66,3 +66,23 @@ class AcceptOrderError extends PharmacyState {
   final String message;
   AcceptOrderError(this.message);
 }
+// delete product
+class GetMessageLoading extends PharmacyState {}
+class GetMessageSuccessful extends PharmacyState {
+  final String message;
+  GetMessageSuccessful(this.message);
+}
+class GetMessageError extends PharmacyState {
+  final String message;
+  GetMessageError(this.message);
+}
+// delete product
+class GetUsersMessageLoading extends PharmacyState {}
+class GetUsersMessageSuccessful extends PharmacyState {
+  final String message;
+  GetUsersMessageSuccessful(this.message);
+}
+class GetUsersMessageError extends PharmacyState {
+  final String message;
+  GetUsersMessageError(this.message);
+}

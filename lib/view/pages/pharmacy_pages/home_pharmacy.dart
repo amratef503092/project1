@@ -17,6 +17,7 @@ import 'Edit_Product_Screen.dart';
 import 'add_service_screen.dart';
 import 'create_product.dart';
 import 'edit_pharmacy_info.dart';
+import 'messageScreen.dart';
 
 class HomePharmacyScreen extends StatefulWidget {
   const HomePharmacyScreen({Key? key}) : super(key: key);
@@ -134,16 +135,26 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                           },
                         ),
                         ListTile(
+                          leading: const Icon(Icons.shopify),
+                          title: const Text("messages"),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const MessageScreen(),
+                                ));
+                          },
+                        ),
+                        ListTile(
                           leading: const Icon(Icons.logout),
                           title: const Text("Logout"),
                           onTap: () async {
                             await FirebaseFirestore.instance
                                 .collection('users')
-                                .doc(userID)
+                                .doc(CacheHelper.getDataString(key: 'id'))
                                 .update({
                               'online': 'false',
                             }).then((value) async {
-                              userID = null;
                               await CacheHelper.removeData(key: 'id');
                               FirebaseAuth.instance.signOut();
                             }).then((value) {

@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/code/constants_value.dart';
+import 'package:graduation_project/model/user_model.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:open_filex/open_filex.dart';
@@ -12,16 +13,16 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../model/pharmacy_model.dart';
 
-class ChatUserScreen extends StatefulWidget {
-  ChatUserScreen({Key? key, required this.pahrmacyModel});
+class PharmacyMessage extends StatefulWidget {
+  PharmacyMessage({Key? key, required this.pahrmacyModel});
 
-  PharmacyModel? pahrmacyModel;
+  UserModel? pahrmacyModel;
 
   @override
-  State<ChatUserScreen> createState() => _ChatUserScreenState();
+  State<PharmacyMessage> createState() => _PharmacyMessageState();
 }
 
-class _ChatUserScreenState extends State<ChatUserScreen> {
+class _PharmacyMessageState extends State<PharmacyMessage> {
   final fireStore = FirebaseFirestore.instance;
   TextEditingController messageController = TextEditingController();
 
@@ -43,7 +44,7 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
               stream: FirebaseFirestore.instance
                   .collection('users')
                   .doc(widget.pahrmacyModel!.id)
-                  .collection('messages').where('customerId',isEqualTo:CacheHelper.getDataString(key: 'id')).orderBy('time').snapshots(),
+                  .collection('messages').where('pharmacyID',isEqualTo:CacheHelper.getDataString(key: 'id')).orderBy('time').snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Text("no message");
@@ -53,7 +54,7 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
 
                   for (var message in messages) {
                     final messageText = message.get('message');
-                    final sender = (message['senderID']==CacheHelper.getDataString(key: 'id'))?message.get('customerName'):message.get('pharmacyName');
+                    final sender = (message['senderID']==CacheHelper.getDataString(key: 'id'))?message.get('pharmacyName'):message.get('customerName');
 
                     messageWidgets.add(MessageLine(
                         type: message['type'],
@@ -123,13 +124,12 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
                       ),
                       onPressed: () {
                         cubit.sendMessage(
-                            senderID: CacheHelper.getDataString(key: 'id').toString(),
-                            pharmacyID: widget.pahrmacyModel!.id,
+                            pharmacyID: CacheHelper.getDataString(key: 'id').toString(),
                             message: messageController.text,
-                            pharmacyName: widget.pahrmacyModel!.name,
-                            customerId: CacheHelper.getDataString(key: 'id').toString(),
-                            customerName: cubit.userModel!.name,
-
+                            pharmacyName: cubit.userModel!.name,
+                            customerId: widget.pahrmacyModel!.id,
+                            senderID: CacheHelper.getDataString(key: 'id').toString(),
+                            customerName: widget.pahrmacyModel!.name,
                             type: 'text');
                         // cubit.sendMessage(text: cubit.messageController.text , time:DateTime.now().toString() );
                         //
@@ -146,10 +146,10 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
                       ),
                       onPressed: () async {
                         cubit.pickFileMessage(
-                            pharmacyID: widget.pahrmacyModel!.id,
-                            pharmacyName: widget.pahrmacyModel!.name,
-                            customerId: CacheHelper.getDataString(key: 'id').toString(),
-                            customerName: cubit.userModel!.name,
+                            pharmacyID: CacheHelper.getDataString(key: 'id').toString(),
+                            pharmacyName: cubit.userModel!.name,
+                            customerId: widget.pahrmacyModel!.id,
+                            customerName: widget.pahrmacyModel!.name,
                             type: 'pdf');
 
                         //   const oneMegabyte = 1024 * 1024;
@@ -228,9 +228,19 @@ class MessageLine extends StatelessWidget {
             color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(14.0),
-              child: Text('$messageText',
-                  style:
-                  TextStyle(color: Colors.black, fontSize: 14)),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Icon((Icons.download)),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                      '${messageText!.substring(90, messageText!.length)}.pdf',
+                      style: TextStyle(
+                          color: Colors.black, fontSize: 14)),
+                ],
+              )
             ),
           ),
         ],
@@ -238,7 +248,7 @@ class MessageLine extends StatelessWidget {
     )
         : Padding(
       padding: EdgeInsets.all(22),
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -246,7 +256,7 @@ class MessageLine extends StatelessWidget {
             Text('$sender'),
             Material(
               elevation: 2,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30),
                 topLeft: Radius.circular(30),
@@ -256,7 +266,7 @@ class MessageLine extends StatelessWidget {
                 padding: const EdgeInsets.all(14.0),
                 child: Text(
                   '$messageText',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xff1A1D21),
                     fontSize: 14,
                   ),
@@ -410,5 +420,3 @@ class PdfLine extends StatelessWidget {
     );
   }
 }
-
-

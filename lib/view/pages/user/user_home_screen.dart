@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,7 +8,11 @@ import 'package:graduation_project/view/pages/user/orderUser.dart';
 import 'package:graduation_project/view/pages/user/pharmacy_product.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 import 'package:graduation_project/view_model/bloc/user_cubit/user_cubit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../code/constants_value.dart';
+import '../../../view_model/database/local/cache_helper.dart';
+import '../auth/login_screen.dart';
 import 'EditUserInfo.dart';
 import 'MedicineDetailsScreen.dart';
 import 'medicalDevices.dart';
@@ -127,29 +132,29 @@ class _HomeUserScreenState extends State<HomeUserScreen> {
                     // },
                     // ),
 
-                    // ListTile(
-                    //   leading: const Icon(Icons.logout),
-                    //   title: const Text("Logout"),
-                    //   onTap: () async {
-                    //     await FirebaseFirestore.instance
-                    //         .collection('users')
-                    //         .doc(userID)
-                    //         .update({
-                    //       'online': 'false',
-                    //     }).then((value) async {
-                    //       userID = null;
-                    //       await CacheHelper.removeData(key: 'id');
-                    //       FirebaseAuth.instance.signOut();
-                    //     }).then((value) {
-                    //       Navigator.pushAndRemoveUntil(
-                    //           context,
-                    //           MaterialPageRoute(
-                    //             builder: (context) => LoginScreen(),
-                    //           ),
-                    //               (route) => false);
-                    //     });
-                    //   },
-                    // ),
+                    ListTile(
+                      leading: const Icon(Icons.logout),
+                      title: const Text("Logout"),
+                      onTap: () async {
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(userID)
+                            .update({
+                          'online': 'false',
+                        }).then((value) async {
+                          userID = null;
+                          await CacheHelper.removeData(key: 'id');
+                          FirebaseAuth.instance.signOut();
+                        }).then((value) {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(),
+                              ),
+                                  (route) => false);
+                        });
+                      },
+                    ),
 
                   ],
                 ));

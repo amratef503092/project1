@@ -1,4 +1,7 @@
+import 'dart:io' as io;
+
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -7,21 +10,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:io' as io;
+
 import '../../../code/constants_value.dart';
 import '../../../model/order_model.dart';
-import '../../../model/pharmacy_model.dart';
 import '../../../model/product_model.dart';
+import '../../../model/user_model.dart';
 
 part 'pharmacy_state.dart';
 
 class PharmacyCubit extends Cubit<PharmacyState> {
   PharmacyCubit() : super(PharmacyInitial());
+
   static PharmacyCubit get(context) => BlocProvider.of<PharmacyCubit>(context);
   List<ProductModel> productsModel = [];
-  Future<void> getPharmacyProduct() async
-  {
+
+  Future<void> getPharmacyProduct() async {
     productsModel = [];
     emit(GetProductLodaing());
     await FirebaseFirestore.instance
@@ -29,7 +32,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         .where('pharmacyID', isEqualTo: userID)
         .get()
         .then((value) {
-          print(value.docs.length);
+      print(value.docs.length);
       for (var element in value.docs) {
         productsModel.add(ProductModel.fromMap(element.data()));
       }
@@ -40,26 +43,22 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       emit(GetProductError('onError'));
     });
   }
-  Future<void>updateProduct({
-  required String description,
+
+  Future<void> updateProduct({
+    required String description,
     required int price,
     required String title,
     required String type,
     required int quantity,
     required String id,
-
-})
-  async
-  {
-
+  }) async {
     emit(UpdateProductLodaing());
-    await
-    FirebaseFirestore.instance.collection('product').doc(id).update({
-      'title':title,
-      'price':price,
-      'quantity':quantity,
-      'description':description,
-      'type' : type,
+    await FirebaseFirestore.instance.collection('product').doc(id).update({
+      'title': title,
+      'price': price,
+      'quantity': quantity,
+      'description': description,
+      'type': type,
     }).then((value) {
       productsModel = [];
       getPharmacyProduct();
@@ -69,7 +68,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       emit(UpdateProductError('onError'));
     });
   }
-  Future<void> editImageProduct(XFile? file, BuildContext context ,String docId) async {
+
+  Future<void> editImageProduct(
+      XFile? file, BuildContext context, String docId) async {
     emit(UploadImageLoadingState());
     if (file == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -96,22 +97,28 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     } else {
       print('Amr2');
       ref.putFile(io.File(file.path), metadata).then((p0) => {
-        ref.getDownloadURL().then((value) async {
-          await FirebaseFirestore.instance.collection('product').doc(docId).update({'image': value}).then((value) {
-            getPharmacyProduct();
-            emit(UploadImageSuccessfulState('done'));
+            ref.getDownloadURL().then((value) async {
+              await FirebaseFirestore.instance
+                  .collection('product')
+                  .doc(docId)
+                  .update({'image': value}).then((value) {
+                getPharmacyProduct();
+                emit(UploadImageSuccessfulState('done'));
+              });
 
+              // here modify the profile pic
+            })
           });
-
-          // here modify the profile pic
-        })
-      });
     }
   }
-  Future<void>deleteProduct({required String id}) async
-  {
+
+  Future<void> deleteProduct({required String id}) async {
     emit(DeleteProductLoading());
-    await FirebaseFirestore.instance.collection('product').doc(id).delete().then((value) {
+    await FirebaseFirestore.instance
+        .collection('product')
+        .doc(id)
+        .delete()
+        .then((value) {
       getPharmacyProduct();
       emit(DeleteProductSuccessful('Successful'));
     }).catchError((onError) {
@@ -119,53 +126,75 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       emit(DeleteProductError('onError'));
     });
   }
+
   List<OrderModel> orders = [];
   List<ProductModel> productsOrder = [];
 
-  Future<void>getOrders(String status) async{
+  Future<void> getOrders(String status) async {
     orders = [];
     emit(GetOrderLoading());
-     await FirebaseFirestore.instance.collection('product').where('pharmacyID',isEqualTo: CacheHelper.getDataString(key: 'id')).get().then((value) async{
-       value.docs.forEach((element) async{
-        await FirebaseFirestore.instance.collection('product').doc(element.id).collection('orders').where('orderStatus',isEqualTo: status).get().then((value) {
-           value.docs.forEach((element) {
-             orders.add(OrderModel.fromMap(element.data()));
-
-           });
-
-         });
+    await FirebaseFirestore.instance
+        .collection('product')
+        .where('pharmacyID', isEqualTo: CacheHelper.getDataString(key: 'id'))
+        .get()
+        .then((value) async {
+      value.docs.forEach((element) async {
+        await FirebaseFirestore.instance
+            .collection('product')
+            .doc(element.id)
+            .collection('orders')
+            .where('orderStatus', isEqualTo: status)
+            .get()
+            .then((value) {
+          value.docs.forEach((element) {
+            orders.add(OrderModel.fromMap(element.data()));
+          });
+        });
         for (var element in orders) {
-          await FirebaseFirestore.instance.collection('product').where(element.productID).get().then((value) {
+          await FirebaseFirestore.instance
+              .collection('product')
+              .where(element.productID)
+              .get()
+              .then((value) {
             for (var element in value.docs) {
               productsOrder.add(ProductModel.fromMap(element.data()));
             }
           });
         }
         emit(GetOrderSuccessful('Successful'));
-       });
-     }).catchError((onError){
-       print(onError);
-       emit(GetOrderError('Error'));
-
-     });
+      });
+    }).catchError((onError) {
+      print(onError);
+      emit(GetOrderError('Error'));
+    });
   }
-  Future<void> acceptOrder({required String orderID , required String productID}) async{
+
+  Future<void> acceptOrder(
+      {required String orderID, required String productID}) async {
     emit(AcceptOrderLoading());
-    await FirebaseFirestore.instance.collection('product').doc(productID).update({
-      'quantity':FieldValue.increment(-1),
-    }).then((value) async{
-      await FirebaseFirestore.instance.collection('product').doc(productID).collection('orders').doc(orderID).update({
-        'orderStatus':'Accepted',
+    await FirebaseFirestore.instance
+        .collection('product')
+        .doc(productID)
+        .update({
+      'quantity': FieldValue.increment(-1),
+    }).then((value) async {
+      await FirebaseFirestore.instance
+          .collection('product')
+          .doc(productID)
+          .collection('orders')
+          .doc(orderID)
+          .update({
+        'orderStatus': 'Accepted',
       }).then((value) {
         getOrders('pending');
         emit(AcceptOrderSuccessful('Successful'));
       });
-    }).catchError((onError){
+    }).catchError((onError) {
       emit(AcceptOrderError('Error'));
     });
   }
-  Future<void> getPharmacySpecificProduct({required String pharmacyID}) async
-  {
+
+  Future<void> getPharmacySpecificProduct({required String pharmacyID}) async {
     productsModel = [];
     emit(GetProductLodaing());
     await FirebaseFirestore.instance
@@ -184,10 +213,10 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       emit(GetProductError('onError'));
     });
   }
+
   List<ProductModel> getProductByType = [];
 
-  Future<void> getByTypes({required String type}) async
-  {
+  Future<void> getByTypes({required String type}) async {
     getProductByType = [];
     emit(GetProductLodaing());
     await FirebaseFirestore.instance
@@ -206,5 +235,34 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       emit(GetProductError('onError'));
     });
   }
+  List<UserModel>usersMessage = [];
+  Future<void> getMessage() async {
+    emit(GetMessageLoading());
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(CacheHelper.getDataString(key: 'id'))
+        .collection('message')
+        .get()
+        .then((value) {
 
+      emit(GetMessageSuccessful('Successful'));
+    }).catchError((onError) {
+      print(onError);
+      emit(GetMessageError('Error'));
+    });
+  }
+  Future<void>getUsers() async{
+    usersMessage = [];
+    emit(GetUsersMessageLoading());
+    await FirebaseFirestore.instance.collection('users').where('role',isEqualTo: '3').get().then((value) {
+      for(var element in value.docs){
+        print(element.data());
+        usersMessage.add(UserModel.fromMap(element.data()));
+      }
+      emit(GetUsersMessageSuccessful('Successful'));
+    }).catchError((error){
+      print(error);
+      emit(GetUsersMessageError('Error'));
+    });
+  }
 }

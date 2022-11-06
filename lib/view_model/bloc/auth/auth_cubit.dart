@@ -219,25 +219,26 @@ class AuthCubit extends Cubit<AuthState> {
 
   // send message firebase
   Future<void> sendMessage({
-    required String userid,
     required String message,
+    required String pharmacyID,
+    required String customerName,
+    required String customerId,
+    required String pharmacyName,
     required String senderID,
-    required String senderName,
-    required String receiverId,
-    required String receiverName,
     required String type
   }) async {
     emit(SendMessageStateLoading('loading'));
     FirebaseFirestore.instance
         .collection('users')
-        .doc(userid)
+        .doc(customerId)
         .collection('messages')
         .add({
       'message': message,
-      'senderName': senderName,
-      'senderID': senderID,
-      'receiverName': receiverName,
-      'receiverID': receiverId,
+      'senderID':senderID,
+      'customerName': customerName,
+      'pharmacyID': pharmacyID,
+      'pharmacyName': pharmacyName,
+      'customerId': customerId,
       'type': type,
       'time': DateTime.now().toString(),
     }).then((value) {
@@ -248,14 +249,16 @@ class AuthCubit extends Cubit<AuthState> {
     });
     FirebaseFirestore.instance
         .collection('users')
-        .doc(receiverId)
+        .doc(pharmacyID)
         .collection('messages')
         .add({
       'message': message,
-      'senderName': senderName,
-      'senderID': senderID,
-      'receiverName': receiverName,
-      'receiverID': receiverId,
+      'customerName': customerName,
+      'senderID':senderID,
+
+      'pharmacyID': pharmacyID,
+      'pharmacyName': pharmacyName,
+      'customerId': customerId,
       'type': type,
       'time': DateTime.now().toString(),
     }).then((value) {
@@ -280,10 +283,9 @@ class AuthCubit extends Cubit<AuthState> {
       });
     }
   }
-  Future<void> pickFileMessage({required String userid,required String senderID,
-  required String senderName,
-required String receiverId,
-    required String receiverName,
+  Future<void> pickFileMessage({required String customerId,required String pharmacyID,
+  required String pharmacyName,
+required String customerName,
     required String type}) async {
 
     result = await FilePicker.platform.pickFiles(
@@ -295,11 +297,12 @@ required String receiverId,
       FirebaseStorage.instance.ref().child('files').putFile(file).then((p0) {
         p0.ref.getDownloadURL().then((value) {
           sendMessage(
-              userid: userid
-              , message: value,
-              senderID: senderID, senderName: senderName,
-              receiverId: receiverId,
-              receiverName: receiverName,
+              senderID: CacheHelper.getDataString(key: 'id').toString(),
+            pharmacyName: pharmacyName,
+              customerId: customerId,
+              customerName: customerName,
+              message: value,
+              pharmacyID: pharmacyID,
               type: type);
         });
       });
