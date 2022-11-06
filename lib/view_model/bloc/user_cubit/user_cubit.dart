@@ -40,7 +40,7 @@ class UserCubit extends Cubit<UserState> {
       emit(GetPharmacyErrorState(onError.toString()));
     });
   }
-  Future<void> buyProduct({required ProductModel  productModel , required int quantity}) async{
+  Future<void> buyProduct({required ProductModel  productModel , required int quantity,required String address}) async{
     int price = productModel.price * quantity;
     emit(BuyProductLoadingState());
     await FirebaseFirestore.instance.collection('product').doc(productModel.id).collection('orders').add({
@@ -51,7 +51,11 @@ class UserCubit extends Cubit<UserState> {
       'totalPrice': price,
       'orderDate': DateTime.now(),
       'orderStatus': false,
-    }).then((value) {
+      'address':address,
+    }).then((value) async {
+      await FirebaseFirestore.instance.collection('product').doc(productModel.id).collection('orders').doc(value.id).update({
+        'id': value.id,
+      });
       emit(BuyProductSuccessfulState());
     }).catchError((onError){
       emit(BuyProductErrorState(onError.toString()));

@@ -45,3 +45,24 @@ class DeleteProductError extends PharmacyState {
   DeleteProductError(this.message);
 }
 // delete state end
+
+// get product
+class GetOrderLoading extends PharmacyState {}
+class GetOrderSuccessful extends PharmacyState {
+  final String message;
+  GetOrderSuccessful(this.message);
+}
+class GetOrderError extends PharmacyState {
+  final String message;
+  GetOrderError(this.message);
+}
+// delete product
+class AcceptOrderLoading extends PharmacyState {}
+class AcceptOrderSuccessful extends PharmacyState {
+  final String message;
+  AcceptOrderSuccessful(this.message);
+}
+class AcceptOrderError extends PharmacyState {
+  final String message;
+  AcceptOrderError(this.message);
+}

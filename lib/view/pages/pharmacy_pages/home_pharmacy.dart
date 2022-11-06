@@ -7,6 +7,7 @@ import 'package:graduation_project/code/constants_value.dart';
 import 'package:graduation_project/view/components/custom_button.dart';
 import 'package:graduation_project/view/components/custom_text_field.dart';
 import 'package:graduation_project/view/pages/pharmacy_pages/get_pharmacy_services.dart';
+import 'package:graduation_project/view/pages/pharmacy_pages/show_orders.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 
 import '../../../view_model/bloc/pharmacy_product/pharmacy_cubit.dart';
@@ -117,6 +118,18 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const GetPharmacyServices(),
+                                ));
+                          },
+                        ),
+
+                        ListTile(
+                          leading: const Icon(Icons.shopify),
+                          title: const Text("Show all Orders"),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ShowOrders(),
                                 ));
                           },
                         ),

@@ -4,11 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io' as io;
 import '../../../code/constants_value.dart';
+import '../../../model/order_model.dart';
 import '../../../model/pharmacy_model.dart';
 import '../../../model/product_model.dart';
 
@@ -117,5 +119,49 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       emit(DeleteProductError('onError'));
     });
   }
+  List<OrderModel> orders = [];
+  List<ProductModel> productsOrder = [];
 
+  Future<void>getOrders(String status) async{
+    orders = [];
+    emit(GetOrderLoading());
+     await FirebaseFirestore.instance.collection('product').where('pharmacyID',isEqualTo: CacheHelper.getDataString(key: 'id')).get().then((value) async{
+       value.docs.forEach((element) async{
+        await FirebaseFirestore.instance.collection('product').doc(element.id).collection('orders').where('orderStatus',isEqualTo: status).get().then((value) {
+           value.docs.forEach((element) {
+             orders.add(OrderModel.fromMap(element.data()));
+
+           });
+
+         });
+        for (var element in orders) {
+          await FirebaseFirestore.instance.collection('product').where(element.productID).get().then((value) {
+            for (var element in value.docs) {
+              productsOrder.add(ProductModel.fromMap(element.data()));
+            }
+          });
+        }
+        emit(GetOrderSuccessful('Successful'));
+       });
+     }).catchError((onError){
+       print(onError);
+       emit(GetOrderError('Error'));
+
+     });
+  }
+  Future<void> acceptOrder({required String orderID , required String productID}) async{
+    emit(AcceptOrderLoading());
+    await FirebaseFirestore.instance.collection('product').doc(productID).update({
+      'quantity':FieldValue.increment(-1),
+    }).then((value) async{
+      await FirebaseFirestore.instance.collection('product').doc(productID).collection('orders').doc(orderID).update({
+        'orderStatus':'Accepted',
+      }).then((value) {
+        getOrders('pending');
+        emit(AcceptOrderSuccessful('Successful'));
+      });
+    }).catchError((onError){
+      emit(AcceptOrderError('Error'));
+    });
+  }
 }
