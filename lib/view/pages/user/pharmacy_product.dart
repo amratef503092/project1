@@ -31,6 +31,7 @@ class _PharmacyProductState extends State<PharmacyProduct> {
       },
       builder: (context, state) {
         var cubit = PharmacyCubit.get(context);
+        print(cubit.productsModel.length);
         return Scaffold(
           appBar: AppBar(
             title: Text(widget.pahrmacyModel!.name),
@@ -49,8 +50,7 @@ class _PharmacyProductState extends State<PharmacyProduct> {
           ),
           body: (state is GetProductLodaing)?const Center(
             child: Text('Pharmacy Product'),
-          ):ListView.separated(
-              itemBuilder: (context, index) => SizedBox(
+          ):SizedBox(
                 width: double.infinity,
                 child: Padding(
                   padding: const EdgeInsets.all(20),
@@ -116,12 +116,7 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                       }),
                 ),
               ),
-              separatorBuilder: (context, index) => Container(
-                width: double.infinity,
-                height: 1,
-                color: Colors.grey,
-              ),
-              itemCount: cubit.productsModel.length),
+
         );
       },
     );

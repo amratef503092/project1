@@ -89,7 +89,10 @@ class AuthCubit extends Cubit<AuthState> {
       FirebaseFirestore.instance
           .collection('users')
           .doc(value.user!.uid)
-          .set(userModel!.toMap());
+          .set(userModel!.toMap()).then((value) {
+            getAdmin();
+      });
+
       emit(RegisterSuccessfulState('Register success'));
     }).catchError((onError) {
       emit(RegisterErrorState('Register Error'));
@@ -97,6 +100,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> getUserData() async {
+    userModel = null;
     emit(GetUserDataLoadingState());
 
     FirebaseFirestore.instance
@@ -105,8 +109,10 @@ class AuthCubit extends Cubit<AuthState> {
         .get()
         .then((value) {
       userModel = UserModel.fromMap(value.data()!);
+
       emit(GetUserDataSuccessfulState('data come true'));
     }).catchError((onError) {
+      print(onError.toString());
       emit(GetUserDataErrorState('some Thing Error'));
     });
   }
@@ -199,16 +205,22 @@ class AuthCubit extends Cubit<AuthState> {
   List<UserModel> adminData = [];
 
   Future<void> getAdmin() async {
-    adminData = [];
+
     emit(GetAdminsStateLoading('loading'));
+    adminData = [];
     FirebaseFirestore.instance
         .collection('users')
-        .where('role', isEqualTo: '1')
+        .where('role', isEqualTo: '1',).where('ban', isEqualTo: false)
         .get()
         .then((value) {
       print(value.docs.length);
       value.docChanges.forEach((element) {
-        adminData.add(UserModel.fromMap(element.doc.data()!));
+        if(element.doc.data()!['id']==CacheHelper.getDataString(key: 'id')) {
+          print('same');
+        }else{
+          adminData.add(UserModel.fromMap(element.doc.data()!));
+
+        }
       });
       emit(GetAdminsStateSuccessful('loading'));
     }).catchError((onError) {
@@ -312,6 +324,7 @@ required String customerName,
 
   Future<void> getPharmacyDetails() async {
     emit(GetPharmacyDetailsStateLoading('loading'));
+    detailsModelPharmacy = null;
     FirebaseFirestore.instance
         .collection('users')
         .doc(userID)

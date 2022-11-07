@@ -317,7 +317,7 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                                           const SliverGridDelegateWithMaxCrossAxisExtent(
                                               maxCrossAxisExtent: 200,
                                               crossAxisSpacing: 20,
-                                              childAspectRatio: 3 / 4,
+                                              childAspectRatio: 3 / 5,
                                               mainAxisSpacing: 20),
                                       itemCount: PharmacyCubit.get(context)
                                           .productsModel

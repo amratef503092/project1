@@ -32,12 +32,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    context.read<AuthCubit>().getUserData();
     nameController.text = AuthCubit.get(context).userModel!.name;
     phoneController.text = AuthCubit.get(context).userModel!.phone;
     ageController.text = AuthCubit.get(context).userModel!.age;
     emailController.text = AuthCubit.get(context).userModel!.email;
-
     super.initState();
   }
 
@@ -49,13 +47,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
       builder: (context, state) {
         var authCubit = AuthCubit.get(context);
-        print(authCubit.userModel!.photo);
+
 
         return Scaffold(
           body: SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            child: (state is GetUserDataLoadingState)
+            child: (authCubit.userModel == null)
                 ? Center(
                     child: CircularProgressIndicator(),
                   )

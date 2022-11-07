@@ -203,48 +203,61 @@ class _HomeUserScreenState extends State<HomeUserScreen> {
                                       itemCount: cubit.productModel.length,
                                       itemBuilder: (BuildContext context,
                                               int itemIndex, int pageViewIndex) =>
-                                          Container(
-                                              child: Stack(
+                                          InkWell(
+                                            onTap: (){
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          MedicineDetailsScreen(
+                                                            productModel:
+                                                            cubit.productModel[
+                                                            itemIndex],
+                                                          )));
+                                            },
+                                            child: Container(
+                                                child: Stack(
                                         children: [
-                                          Image.network(
-                                            cubit.productModel[itemIndex].image,
-                                            fit: BoxFit.cover,
-                                            width: 1000.0,
-                                          ),
-                                          Align(
-                                              alignment: Alignment.bottomCenter,
-                                              child: Container(
-                                                width: double.infinity,
-                                                height: 30,
-                                                color: Colors.black45,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      "Title : ${cubit.productModel[itemIndex].title}",
-                                                      style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.w900),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 20,
-                                                    ),
-                                                    Text(
-                                                      "price : ${cubit.productModel[itemIndex].price}",
-                                                      style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.w900),
-                                                    ),
-                                                  ],
-                                                ),
-                                              )),
+                                            Image.network(
+                                              cubit.productModel[itemIndex].image,
+                                              fit: BoxFit.cover,
+                                              width: 1000.0,
+                                            ),
+                                            Align(
+                                                alignment: Alignment.bottomCenter,
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  height: 30,
+                                                  color: Colors.black45,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        "Title : ${cubit.productModel[itemIndex].title}",
+                                                        style: const TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight.w900),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 20,
+                                                      ),
+                                                      Text(
+                                                        "price : ${cubit.productModel[itemIndex].price}",
+                                                        style: const TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight.w900),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )),
                                         ],
                                       )),
+                                          ),
                                     )
                                   : const Center(
                                       child: CircularProgressIndicator(),

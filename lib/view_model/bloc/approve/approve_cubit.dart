@@ -23,16 +23,19 @@ class ApproveCubit extends Cubit<ApproveState> {
 
   static ApproveCubit get(context) => BlocProvider.of<ApproveCubit>(context);
   List<DetailsModelPharmacy> detailsModelPharmacyAdminApproved = [];
-
+  //this function will do get all pharmacy from database to approve it
   Future<void> getDataToApproved() async {
-    detailsModelPharmacyAdminApproved = [];
+
     emit(GetDataToApprovedStateLoading('loading'));
+    detailsModelPharmacyAdminApproved = [];
+    // this is the path of data in database i determine it to get it
     FirebaseFirestore.instance
         .collection('users')
         .where('role', isEqualTo: '2')
         .get()
         .then((value) async {
       for (var element in value.docChanges) {
+        // i loop on all data to get it and add it to list
         await FirebaseFirestore.instance
             .collection('users')
             .doc(element.doc.id)
@@ -42,12 +45,14 @@ class ApproveCubit extends Cubit<ApproveState> {
           for (var element in value.docChanges) {
             print(element.doc.data()!['approved']);
             if (!element.doc.data()!['approved']) {
+              // here i check if pharmacy is approved or not if not i add it to list
               detailsModelPharmacyAdminApproved
                   .add(DetailsModelPharmacy.fromMap(element.doc.data()!));
             }
           }
         });
       }
+
       getMoreInfoPharmacy();
     }).catchError((onError) {
       print(onError);

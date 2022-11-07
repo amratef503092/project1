@@ -40,7 +40,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       },
       builder: (context, state) {
         // print(userID.toString()+ "from sql");
+
         var authCubit = AuthCubit.get(context);
+        print(authCubit.adminData.length);
         return Scaffold(
           appBar: AppBar(title: const Text("Admin Panel "), centerTitle: true),
           drawer: (AuthCubit.get(context).userModel == null)
@@ -129,15 +131,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )
-                  : ListView.builder(
+                  : (authCubit.adminData.isEmpty)?Center(child: Text("No Admin Found"),):ListView.builder(
                       itemCount: authCubit.adminData.length,
                       itemBuilder: (context, index) {
-                        if (authCubit.adminData[index].id ==
-                                authCubit.userModel!.id ||
-                            authCubit.adminData[index].ban) {
-                          return Container();
-                        } else {
-                          return Card(
+                      return Card(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -255,7 +252,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             ),
                           );
                         }
-                      })),
+                      )),
         );
       },
     );

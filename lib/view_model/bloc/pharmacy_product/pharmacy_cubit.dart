@@ -25,8 +25,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   List<ProductModel> productsModel = [];
 
   Future<void> getPharmacyProduct() async {
-    productsModel = [];
+
     emit(GetProductLodaing());
+    productsModel = [];
     await FirebaseFirestore.instance
         .collection('product')
         .where('pharmacyID', isEqualTo: userID)
@@ -131,8 +132,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   List<ProductModel> productsOrder = [];
 
   Future<void> getOrders(String status) async {
-    orders = [];
+
     emit(GetOrderLoading());
+    orders = [];
     await FirebaseFirestore.instance
         .collection('product')
         .where('pharmacyID', isEqualTo: CacheHelper.getDataString(key: 'id'))
@@ -195,8 +197,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   }
 
   Future<void> getPharmacySpecificProduct({required String pharmacyID}) async {
-    productsModel = [];
+
     emit(GetProductLodaing());
+    productsModel = [];
     await FirebaseFirestore.instance
         .collection('product')
         .where('pharmacyID', isEqualTo: pharmacyID)
@@ -217,8 +220,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   List<ProductModel> getProductByType = [];
 
   Future<void> getByTypes({required String type}) async {
-    getProductByType = [];
+
     emit(GetProductLodaing());
+    getProductByType = [];
     await FirebaseFirestore.instance
         .collection('product')
         .where('type', isEqualTo: type)
@@ -252,8 +256,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     });
   }
   Future<void>getUsers() async{
-    usersMessage = [];
+
     emit(GetUsersMessageLoading());
+    usersMessage = [];
     await FirebaseFirestore.instance.collection('users').where('role',isEqualTo: '3').get().then((value) {
       for(var element in value.docs){
         print(element.data());

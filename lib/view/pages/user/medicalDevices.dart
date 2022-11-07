@@ -36,10 +36,7 @@ class _MedicalDevicesState extends State<MedicalDevices> {
           ),
           body: (state is GetProductLodaing)?const Center(
             child: Text('Pharmacy Product'),
-          ):ListView.separated(
-              itemBuilder: (context, index) => SizedBox(
-                width: double.infinity,
-                child: Padding(
+          ):(cubit.getProductByType.isNotEmpty)? Padding(
                   padding: const EdgeInsets.all(20),
                   child: GridView.builder(gridDelegate:  const SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: 200,
@@ -100,15 +97,7 @@ class _MedicalDevicesState extends State<MedicalDevices> {
                             ),
                           ),
                         );
-                      }),
-                ),
-              ),
-              separatorBuilder: (context, index) => Container(
-                width: double.infinity,
-                height: 1,
-                color: Colors.grey,
-              ),
-              itemCount: cubit.getProductByType.length),
+                      })):const Center(child: Text('No Data'),),
         );
       },
     );
