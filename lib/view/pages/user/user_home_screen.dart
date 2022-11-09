@@ -140,11 +140,12 @@ class _HomeUserScreenState extends State<HomeUserScreen> {
                             .collection('users')
                             .doc(userID)
                             .update({
-                          'online': 'false',
+                          'online': false,
                         }).then((value) async {
                           userID = null;
                           await CacheHelper.removeData(key: 'id');
-                          FirebaseAuth.instance.signOut();
+
+                        await  FirebaseAuth.instance.signOut();
                         }).then((value) {
                           Navigator.pushAndRemoveUntil(
                               context,
@@ -183,7 +184,7 @@ class _HomeUserScreenState extends State<HomeUserScreen> {
                             builder: (context, state) {
                               var cubit = UserCubit.get(context);
                               return (state is GetMedicineSuccessfulState)
-                                  ? CarouselSlider.builder(
+                                  ? (cubit.productModel.length ==0)? Center(child: Text("No Product"),): CarouselSlider.builder(
                                       options: CarouselOptions(
                                         height: 200.0,
                                         aspectRatio: 16 / 9,

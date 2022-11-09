@@ -25,7 +25,6 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   List<ProductModel> productsModel = [];
 
   Future<void> getPharmacyProduct() async {
-
     emit(GetProductLodaing());
     productsModel = [];
     await FirebaseFirestore.instance
@@ -132,7 +131,6 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   List<ProductModel> productsOrder = [];
 
   Future<void> getOrders(String status) async {
-
     emit(GetOrderLoading());
     orders = [];
     await FirebaseFirestore.instance
@@ -197,7 +195,6 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   }
 
   Future<void> getPharmacySpecificProduct({required String pharmacyID}) async {
-
     emit(GetProductLodaing());
     productsModel = [];
     await FirebaseFirestore.instance
@@ -220,7 +217,6 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   List<ProductModel> getProductByType = [];
 
   Future<void> getByTypes({required String type}) async {
-
     emit(GetProductLodaing());
     getProductByType = [];
     await FirebaseFirestore.instance
@@ -239,7 +235,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       emit(GetProductError('onError'));
     });
   }
-  List<UserModel>usersMessage = [];
+
+  List<UserModel> usersMessage = [];
+
   Future<void> getMessage() async {
     emit(GetMessageLoading());
     await FirebaseFirestore.instance
@@ -248,26 +246,130 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         .collection('message')
         .get()
         .then((value) {
-
       emit(GetMessageSuccessful('Successful'));
     }).catchError((onError) {
       print(onError);
       emit(GetMessageError('Error'));
     });
   }
-  Future<void>getUsers() async{
 
+  Future<void> getUsers() async {
     emit(GetUsersMessageLoading());
     usersMessage = [];
-    await FirebaseFirestore.instance.collection('users').where('role',isEqualTo: '3').get().then((value) {
-      for(var element in value.docs){
+    await FirebaseFirestore.instance
+        .collection('users')
+        .where('role', isEqualTo: '3')
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
         print(element.data());
         usersMessage.add(UserModel.fromMap(element.data()));
       }
       emit(GetUsersMessageSuccessful('Successful'));
-    }).catchError((error){
+    }).catchError((error) {
       print(error);
       emit(GetUsersMessageError('Error'));
     });
   }
+
+  num currentRate = 0.0;
+  num userRate = 0.0;
+
+  Future<void> postRateToPharmacy(
+      {required String pharmacyId, required double rate}) async {
+    emit(PostRateLoading());
+    debugPrint('rate is $pharmacyId');
+    if (userRate == 0) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(pharmacyId)
+          .collection('rate')
+          .add({
+        'userID': CacheHelper.getDataString(key: 'id'),
+        'rate': rate,
+
+      }).then((value) async {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(pharmacyId)
+            .collection('rate')
+            .doc(value.id)
+            .update({
+          'id': value.id,
+        }).then((value) {
+          emit(PostRateSuccessful('Successful'));
+        });
+      }
+
+      ).catchError((onError) {
+        print(onError);
+        emit(PostRateError('Error'));
+      });
+    }else{
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(pharmacyId)
+          .collection('rate').where('userID',isEqualTo: CacheHelper.getDataString(key: 'id'))
+          .get().then((value) {
+            value.docs.forEach((element) {
+              FirebaseFirestore.instance.collection('users').doc(pharmacyId).collection('rate').doc(element.id).update({
+                'rate': rate,
+              }).then((value) {
+                emit(PostRateSuccessful('Successful'));
+              });
+            });
+
+    });
+    }
+  }
+
+  Future<void> getRatePharmacy({
+    required String pharmacyId,
+  }) async {
+    emit(GetCurrentRateLoading('loading'));
+    currentRate = 0.0;
+    debugPrint('rate is $pharmacyId');
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(pharmacyId)
+        .collection('rate')
+        .get()
+        .then((value) {
+      if (value.docs.length == 0) {
+        currentRate = 0.0;
+      } else {
+        for (var element in value.docs) {
+          currentRate = currentRate + element.data()['rate'];
+        }
+        currentRate = currentRate / value.docs.length;
+      }
+      emit(GetCurrentRateSuccessful('loaing'));
+    }).catchError((value) {
+      emit(GetCurrentRateError('Error'));
+    });
+  }
+
+  Future<void> getUserRate({
+    required String pharmacyId,
+  }) async {
+    emit(GetUserRateLoading('loading'));
+    userRate = 0.0;
+    debugPrint('rate is $pharmacyId');
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(pharmacyId)
+        .collection('rate')
+        .where('userID', isEqualTo: CacheHelper.getDataString(key: 'id'))
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        userRate = element.data()['rate'];
+      }
+      print(userRate);
+      emit(GetUserRateSuccessful('loaing'));
+    }).catchError((value) {
+      emit(GetUserRateError('Error'));
+    });
+  }
+
 }

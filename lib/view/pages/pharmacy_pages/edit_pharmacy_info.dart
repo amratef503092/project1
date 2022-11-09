@@ -32,7 +32,6 @@ class _EditPharamcyScreenState extends State<EditPharamcyScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    context.read<AuthCubit>().getUserData();
     nameController.text = AuthCubit.get(context).userModel!.name;
     phoneController.text = AuthCubit.get(context).userModel!.phone;
     ageController.text = AuthCubit.get(context).userModel!.age;
@@ -55,7 +54,7 @@ class _EditPharamcyScreenState extends State<EditPharamcyScreen> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: (state is GetUserDataLoadingState)
-                ? Center(
+                ?const Center(
               child: CircularProgressIndicator(),
             )
                 : Padding(
@@ -84,7 +83,7 @@ class _EditPharamcyScreenState extends State<EditPharamcyScreen> {
                         : CustomButton(
                       disable: true,
                       size: Size(170.w,40.h),
-                      widget: Text("Select from gallery"),
+                      widget: const Text("Select from gallery"),
                       function: () {
                         AuthCubit.get(context)
                             .pickImageGallary(context);
@@ -99,7 +98,7 @@ class _EditPharamcyScreenState extends State<EditPharamcyScreen> {
                       size: Size(170.w,40.h),
 
                       disable: true,
-                      widget: Text("Select from camera"),
+                      widget: const Text("Select from camera"),
                       function: () {
                         AuthCubit.get(context)
                             .pickImageCamera(context);
@@ -117,7 +116,7 @@ class _EditPharamcyScreenState extends State<EditPharamcyScreen> {
                           fieldValidator: emailValidator,
                           hint: 'email',
                           iconData: Icons.email,
-                          enable: enable,
+                          enable: false,
                         ),
                         SizedBox(
                           height: 20.h,
@@ -179,7 +178,7 @@ class _EditPharamcyScreenState extends State<EditPharamcyScreen> {
                               enable = !enable;
                             });
                           },
-                          widget: Text("Start Edit"),
+                          widget: const Text("Start Edit"),
                           size: Size(300.w, 50.h),
                           radius: 20.r,
                           disable: true,
@@ -198,7 +197,7 @@ class _EditPharamcyScreenState extends State<EditPharamcyScreen> {
                                   name: nameController.text);
                             }
                           },
-                          widget: Text("confirm Update"),
+                          widget: const Text("confirm Update"),
                           size: Size(300.w, 50.h),
                           radius: 20.r,
                           disable: enable,

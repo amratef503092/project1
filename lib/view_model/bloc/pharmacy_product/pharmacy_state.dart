@@ -86,3 +86,40 @@ class GetUsersMessageError extends PharmacyState {
   final String message;
   GetUsersMessageError(this.message);
 }
+// delete product
+class PostRateLoading  extends PharmacyState {
+
+}
+class PostRateSuccessful extends PharmacyState {
+  final String message;
+  PostRateSuccessful(this.message);
+}
+class PostRateError extends PharmacyState {
+  final String message;
+  PostRateError(this.message);
+}
+class GetCurrentRateLoading extends PharmacyState {
+  final String message;
+  GetCurrentRateLoading(this.message);
+}
+class GetCurrentRateSuccessful extends PharmacyState {
+  final String message;
+  GetCurrentRateSuccessful(this.message);
+}
+class GetCurrentRateError extends PharmacyState {
+  final String message;
+  GetCurrentRateError(this.message);
+}
+
+class GetUserRateLoading extends PharmacyState {
+  final String message;
+  GetUserRateLoading(this.message);
+}
+class GetUserRateSuccessful extends PharmacyState {
+  final String message;
+  GetUserRateSuccessful(this.message);
+}
+class GetUserRateError extends PharmacyState {
+  final String message;
+  GetUserRateError(this.message);
+}

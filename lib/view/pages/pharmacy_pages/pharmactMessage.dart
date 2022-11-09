@@ -12,6 +12,7 @@ import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../model/pharmacy_model.dart';
+import '../../components/message.dart';
 
 class PharmacyMessage extends StatefulWidget {
   PharmacyMessage({Key? key, required this.pahrmacyModel});
@@ -60,7 +61,8 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
                         type: message['type'],
                         sender: sender,
                         messageText: messageText,
-                        isMe: message['senderID']==CacheHelper.getDataString(key: 'id')));
+                        isMe: message['senderID']==CacheHelper.getDataString(key: 'id'),
+                      baseName:  message['baseName'],));
                   }
 
                   return Expanded(
@@ -87,6 +89,9 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
             // ): Center(
             //   child: CircularProgressIndicator(),
             // ),
+            SizedBox(
+              height: 15,
+            ),
             Row(
               children: [
                 Expanded(
@@ -95,11 +100,11 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
                     child: TextFormField(
                       controller: messageController,
                       decoration: InputDecoration(
-                        labelText: "Enter Email",
+                        labelText: "Enter Message",
                         fillColor: Colors.white,
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Colors.blue,
                           ),
                         ),
@@ -116,7 +121,7 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
                 ),
                 CircleAvatar(
                     backgroundColor: buttonColor,
-                    radius: 25,
+                    radius: 20,
                     child: IconButton(
                       icon: const Icon(
                         Icons.send,
@@ -136,9 +141,10 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
                         messageController.clear();
                       },
                     )),
+                SizedBox(width: 5,),
                 CircleAvatar(
                     backgroundColor: buttonColor,
-                    radius: 25,
+                    radius: 20,
                     child: IconButton(
                       icon: const Icon(
                         Icons.file_copy,
@@ -163,7 +169,8 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
                         //
                         // cubit.messageController.clear();
                       },
-                    ))
+                    )),
+                SizedBox(width: 5,),
               ],
             ),
           ]),
@@ -196,227 +203,4 @@ Future<io.File?> downloadFile(String url, String filName) async {
   return filePath;
 }
 
-class MessageLine extends StatelessWidget {
-  MessageLine({this.messageText, this.sender, this.isMe, this.type});
 
-  String? type;
-  String? messageText;
-  String? sender;
-  bool? isMe;
-
-  @override
-  Widget build(BuildContext context) {
-    return (isMe!)
-        ? (type == 'pdf')
-        ? InkWell(
-      onTap: () {
-        openFile(
-            url: messageText!,
-            fileName:
-            '${messageText!.substring(90, messageText!.length)}.pdf');
-      },
-      child: Column(
-        children: [
-          Text('$sender'),
-          Material(
-            elevation: 2,
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
-              topLeft: Radius.circular(30),
-            ),
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Icon((Icons.download)),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                      '${messageText!.substring(90, messageText!.length)}.pdf',
-                      style: TextStyle(
-                          color: Colors.black, fontSize: 14)),
-                ],
-              )
-            ),
-          ),
-        ],
-      ),
-    )
-        : Padding(
-      padding: EdgeInsets.all(22),
-      child: SizedBox(
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text('$sender'),
-            Material(
-              elevation: 2,
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-                topLeft: Radius.circular(30),
-              ),
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(14.0),
-                child: Text(
-                  '$messageText',
-                  style: const TextStyle(
-                    color: Color(0xff1A1D21),
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ),
-
-          ],
-        ),
-      ),
-    )
-        : (type == 'pdf')
-        ? InkWell(
-      onTap: () {
-        openFile(
-            url: messageText!,
-            fileName:
-            '${messageText!.substring(90, messageText!.length)}.pdf');
-      },
-      child: Column(
-        children: [
-          Text('$sender'),
-          Material(
-            elevation: 2,
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-                topRight: Radius.circular(30)),
-            color: Color(0xffAAACAE),
-            child: Padding(
-                padding: const EdgeInsets.all(14.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Icon((Icons.download)),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                        '${messageText!.substring(90, messageText!.length)}.pdf',
-                        style: TextStyle(
-                            color: Colors.white, fontSize: 14)),
-                  ],
-                )),
-          ),
-        ],
-      ),
-    )
-        : Padding(
-      padding: EdgeInsets.all(22),
-      child: Container(
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('$sender'),
-            Material(
-              elevation: 2,
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                  topRight: Radius.circular(30)),
-              color: Color(0xffAAACAE),
-              child: Padding(
-                padding: const EdgeInsets.all(14.0),
-                child: Text(
-                  '$messageText',
-                  style: TextStyle(
-                    color: Color(0xff1A1D21),
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class PdfLine extends StatelessWidget {
-  PdfLine({
-    this.messageText,
-    this.sender,
-    this.isMe,
-  });
-
-  String? messageText;
-  String? sender;
-  bool? isMe;
-
-  @override
-  Widget build(BuildContext context) {
-    return (isMe!)
-        ? Padding(
-      padding: EdgeInsets.all(22),
-      child: Container(
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text('$sender'),
-            Material(
-              elevation: 2,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-                topLeft: Radius.circular(30),
-              ),
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(14.0),
-                child: Text('$messageText',
-                    style: TextStyle(color: Colors.black, fontSize: 14)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    )
-        : Padding(
-      padding: EdgeInsets.all(22),
-      child: Container(
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('$sender'),
-            Material(
-              elevation: 2,
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                  topRight: Radius.circular(30)),
-              color: Color(0xffAAACAE),
-              child: Padding(
-                padding: const EdgeInsets.all(14.0),
-                child: Text(
-                  '$messageText',
-                  style: TextStyle(
-                    color: Color(0xff1A1D21),
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

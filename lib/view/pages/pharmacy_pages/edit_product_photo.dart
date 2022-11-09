@@ -58,16 +58,18 @@ class _EditImageState extends State<EditImage> {
                       height: 20,
                     ),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    Column(
                       children: [
                         CustomButton(
-                          size: Size(200, 59),
+                          size: const Size(200, 59),
                           disable: true,
                           widget: const Text("Select from gallery"),
                           function: () {
                             ApproveCubit.get(context).pickImageGallary(context);
                           },
+                        ),
+                        SizedBox(
+                          height: 20.h,
                         ),
                         CustomButton(
                           disable: true,
@@ -84,9 +86,9 @@ class _EditImageState extends State<EditImage> {
                       height: 20,
                     ),
                     CustomButton(
-                      size: Size(200, 59),
+                      size: const Size(200, 59),
                       disable: true,
-                      widget: const Text("Select from gallery"),
+                      widget: const Text("Done"),
                       function: () {
                         PharmacyCubit.get(context).editImageProduct(
                             approveCubit.image, context, PharmacyCubit

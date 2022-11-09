@@ -27,8 +27,8 @@ class _ShowOrdersState extends State<ShowOrders> {
             length: 3,
             child: Scaffold(
             appBar: AppBar(
-            title: Text("GeeksForGeeks"),
-        bottom: TabBar(
+            title: const Text("Orders"),
+        bottom: const TabBar(
         tabs: [
         Tab(text: "Pending"),
         Tab(text: "Accepted"),
@@ -71,7 +71,7 @@ class _PendingState extends State<Pending> {
         // TODO: implement listener
       },
       builder: (context, state) {
-        return (state is GetProductSuccsseful)? const Center(child: CircularProgressIndicator(),):ListView.separated(
+        return ListView.separated(
             itemBuilder: (context, index) {
               return InkWell(
                 onTap: () {
@@ -101,7 +101,9 @@ class _PendingState extends State<Pending> {
                             child: const Text('Accepted'),
                           ),
                           TextButton(
-                            onPressed: () {
+                            onPressed: ()
+                            {
+
                               Navigator.of(context).pop();
                             },
                             child: const Text('Reject'),
@@ -221,7 +223,7 @@ Widget rejected({required BuildContext context}){
       // TODO: implement listener
     },
     builder: (context, state) {
-      return (state is GetProductSuccsseful)? Center(child: CircularProgressIndicator(),):ListView.separated(
+      return (state is GetProductSuccsseful)? const Center(child: CircularProgressIndicator(),):ListView.separated(
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {

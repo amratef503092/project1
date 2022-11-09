@@ -12,6 +12,7 @@ import 'package:graduation_project/code/constants_value.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
+import 'package:path/path.dart';
 
 import '../../../model/details_model.dart';
 import '../../../model/product_model.dart';
@@ -47,7 +48,6 @@ class AuthCubit extends Cubit<AuthState> {
         userModel = UserModel.fromMap(value.data()!);
         print(value['online']);
         await CacheHelper.put(key: 'role', value: userModel!.role);
-
         emit(LoginSuccessfulState(
             role: value['role'],
             message: 'login success',
@@ -109,7 +109,6 @@ class AuthCubit extends Cubit<AuthState> {
         .get()
         .then((value) {
       userModel = UserModel.fromMap(value.data()!);
-
       emit(GetUserDataSuccessfulState('data come true'));
     }).catchError((onError) {
       print(onError.toString());
@@ -237,9 +236,11 @@ class AuthCubit extends Cubit<AuthState> {
     required String customerId,
     required String pharmacyName,
     required String senderID,
-    required String type
+    required String type,
+    String ? baseName
   }) async {
     emit(SendMessageStateLoading('loading'));
+    print(baseName);
     FirebaseFirestore.instance
         .collection('users')
         .doc(customerId)
@@ -253,6 +254,7 @@ class AuthCubit extends Cubit<AuthState> {
       'customerId': customerId,
       'type': type,
       'time': DateTime.now().toString(),
+      'baseName':baseName
     }).then((value) {
       print(value);
       emit(SendMessageStateSuccessful('Successful'));
@@ -267,7 +269,7 @@ class AuthCubit extends Cubit<AuthState> {
       'message': message,
       'customerName': customerName,
       'senderID':senderID,
-
+      'baseName':baseName,
       'pharmacyID': pharmacyID,
       'pharmacyName': pharmacyName,
       'customerId': customerId,
@@ -295,6 +297,7 @@ class AuthCubit extends Cubit<AuthState> {
       });
     }
   }
+  String  ? baseName ;
   Future<void> pickFileMessage({required String customerId,required String pharmacyID,
   required String pharmacyName,
 required String customerName,
@@ -306,7 +309,9 @@ required String customerName,
     );
     if (result != null) {
       io.File file = io.File(result!.files.single.path.toString());
-      FirebaseStorage.instance.ref().child('files').putFile(file).then((p0) {
+      baseName = basename(file.path);
+
+      FirebaseStorage.instance.ref().child(result!.files.single.path.toString()).putFile(file).then((p0) {
         p0.ref.getDownloadURL().then((value) {
           sendMessage(
               senderID: CacheHelper.getDataString(key: 'id').toString(),
@@ -315,7 +320,9 @@ required String customerName,
               customerName: customerName,
               message: value,
               pharmacyID: pharmacyID,
-              type: type);
+              type: type,
+            baseName: baseName
+          );
         });
       });
     }
@@ -356,8 +363,8 @@ required String customerName,
       'address': address,
       'approved': false,
       'id': userID,
-    }).then((value) {
-      getPharmacyDetails();
+    }).then((value) async{
+     await getPharmacyDetails();
       // emit(AddPharmacyDetailsStateSuccessful('Successful'));
     }).catchError((onError) {
       emit(AddPharmacyDetailsStateError('onError'));

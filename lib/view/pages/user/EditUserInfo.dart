@@ -29,7 +29,7 @@ bool enable = false;
 class _EditUserInfoState extends State<EditUserInfo> {
   void initState() {
     // TODO: implement initState
-    context.read<AuthCubit>().getUserData();
+    AuthCubit.get(context).getUserData();
     nameController.text = AuthCubit.get(context).userModel!.name;
     phoneController.text = AuthCubit.get(context).userModel!.phone;
     ageController.text = AuthCubit.get(context).userModel!.age;
