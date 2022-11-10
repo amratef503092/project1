@@ -1,103 +1,118 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:graduation_project/model/pharmacy_model.dart';
 import 'package:graduation_project/view_model/bloc/pharmacy_product/pharmacy_cubit.dart';
 
+import '../../../view_model/bloc/user_cubit/user_cubit.dart';
 import 'MedicineDetailsScreen.dart';
 
-class MedicalDevices extends StatefulWidget {
-  MedicalDevices({Key? key, required this.type}) : super(key: key);
-  String type;
+class AllMedicineScreen extends StatefulWidget {
+  const AllMedicineScreen({Key? key}) : super(key: key);
 
   @override
-  State<MedicalDevices> createState() => _MedicalDevicesState();
+  State<AllMedicineScreen> createState() => _AllMedicineScreenState();
 }
 
-class _MedicalDevicesState extends State<MedicalDevices> {
+class _AllMedicineScreenState extends State<AllMedicineScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    PharmacyCubit.get(context).getByTypes(type: widget.type);
+    PharmacyCubit.get(context).getByTypes(type: 'medicine');
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PharmacyCubit, PharmacyState>(
-      listener: (context, state) {
-        // TODO: implement listener
+    return BlocBuilder<PharmacyCubit, PharmacyState>(
+      buildWhen: (previous, current) {
+        if (current is GetProductSuccsseful) {
+          return true;
+        } else {
+          return false;
+        }
       },
       builder: (context, state) {
         var cubit = PharmacyCubit.get(context);
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(widget.type),
-          ),
-          body: (state is GetProductLodaing)?const Center(
-            child: Text('Pharmacy Product'),
-          ):(cubit.getProductByType.isNotEmpty)? Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: GridView.builder(gridDelegate:  const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 200,
-                      crossAxisSpacing: 20,
-                      childAspectRatio: 3 / 4,
-                      mainAxisSpacing: 20),
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount:  cubit.getProductByType.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => MedicineDetailsScreen(productModel: cubit.getProductByType[index],)));
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.r)
-                            ),
-                            child: Stack(
-                              children: [
-                                Image.network(
-                                  cubit.getProductByType[index].image,
-                                  fit: BoxFit.cover,
-                                ),
-                                Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Container(
-                                      width: double.infinity,
-                                      color: Colors.black45,
-                                      height: 90.h,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "Title : ${cubit.getProductByType[index].title}",
-                                            style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20,
-                                                fontWeight:
-                                                FontWeight.w900),
-                                          ),
-                                          const SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(
-                                            "price : ${ cubit.getProductByType[index].price} ",
-                                            style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20,
-                                                fontWeight:
-                                                FontWeight.w900),
-                                          ),
-                                        ],
-                                      ),
-                                    )),
-                              ],
-                            ),
+        return (state is GetProductSuccsseful)
+            ? SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 15.w,
+                  mainAxisSpacing: 15.h,
+                  mainAxisExtent: 300.h,
+                ),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: cubit.getProductByType.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MedicineDetailsScreen(
+                                productModel:
+                                cubit.getProductByType[index],
+                              )));
+                    },
+                    child: Container(
+                      width: 514.w,
+                      height: 540.h,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15.r)),
+                      child: Column(
+                        children: [
+                          Image.network(
+                            cubit.getProductByType[index].image,
+                            width: 80.w,
+                            height: 168.h,
                           ),
-                        );
-                      })):const Center(child: Text('No Data'),),
+                          Text(cubit.getProductByType[index].title,
+                              style: TextStyle(
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.w800,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis),
+                          Text(
+                              "SAR ${cubit.getProductByType[index].price}",
+                              style: TextStyle(
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis),
+                          ElevatedButton.icon(
+                            icon: Icon(Icons.shopping_cart),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          MedicineDetailsScreen(
+                                            productModel: cubit
+                                                .getProductByType[index],
+                                          )));
+                            },
+                            label: const Text("BUY"),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xff30CA00)),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+          ),
+        )
+            : const Center(
+          child: CircularProgressIndicator(),
         );
       },
     );

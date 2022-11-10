@@ -24,11 +24,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    if (AuthCubit.get(context).userModel == null) {
-      context.read<AuthCubit>().getUserData();
-    }
 
-    context.read<AuthCubit>().getAdmin();
+
+    AuthCubit.get(context).getAdmin();
     super.initState();
   }
 
@@ -76,9 +74,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                       ),
                       ListTile(
                         leading: const Icon(Icons.work),
-                        title: const Text("Approve company"),
+                        title: const Text("Approve Pharmacy"),
                         onTap: (){
-
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -108,10 +105,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               .update({
                             'online': 'false',
                           }).then((value) async {
-                            userID = null;
+                            await FirebaseAuth.instance.signOut();
+
+
+                          }).then((value) async {
                             await CacheHelper.removeData(key: 'id');
-                            FirebaseAuth.instance.signOut();
-                          }).then((value) {
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
@@ -131,7 +129,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )
-                  : (authCubit.adminData.isEmpty)?Center(child: Text("No Admin Found"),):ListView.builder(
+                  : (authCubit.adminData.isEmpty)?const Center(child: Text("No Admin Found"),):ListView.builder(
                       itemCount: authCubit.adminData.length,
                       itemBuilder: (context, index) {
                       return Card(
@@ -176,19 +174,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                 ),
                                 Column(
                                   children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          // chat screen
-                                          // Navigator.push(context,
-                                          //     MaterialPageRoute(
-                                          //   builder: (context) {
-                                          //     return ChatScreen(
-                                          //       index: index,
-                                          //     );
-                                          //   },
-                                          // ));
-                                        },
-                                        icon: const Icon(Icons.chat)),
                                     IconButton(
                                         onPressed: () {
                                           showDialog(

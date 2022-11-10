@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/model/product_model.dart';
 import 'package:graduation_project/view/components/custom_button.dart';
 import 'package:graduation_project/view/components/custom_text_field.dart';
@@ -21,72 +22,102 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(widget.productModel.title),
+
       ),
       body: Padding(
         padding: EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Container(
-                height: 200,
+              SizedBox(
+                height: 200.h,
                 width: double.infinity,
                 child: Image(
                   image: NetworkImage(widget.productModel.image),
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(height: 10,),
-              Text("Title : ${(widget.productModel.title)}", style: const TextStyle(
+               SizedBox(height: 40.h,),
+              Text((widget.productModel.title), style:  TextStyle(
                   fontWeight: FontWeight.w900,
-                  fontSize: 45
-              ),),
-              const SizedBox(height: 10,),
-              const Divider(
-                thickness: 2,
+                  fontSize: 30.sp,
               ),
-              Text("Description : ${(widget.productModel.description)}",
-                style: TextStyle(
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+              const SizedBox(height: 10,),
+              Text("SAR : ${(widget.productModel.price.toString())}",
+                style:  TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: 24
+                    fontSize: 24.sp
                 ),),
               const SizedBox(height: 10,),
-              Text("Price : ${(widget.productModel.price.toString())}",
+              Text("Description :",
                 style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: 24
+                    fontSize: 24.sp
+
                 ),),
-              Text("quantity : ${(widget.productModel.quantity.toString())}",
+              Text(" ${(widget.productModel.description)}",
                 style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 24
+                    fontWeight: FontWeight.w600,
+                    height: 1.5,
+                    fontSize: 20.sp
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 4,
+              ),
+              const SizedBox(height: 10,),
+
+              Text("Available Stoke : ${(widget.productModel.quantity.toString())}",
+                style:  TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 16.sp,
+                    color: Colors.grey
                 ),),
+              SizedBox(height: 20.h,),
               Row(
                 children: [
-                  IconButton(onPressed: () {
-                    if (count < widget.productModel.quantity) {
-                      setState(() {
-                        count++;
-                      });
-                    }
-                  }, icon: Icon(Icons.add)),
-                  Container(
+                  CircleAvatar(
+                    radius:  30.r,
+                    backgroundColor: Colors.blueAccent,
+                    child: IconButton(onPressed: () {
+                      if (count < widget.productModel.quantity) {
+                        setState(() {
+                          count++;
+                        });
+                      }
+                    }, icon: Icon(Icons.add , color: Colors.white,)),
+                  ),
+                  SizedBox(width: 20.w,),
+                  CircleAvatar(
+                    radius: 30.r,
+                    backgroundColor: Color(0xffF8F8F8),
                     child: Text("$count"),
                   ),
-                  IconButton(onPressed: () {
-                    if (count == 0) {
+                  SizedBox(width: 20.w,),
+                  CircleAvatar(
+                    radius: 30.r,
+                    backgroundColor: Colors.blueAccent,
+                    child: IconButton(onPressed: () {
+                      if (count == 0) {
 
-                    } else {
-                      setState(() {
-                        count--;
-                      });
-                    }
-                  }, icon: const Icon(Icons.minimize)),
+                      } else {
+                        setState(() {
+                          count--;
+                        });
+                      }
+                    }, icon: Text("-" , style: TextStyle(color: Colors.white, fontSize: 30.sp),)),
+                  ),
                 ],
               ),
+              SizedBox(height: 20.h,),
+
               Form(
                 key: formKey,
                 child: CustomTextField(controller: controller, hint: 'EnterAddress', fieldValidator: (String ? value){
@@ -98,6 +129,7 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                 },
                 iconData: Icons.location_on_outlined,),
               ),
+              SizedBox(height: 20.h,),
 
               BlocConsumer<UserCubit, UserState>(
                 listener: (context, state) {
@@ -113,11 +145,14 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                   return (state is BuyProductLoadingState) ? const Center(
                     child: CircularProgressIndicator(),) : CustomButton(
                     widget: const Text("Buy"),
+                    color: Color(0xff30CA00),
                     function: () {
                       if(formKey.currentState!.validate()){
                         UserCubit.get(context).buyProduct(
                             productModel: widget.productModel, quantity: count
-                            ,address: controller.text);
+                            ,address: controller.text,
+                          title: widget.productModel.title
+                        );
                       }
 
                     },

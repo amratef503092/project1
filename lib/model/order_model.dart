@@ -9,6 +9,7 @@ class OrderModel
   String userID;
   String id;
   String address;
+  String title;
 
   OrderModel({
     required this.orderDate,
@@ -19,7 +20,8 @@ class OrderModel
     required this.totalPrice,
     required this.userID,
     required this.id,
-    required this.address
+    required this.address,
+    required this.title
   });
 
   Map<String, dynamic> toMap() {
@@ -46,6 +48,7 @@ class OrderModel
       quantity: map['quantity'] as num,
       totalPrice: map['totalPrice'] as num,
       userID: map['userID'] as String,
+      title: map['title']
     );
   }
 }

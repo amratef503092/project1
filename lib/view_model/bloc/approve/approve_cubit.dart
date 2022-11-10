@@ -8,19 +8,21 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/code/constants_value.dart';
+import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 
 import '../../../model/details_model.dart';
 import '../../../model/pharmacy_model.dart';
+import '../pharmacy_product/pharmacy_cubit.dart';
 
 part 'approve_state.dart';
 
 class ApproveCubit extends Cubit<ApproveState> {
   ApproveCubit() : super(ApproveInitial());
   final ImagePicker _picker = ImagePicker();
-
+  bool  wait = false;
   static ApproveCubit get(context) => BlocProvider.of<ApproveCubit>(context);
   List<DetailsModelPharmacy> detailsModelPharmacyAdminApproved = [];
   //this function will do get all pharmacy from database to approve it
@@ -37,9 +39,7 @@ class ApproveCubit extends Cubit<ApproveState> {
       for (var element in value.docChanges) {
         // i loop on all data to get it and add it to list
         await FirebaseFirestore.instance
-            .collection('users')
-            .doc(element.doc.id)
-            .collection('details')
+            .collection('users').where('approved',isEqualTo: false)
             .get()
             .then((value) {
           for (var element in value.docChanges) {
@@ -50,6 +50,7 @@ class ApproveCubit extends Cubit<ApproveState> {
                   .add(DetailsModelPharmacy.fromMap(element.doc.data()!));
             }
           }
+
         });
       }
 
@@ -85,32 +86,23 @@ class ApproveCubit extends Cubit<ApproveState> {
   Future<void> approvePharmacy(
       {required String userID, required int index}) async {
     emit(ApprovePharmacyStateLoading());
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userID)
-        .collection('details')
-        .get()
-        .then((value) {
-      value.docs.forEach((element) async {
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(userID)
-            .collection('details')
-            .doc(element.id)
-            .update({'approved': true}).then((value) {
-          pharmacyModel.removeAt(index);
-          detailsModelPharmacyAdminApproved.removeAt(index);
-          emit(ApprovePharmacyStateSuccessful());
-        });
-      });
+    await
+    FirebaseFirestore.instance
+              .collection('users')
+              .doc(userID)
+              .update({'approved': true}).then((value) {
+      pharmacyModel.removeAt(index);
+      detailsModelPharmacyAdminApproved.removeAt(index);
+      emit(ApprovePharmacyStateSuccessful());
     }).catchError((onError) {
       print(onError);
       emit(ApprovePharmacyStateError());
     });
   }
-
+  bool uploadFileCheck = false;
   Future<void> uploadFile(XFile? file, BuildContext context,
       String docId) async {
+    uploadFileCheck = false;
     emit(UploadImageStateLoading());
     if (file == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -142,8 +134,15 @@ class ApproveCubit extends Cubit<ApproveState> {
           await FirebaseFirestore.instance
               .collection('product')
               .doc(docId)
-              .update({'image': value}).then((value) {
+              .update({'image': value}).then((value)async {
+                print('amr');
+              await  PharmacyCubit.get(context).getPharmacyProduct();
+                wait = false;
             emit(UploadImageStateSuccessful());
+          }).catchError((){
+            wait = false;
+            emit(UploadError());
+
           });
 
           // here modify the profile pic
@@ -233,7 +232,7 @@ class ApproveCubit extends Cubit<ApproveState> {
       'price': price,
       'image': quantity,
       'description': description,
-      'pharmacyID': userID,
+      'pharmacyID': CacheHelper.getDataString(key: 'id'),
       'quantity': quantity,
       'type': type,
     }).then((value) async {
@@ -244,7 +243,10 @@ class ApproveCubit extends Cubit<ApproveState> {
           .update({
         'id': value.id,
       }).then((value) async {
-        await uploadFile(image, context, docId!);
+        wait = true;
+        await uploadFile(image, context, docId!).whenComplete(() async{
+
+        });
         emit(AddProductSuccessfulState());
       }).catchError((onError) {
         emit(AddProductStateError());

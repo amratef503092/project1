@@ -17,7 +17,9 @@ class _ApproveScreenState extends State<ApproveScreen> {
   void initState() {
     // TODO: implement initState
     setState(() {
-      context.read<ApproveCubit>().getDataToApproved();
+
+      ApproveCubit.get(context).getDataToApproved(
+      );
     });
     super.initState();
   }
@@ -32,8 +34,9 @@ class _ApproveScreenState extends State<ApproveScreen> {
           title: const Text('Approve'),
         ),
         body: (state is GetDataToApprovedStateLoading)
-            ? const Text('Witting data')
-            : ListView.builder(
+            ? const Center(child: CircularProgressIndicator(),)
+            : (  ApproveCubit.get(context)
+            .pharmacyModel.isNotEmpty)?ListView.builder(
                 itemBuilder: (context, index) {
 
                   return Card(
@@ -63,25 +66,20 @@ class _ApproveScreenState extends State<ApproveScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Name : ${ApproveCubit.get(context)
+                                  ApproveCubit.get(context)
                                       .pharmacyModel[index]
-                                      .name}",
+                                      .name,
                                   style: const TextStyle(
                                       fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                "Email ${  ApproveCubit.get(context)
+                               ApproveCubit.get(context)
                                     .pharmacyModel[index]
-                                    .email}",
+                                    .email,
                                   style: const TextStyle(
                                       fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
-                                Text(
-                                  "Discrption : ${ApproveCubit.get(context)
-                                      .detailsModelPharmacyAdminApproved[index].dis}",
-                                  style: const TextStyle(
-                                      fontSize: 20, fontWeight: FontWeight.bold),
-                                ),
+
                               ],
                             ),
                           ),
@@ -104,7 +102,7 @@ class _ApproveScreenState extends State<ApproveScreen> {
                   );
                 },
                 itemCount: ApproveCubit.get(context).pharmacyModel.length,
-              ),
+              ):const Center(child: Text("No Pharmacy to Approve"),),
       );
     });
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_project/view/pages/admin_screen/approve_screen.dart';
 import 'package:graduation_project/view/pages/admin_screen/home_admin_screen.dart';
 import 'package:graduation_project/view/pages/auth/register_screen.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
@@ -9,7 +10,9 @@ import '../../../code/resource/validator.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_text_field.dart';
 import '../../components/custom_texts.dart';
+import '../pharmacy_pages/approvedPage.dart';
 import '../pharmacy_pages/home_pharmacy.dart';
+import '../user/layout_screen.dart';
 import '../user/user_home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -58,12 +61,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               );
             }else{
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomePharmacyScreen(),
-                  ),
-                      (route) => false);
+              if(state.approved){
+
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HomePharmacyScreen(),
+                    ),
+                        (route) => false);
+              }else{
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Waiting admin approve'),
+                  backgroundColor: Colors.red,
+                ),);
+              }
+
             }
             print('Amr 2');
           } else {
@@ -78,11 +90,11 @@ class _LoginScreenState extends State<LoginScreen> {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const HomeUserScreen(),
+                    builder: (context) => const LayoutScreen(),
                   ),
                       (route) => false);
             }
-            print('Amr 3');
+
           }
         }
         // TODO: implement listener

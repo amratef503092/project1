@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:graduation_project/view/pages/admin_screen/home_admin_screen.dart';
 import 'package:graduation_project/view/pages/auth/login_screen.dart';
 import 'package:graduation_project/view/pages/pharmacy_pages/home_pharmacy.dart';
+import 'package:graduation_project/view/pages/user/layout_screen.dart';
 import 'package:graduation_project/view/pages/user/user_home_screen.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 
@@ -42,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
               }else{
                 // user
                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
-                  return HomeUserScreen();
+                  return LayoutScreen();
                 },), (route) => false);
               }
         });

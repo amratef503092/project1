@@ -334,7 +334,7 @@ required String customerName,
     detailsModelPharmacy = null;
     FirebaseFirestore.instance
         .collection('users')
-        .doc(userID)
+        .doc(CacheHelper.getDataString(key: 'id'))
         .collection('details')
         .get()
         .then((value) {
@@ -356,16 +356,16 @@ required String customerName,
     // emit(AddPharmacyDetailsStateLoading('loading'));
     FirebaseFirestore.instance
         .collection('users')
-        .doc(userID)
+        .doc(CacheHelper.getDataString(key: 'id'))
         .collection('details')
         .add({
       'dis': dis,
       'address': address,
       'approved': false,
-      'id': userID,
+      'id': CacheHelper.getDataString(key: 'id'),
     }).then((value) async{
      await getPharmacyDetails();
-      // emit(AddPharmacyDetailsStateSuccessful('Successful'));
+      emit(AddPharmacyDetailsStateSuccessful('Successful'));
     }).catchError((onError) {
       emit(AddPharmacyDetailsStateError('onError'));
     });

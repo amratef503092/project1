@@ -27,7 +27,6 @@ TextEditingController ageController = TextEditingController();
 TextEditingController phoneController = TextEditingController();
 bool showPassword = false;
 bool enable = false;
-
 class _EditPharamcyScreenState extends State<EditPharamcyScreen> {
   @override
   void initState() {
@@ -181,7 +180,7 @@ class _EditPharamcyScreenState extends State<EditPharamcyScreen> {
                           widget: const Text("Start Edit"),
                           size: Size(300.w, 50.h),
                           radius: 20.r,
-                          disable: true,
+                          disable: !enable,
                         ),
                         (state is UpdateDataLoadingState)
                             ? const Center(
@@ -194,7 +193,11 @@ class _EditPharamcyScreenState extends State<EditPharamcyScreen> {
                                   email: emailController.text,
                                   phone: phoneController.text,
                                   age: ageController.text,
-                                  name: nameController.text);
+                                  name: nameController.text).then((value) {
+
+                              }).then((value) {
+                                enable = false;
+                              });
                             }
                           },
                           widget: const Text("confirm Update"),

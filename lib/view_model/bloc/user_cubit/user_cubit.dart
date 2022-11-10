@@ -53,7 +53,9 @@ class UserCubit extends Cubit<UserState> {
   Future<void> buyProduct(
       {required ProductModel productModel,
       required int quantity,
-      required String address}) async {
+      required String address,
+      required String title
+      }) async {
     int price = productModel.price * quantity;
     emit(BuyProductLoadingState());
     await FirebaseFirestore.instance
@@ -69,6 +71,7 @@ class UserCubit extends Cubit<UserState> {
       'orderDate': DateTime.now(),
       'orderStatus': 'pending',
       'address': address,
+      'title':title
     }).then((value) async {
       await FirebaseFirestore.instance
           .collection('product')

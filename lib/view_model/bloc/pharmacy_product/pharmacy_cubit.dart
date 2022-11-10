@@ -29,7 +29,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     productsModel = [];
     await FirebaseFirestore.instance
         .collection('product')
-        .where('pharmacyID', isEqualTo: userID)
+        .where('pharmacyID', isEqualTo: CacheHelper.getDataString(key: 'id'))
         .get()
         .then((value) {
       print(value.docs.length);
@@ -129,6 +129,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
 
   List<OrderModel> orders = [];
   List<ProductModel> productsOrder = [];
+  List<DataRow> productData = [];
 
   Future<void> getOrders(String status) async {
     emit(GetOrderLoading());
@@ -161,6 +162,7 @@ class PharmacyCubit extends Cubit<PharmacyState> {
             }
           });
         }
+
         emit(GetOrderSuccessful('Successful'));
       });
     }).catchError((onError) {
@@ -186,10 +188,28 @@ class PharmacyCubit extends Cubit<PharmacyState> {
           .update({
         'orderStatus': 'Accepted',
       }).then((value) {
-        getOrders('pending');
+        getOrders('Accepted');
         emit(AcceptOrderSuccessful('Successful'));
       });
     }).catchError((onError) {
+      emit(AcceptOrderError('Error'));
+    });
+  }
+  Future<void> reject(
+      {required String orderID, required String productID}) async {
+    emit(AcceptOrderLoading());
+
+      await FirebaseFirestore.instance
+          .collection('product')
+          .doc(productID)
+          .collection('orders')
+          .doc(orderID)
+          .update({
+        'orderStatus': 'Reject',
+      }).then((value) {
+        getOrders('Reject');
+        emit(AcceptOrderSuccessful('Successful'));
+      }).catchError((onError) {
       emit(AcceptOrderError('Error'));
     });
   }

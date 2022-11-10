@@ -37,6 +37,7 @@ class _PharmacyProductState extends State<PharmacyProduct> {
         var cubit = PharmacyCubit.get(context);
         print(cubit.productsModel.length);
         return Scaffold(
+          backgroundColor: Color(0xffF2F3F7),
           appBar: AppBar(
             title: Text(widget.pahrmacyModel!.name),
             actions: [
@@ -105,17 +106,17 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                                         .postRateToPharmacy(
                                             pharmacyId:
                                                 widget.pahrmacyModel!.id,
-                                            rate: rating!).then((value) {
+                                            rate: rating!)
+                                        .then((value) {
                                       Navigator.pop(context);
                                     });
-
                                   },
-                                  child: Text("confirm")),
+                                  child: const Text("confirm")),
                               TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Text("cancel")),
+                                  child: const Text("cancel")),
                             ],
                           ),
                         );
@@ -137,14 +138,13 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 200,
-                                crossAxisSpacing: 20,
-                                childAspectRatio: 3 / 4,
-                                mainAxisSpacing: 20),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 15.w,
+                          mainAxisSpacing: 15.h,
+                          mainAxisExtent: 300.h,
+                        ),
                         shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: cubit.productsModel.length,
                         itemBuilder: (context, index) {
                           return InkWell(
@@ -159,44 +159,50 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                                           )));
                             },
                             child: Container(
+                              width: 514.w,
+                              height: 540.h,
                               decoration: BoxDecoration(
+                                  color: Colors.white,
                                   borderRadius: BorderRadius.circular(15.r)),
-                              child: Stack(
+                              child: Column(
                                 children: [
                                   Image.network(
                                     cubit.productsModel[index].image,
-                                    fit: BoxFit.cover,
+                                    width: 80.w,
+                                    height: 168.h,
                                   ),
-                                  Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: Container(
-                                        width: double.infinity,
-                                        color: Colors.black45,
-                                        height: 90.h,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "Title : ${cubit.productsModel[index].title}",
-                                              style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w900),
-                                            ),
-                                            const SizedBox(
-                                              width: 20,
-                                            ),
-                                            Text(
-                                              "price : ${cubit.productsModel[index].price} ",
-                                              style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w900),
-                                            ),
-                                          ],
-                                        ),
-                                      )),
+                                  Text(cubit.productsModel[index].title,
+                                      style: TextStyle(
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis),
+                                  Text(
+                                      "SAR ${cubit.productsModel[index].price}",
+                                      style: TextStyle(
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis),
+                                  ElevatedButton.icon(
+                                    icon: Icon(Icons.shopping_cart),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MedicineDetailsScreen(
+                                                    productModel: cubit
+                                                        .productsModel[index],
+                                                  )));
+                                    },
+                                    label: const Text("BUY"),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xff30CA00)),
+                                  )
                                 ],
                               ),
                             ),

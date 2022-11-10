@@ -35,6 +35,8 @@ class ApprovePharmacyStateError extends ApproveState{}
 
 class UploadImageStateLoading extends ApproveState{}
 class UploadImageStateSuccessful extends ApproveState{}
+class UploadError extends ApproveState{}
+
 class pickImageGallaryStateSuccessful extends ApproveState{}
 class pickImageCameraStateSuccessful extends ApproveState{}
 class RemoveImageStateSuccessful extends ApproveState{}
