@@ -3,8 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:graduation_project/code/constants_value.dart';
-import 'package:graduation_project/view/pages/ChatScreen.dart';
 import 'package:graduation_project/view/pages/admin_screen/settings_screen.dart';
 import 'package:graduation_project/view/pages/auth/login_screen.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
@@ -25,7 +23,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   void initState() {
     // TODO: implement initState
 
-
     AuthCubit.get(context).getAdmin();
     super.initState();
   }
@@ -40,88 +37,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         // print(userID.toString()+ "from sql");
 
         var authCubit = AuthCubit.get(context);
-        print(authCubit.adminData.length);
         return Scaffold(
-          appBar: AppBar(title: const Text("Admin Panel "), centerTitle: true),
-          drawer: (AuthCubit.get(context).userModel == null)
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : Drawer(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 100.h,
-                      ),
-                      CircleAvatar(
-                        radius: 80.r,
-                        backgroundImage:
-                            NetworkImage(authCubit.userModel!.photo),
-                      ),
-                      SizedBox(
-                        height: 50.h,
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.perm_identity),
-                        title: const Text("Create Admin"),
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return const CreateAdmin();
-                            },
-                          ));
-                        },
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.work),
-                        title: const Text("Approve Pharmacy"),
-                        onTap: (){
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ApproveScreen(),
-                              ));
-                        },
-                      ),
 
-                      ListTile(
-                        leading: const Icon(Icons.settings),
-                        title: const Text("Settings"),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SettingsScreen(),
-                              ));
-                        },
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.logout),
-                        title: const Text("Logout"),
-                        onTap: () async {
-                          await FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(userID)
-                              .update({
-                            'online': 'false',
-                          }).then((value) async {
-                            await FirebaseAuth.instance.signOut();
-
-
-                          }).then((value) async {
-                            await CacheHelper.removeData(key: 'id');
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LoginScreen(),
-                                ),
-                                (route) => false);
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
           body: SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
@@ -129,114 +46,279 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )
-                  : (authCubit.adminData.isEmpty)?const Center(child: Text("No Admin Found"),):ListView.builder(
-                      itemCount: authCubit.adminData.length,
-                      itemBuilder: (context, index) {
-                      return Card(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                CircleAvatar(
-                                  backgroundImage: NetworkImage(authCubit
-                                      .adminData[index].photo
-                                      .toString()),
-                                  radius: 40,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                        "Name : ${authCubit.adminData[index].name}"),
-                                    Text(
-                                        "Phone : ${authCubit.adminData[index].phone}"),
-                                    authCubit.adminData[index].online
-                                        ? Row(
-                                            children: const [
-                                              Text("Status : "),
-                                              Text(
-                                                "online",
-                                                style: TextStyle(
-                                                    color: Colors.green),
-                                              )
-                                            ],
-                                          )
-                                        : Row(
-                                            children: const [
-                                              Text("Status : "),
-                                              Text(
-                                                "offline",
-                                                style: TextStyle(
-                                                    color: Colors.red),
-                                              )
-                                            ],
+                  : (authCubit.adminData.isEmpty)
+                      ? const Center(
+                          child: Text("No Admin Found"),
+                        )
+                      : Column(
+                        children: [
+                          Align(
+                              alignment: Alignment.topRight,
+                              child: IconButton(
+                                onPressed: () {
+                                  authCubit.getAdmin();
+                                },
+                                icon: const Icon(Icons.refresh),
+
+                              )),
+                          Expanded(
+                            child: ListView.builder(
+                                itemCount: authCubit.adminData.length,
+                                itemBuilder: (context, index) {
+                                  if(!authCubit.adminData[index].ban){
+                                    return Card(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundImage: NetworkImage(authCubit
+                                                .adminData[index].photo
+                                                .toString()),
+                                            radius: 40,
                                           ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (ctx) => AlertDialog(
-                                              title: const Text(
-                                                  "You want Delete Account ?"),
-                                              content: Column(
-                                                mainAxisSize: MainAxisSize.min,
+                                          Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                  "Name : ${authCubit.adminData[index].name}"),
+                                              Text(
+                                                  "Phone : ${authCubit.adminData[index].phone}"),
+                                              authCubit.adminData[index].online
+                                                  ? Row(
                                                 children: const [
+                                                  Text("Status : "),
                                                   Text(
-                                                      "If You click ok you will Ban this Account")
+                                                    "online",
+                                                    style: TextStyle(
+                                                        color: Colors.green),
+                                                  )
+                                                ],
+                                              )
+                                                  : Row(
+                                                children: const [
+                                                  Text("Status : "),
+                                                  Text(
+                                                    "offline",
+                                                    style: TextStyle(
+                                                        color: Colors.red),
+                                                  )
                                                 ],
                                               ),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(ctx).pop();
-                                                  },
-                                                  child: Container(
-                                                    padding:
+                                            ],
+                                          ),
+                                          IconButton(
+                                              onPressed: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (ctx) => AlertDialog(
+                                                    title: const Text(
+                                                        "You want Delete Account ?"),
+                                                    content: Column(
+                                                      mainAxisSize:
+                                                      MainAxisSize.min,
+                                                      children: const [
+                                                        Text(
+                                                            "If You click ok you will Ban this Account")
+                                                      ],
+                                                    ),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(ctx).pop();
+                                                        },
+                                                        child: Container(
+                                                          padding:
+                                                          const EdgeInsets.all(
+                                                              14),
+                                                          child:
+                                                          const Text("Cancel"),
+                                                        ),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          FirebaseFirestore.instance
+                                                              .collection('users')
+                                                              .doc(AuthCubit.get(
+                                                              context)
+                                                              .adminData[index]
+                                                              .id)
+                                                              .update({
+                                                            'ban': true
+                                                          }).then((value) {
+
+                                                            Navigator.of(ctx).pop();
+                                                            AuthCubit.get(context).getAdmin();
+                                                            setState(() {});
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          padding:
+                                                          const EdgeInsets.all(
+                                                              14),
+                                                          child: const Text("Ok"),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              icon: const Icon(Icons.edit))
+                                        ],
+                                      ),
+                                    );
+                                  }else{
+                                    return Card(
+                                      child: Stack(
+                                        children: [
+
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                            children: [
+                                              CircleAvatar(
+                                                backgroundImage: NetworkImage(authCubit
+                                                    .adminData[index].photo
+                                                    .toString()),
+                                                radius: 40,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                      "Name : ${authCubit.adminData[index].name}"),
+                                                  Text(
+                                                      "Phone : ${authCubit.adminData[index].phone}"),
+                                                  authCubit.adminData[index].online
+                                                      ? Row(
+                                                    children: const [
+                                                      Text("Status : "),
+                                                      Text(
+                                                        "online",
+                                                        style: TextStyle(
+                                                            color: Colors.green),
+                                                      )
+                                                    ],
+                                                  )
+                                                      : Row(
+                                                    children: const [
+                                                      Text("Status : "),
+                                                      Text(
+                                                        "offline",
+                                                        style: TextStyle(
+                                                            color: Colors.red),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              // TextButton(
+                                              //   onPressed: () {
+                                              //     FirebaseFirestore.instance
+                                              //         .collection('users')
+                                              //         .doc(AuthCubit.get(
+                                              //         context)
+                                              //         .adminData[index]
+                                              //         .id)
+                                              //         .update({
+                                              //       'ban': true
+                                              //     }).then((value) {
+                                              //
+                                              //       Navigator.of(context).pop();
+                                              //       AuthCubit.get(context).getAdmin();
+                                              //       setState(() {});
+                                              //     });
+                                              //   },
+                                              //   child: Container(
+                                              //     padding:
+                                              //     const EdgeInsets.all(
+                                              //         14),
+                                              //     child: const Text("Ok"),
+                                              //   ),
+                                              // ),
+                                            ],
+                                          ),
+                                          InkWell(
+                                            onTap: ()
+                                            {
+                                              showDialog(
+                                                context: context,
+                                                builder: (ctx) => AlertDialog(
+                                                  title: const Text(
+                                                      "You want Remove Ban Account ?"),
+                                                  content: Column(
+                                                    mainAxisSize:
+                                                    MainAxisSize.min,
+                                                    children: const [
+                                                      Text(
+                                                          "If You click ok you will Remove Ban From this Account ? ")
+                                                    ],
+                                                  ),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(ctx).pop();
+                                                      },
+                                                      child: Container(
+                                                        padding:
                                                         const EdgeInsets.all(
                                                             14),
-                                                    child: const Text("Cancel"),
-                                                  ),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    FirebaseFirestore.instance
-                                                        .collection('users')
-                                                        .doc(AuthCubit.get(
-                                                                context)
+                                                        child:
+                                                        const Text("Cancel"),
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        FirebaseFirestore.instance
+                                                            .collection('users')
+                                                            .doc(AuthCubit.get(
+                                                            context)
                                                             .adminData[index]
                                                             .id)
-                                                        .update({
-                                                      'ban': true
-                                                    }).then((value) {
-                                                      AuthCubit.get(context)
-                                                          .adminData
-                                                          .removeAt(index);
-                                                      Navigator.of(ctx).pop();
+                                                            .update({
+                                                          'ban': false
+                                                        }).then((value) {
 
-                                                      setState(() {});
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    padding:
+                                                          Navigator.of(context).pop();
+                                                          AuthCubit.get(context).getAdmin();
+
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        padding:
                                                         const EdgeInsets.all(
                                                             14),
-                                                    child: const Text("Ok"),
-                                                  ),
+                                                        child: const Text("Ok"),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
+                                              );
+                                            },
+                                            child: Container(
+                                              width: MediaQuery.of(context).size.width,
+                                              height: 100.h,
+                                              color: Colors.black.withOpacity(0.5),
+                                              child: Center(
+                                                child: Text(
+                                                  "Banned",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 30.sp),
+                                                ),
+                                              ),
                                             ),
-                                          );
-                                        },
-                                        icon: const Icon(Icons.edit)),
-                                  ],
-                                )
-                              ],
-                            ),
-                          );
-                        }
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+
+                                }),
+                          ),
+                        ],
                       )),
         );
       },

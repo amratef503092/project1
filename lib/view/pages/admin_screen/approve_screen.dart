@@ -36,7 +36,10 @@ class _ApproveScreenState extends State<ApproveScreen> {
         body: (state is GetDataToApprovedStateLoading)
             ? const Center(child: CircularProgressIndicator(),)
             : (  ApproveCubit.get(context)
-            .pharmacyModel.isNotEmpty)?ListView.builder(
+            .detailsModelPharmacyAdminApproved.isNotEmpty)?GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2 ,
+            childAspectRatio: 1,
+            ),
                 itemBuilder: (context, index) {
 
                   return Card(
@@ -47,13 +50,13 @@ class _ApproveScreenState extends State<ApproveScreen> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
-                      child: Row(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CircleAvatar(
                             backgroundImage: NetworkImage(
                               ApproveCubit.get(context)
-                                  .pharmacyModel[index]
+                                  .detailsModelPharmacyAdminApproved[index]
                                   .photo.toString(),
                             ),
                           ),
@@ -61,20 +64,19 @@ class _ApproveScreenState extends State<ApproveScreen> {
                             width: 20,
                           ),
                           SizedBox(
-                            width: 200.w,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   ApproveCubit.get(context)
-                                      .pharmacyModel[index]
+                                      .detailsModelPharmacyAdminApproved[index]
                                       .name,
                                   style: const TextStyle(
                                       fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                ApproveCubit.get(context)
-                                    .pharmacyModel[index]
+                                    .detailsModelPharmacyAdminApproved[index]
                                     .email,
                                   style: const TextStyle(
                                       fontSize: 20, fontWeight: FontWeight.bold),
@@ -101,7 +103,7 @@ class _ApproveScreenState extends State<ApproveScreen> {
                     ),
                   );
                 },
-                itemCount: ApproveCubit.get(context).pharmacyModel.length,
+                itemCount: ApproveCubit.get(context).detailsModelPharmacyAdminApproved.length,
               ):const Center(child: Text("No Pharmacy to Approve"),),
       );
     });

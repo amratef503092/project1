@@ -28,7 +28,7 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
 
       ),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

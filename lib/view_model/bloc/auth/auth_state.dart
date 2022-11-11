@@ -131,3 +131,15 @@ class GetUrlSuccessfulState extends AuthState{
   GetUrlSuccessfulState(this.message);
 }
 // delete service end
+class GetAllPharmacyStateSuccessful extends AuthState{
+  String message;
+  GetAllPharmacyStateSuccessful(this.message);
+}
+class GetAllPharmacyStateError extends AuthState{
+  String message;
+  GetAllPharmacyStateError(this.message);
+}
+class GetAllPharmacyStateLoading extends AuthState{
+  String message;
+  GetAllPharmacyStateLoading(this.message);
+}

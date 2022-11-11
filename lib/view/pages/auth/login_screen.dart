@@ -10,6 +10,7 @@ import '../../../code/resource/validator.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_text_field.dart';
 import '../../components/custom_texts.dart';
+import '../admin_screen/layout_admin.dart';
 import '../pharmacy_pages/approvedPage.dart';
 import '../pharmacy_pages/home_pharmacy.dart';
 import '../user/layout_screen.dart';
@@ -28,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
 
   TextEditingController passwordController = TextEditingController();
-  bool showPassword = false;
+  bool showPassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AdminHomeScreen(),
+                    builder: (context) => const LayoutScreen(),
                   ),
                       (route) => false);
             }
@@ -96,6 +97,15 @@ class _LoginScreenState extends State<LoginScreen> {
             }
 
           }
+        }else{
+         if(state is LoginErrorState){
+           ScaffoldMessenger.of(context).showSnackBar(
+             SnackBar(
+               content: Text(state.message),
+               backgroundColor: Colors.red,
+             ),
+           );
+         }
         }
         // TODO: implement listener
       },
@@ -124,7 +134,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(
                           height: 50.h,
                         ),
-                        Text("Login",style: TextStyle(fontSize: 30,fontWeight: FontWeight.w900),),
+                        Text("Login",style:
+                        TextStyle(fontSize: 30,fontWeight: FontWeight.w900),),
                         text(text: 'Email'),
                         CustomTextField(
                           controller: emailController,
@@ -161,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 function: () {
                                   if (formKey.currentState!.validate()) {
                                     authCubit.login(
-                                      email: emailController.text,
+                                      email: emailController.text.trim(),
                                       password: passwordController.text,
                                     );
                                   }

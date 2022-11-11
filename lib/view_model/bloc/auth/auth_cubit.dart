@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/code/constants_value.dart';
+import 'package:graduation_project/model/pharmacy_model.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
@@ -16,6 +17,7 @@ import 'package:path/path.dart';
 
 import '../../../model/details_model.dart';
 import '../../../model/product_model.dart';
+import '../../../model/user_data_Model.dart';
 import '../../../model/user_model.dart';
 
 part 'auth_state.dart';
@@ -30,24 +32,25 @@ class AuthCubit extends Cubit<AuthState> {
   // login function start
   Future<void> login({required String email, required String password}) async {
     emit(LoginLoadingState());
-    userModel = null;
-    await FirebaseAuth.instance
+    userModel = null; // here i remove all old data to receive New Data
+    await FirebaseAuth.instance  // firebase auth this library i use it to login i send request Email and password
         .signInWithEmailAndPassword(email: email, password: password)
         .then((value) async {
+          // if login successful i will update user is online to true
       FirebaseFirestore.instance
           .collection('users')
           .doc(value.user!.uid)
           .update({'online': true});
-      await CacheHelper.put(key: 'id', value: value.user!.uid);
-
+      await CacheHelper.put(key: 'id', value: value.user!.uid); // i cache user id to use
+      // if login successful i will get user id and i will use it to get user data from firebase
       FirebaseFirestore.instance
           .collection('users')
           .doc(value.user!.uid)
           .get()
           .then((value) async {
+            // here i will store user data in userModel
         userModel = UserModel.fromMap(value.data()!);
-        print(value['online']);
-        await CacheHelper.put(key: 'role', value: userModel!.role);
+        await CacheHelper.put(key: 'role', value: userModel!.role); //  cashing role user
         emit(LoginSuccessfulState(
             role: value['role'],
             message: 'login success',
@@ -55,12 +58,15 @@ class AuthCubit extends Cubit<AuthState> {
             approved: value['approved']));
       });
     }).catchError((onError) {
-      print(onError);
-      emit(LoginErrorState('login Error'));
+      // if email Error or password Error show message :D
+      if(onError is FirebaseAuthException)
+      {
+        emit(LoginErrorState(onError.message!));
+      }
     });
   }
 
-// login function end
+
   Future<void> register({
     required String email,
     required String password,
@@ -68,11 +74,14 @@ class AuthCubit extends Cubit<AuthState> {
     required String age,
     required String name,
     required String role,
+
   }) async {
+    // register function start
     emit(RegisterLoadingState());
-    await FirebaseAuth.instance
+    await FirebaseAuth.instance // firebase auth this library i use it to register i send request Email and password
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) {
+      // if register successful i will add user data to firebase
       userModel = UserModel(
           phone: phone,
           age: age,
@@ -85,17 +94,129 @@ class AuthCubit extends Cubit<AuthState> {
           approved: (role == '2') ? false : true,
           role: role,
           name: name);
-
       FirebaseFirestore.instance
           .collection('users')
           .doc(value.user!.uid)
-          .set(userModel!.toMap()).then((value) {
-            getAdmin();
+          .set(userModel!.toMap()).then((value) async{
+        emit(RegisterSuccessfulState('Register success'));
+      });
+    }).catchError((onError) {
+      if(onError is FirebaseAuthException)
+      {
+        emit(RegisterErrorState(onError.message!));
+      }
+    });
+  }
+  UserDataModel? userDataModel;
+  Future<void> registerUser({
+    required String email,
+    required String password,
+    required String phone,
+    required String age,
+    required String name,
+    required String role,
+    required String boldType,
+    required String address,
+    required String chornic,
+
+  }) async {
+    // register function start
+    emit(RegisterLoadingState());
+    print(password);
+    await FirebaseAuth.instance // firebase auth this library i use it to register i send request Email and password
+        .createUserWithEmailAndPassword(email: email, password: password)
+        .then((value)async {
+      // if register successful i will add user data to firebase
+      userModel = UserModel(
+          phone: phone,
+          age: age,
+          ban: false,
+          email: email,
+          id: value.user!.uid,
+          online: false,
+          photo:
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH6PjyUR8U-UgBWkOzFe38qcO29regN43tlGGk4sRd&s',
+          approved: (role == '2') ? false : true,
+          role: role,
+          name: name ,
+      );
+      userDataModel = UserDataModel(
+        address: address,
+        bloodType: boldType,
+        chornic: chornic,
+      );
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(value.user!.uid)
+          .set(userModel!.toMap()).then((value) async{
+      });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(value.user!.uid)
+          .update(userDataModel!.toMap()).then((value) async{
+        emit(RegisterSuccessfulState('Register success'));
       });
 
-      emit(RegisterSuccessfulState('Register success'));
     }).catchError((onError) {
-      emit(RegisterErrorState('Register Error'));
+      if(onError is FirebaseAuthException)
+      {
+        emit(RegisterErrorState(onError.message!));
+      }
+    });
+  }
+  PharmacyModel ? pharmacyModel;
+  Future<void> registerPharamcy({
+    required String email,
+    required String password,
+    required String phone,
+    required String name,
+    required String role,
+    required String description,
+    required String address,
+
+  }) async {
+    // register function start
+    emit(RegisterLoadingState());
+
+    await FirebaseAuth.instance // firebase auth this library i use it to register i send request Email and password
+        .createUserWithEmailAndPassword(email: email, password: password)
+        .then((value) async{
+          print(password);
+      // if register successful i will add user data to firebase
+      userModel = UserModel(
+        phone: phone,
+        age: '',
+        ban: false,
+        email: email,
+        id: value.user!.uid,
+        online: false,
+        photo:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH6PjyUR8U-UgBWkOzFe38qcO29regN43tlGGk4sRd&s',
+        approved: (role == '2') ? false : true,
+        role: role,
+        name: name ,
+      );
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(value.user!.uid)
+          .set(userModel!.toMap()).then((value) async{
+        emit(RegisterSuccessfulState('Register success'));
+      });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(value.user!.uid)
+          .update({
+        'description':description,
+        'address':address,
+      }).then((value) async{
+        emit(RegisterSuccessfulState('Register success'));
+      });
+    }).catchError((onError) {
+      if(onError is FirebaseAuthException)
+      {
+        emit(RegisterErrorState(onError.message!));
+      }
     });
   }
 
@@ -204,12 +325,11 @@ class AuthCubit extends Cubit<AuthState> {
   List<UserModel> adminData = [];
 
   Future<void> getAdmin() async {
-
     emit(GetAdminsStateLoading('loading'));
     adminData = [];
     FirebaseFirestore.instance
         .collection('users')
-        .where('role', isEqualTo: '1',).where('ban', isEqualTo: false)
+        .where('role', isEqualTo: '1',)
         .get()
         .then((value) {
       print(value.docs.length);
@@ -372,4 +492,39 @@ required String customerName,
   }
 
   List<ProductModel> productsModel = [];
+  List<UserModel> getAllPharmacyList = [];
+  List<UserModel> getAllCustomerList = [];
+
+  Future<void> getAllPharmacy() async{
+    emit(GetAllPharmacyStateLoading('loading'));
+    getAllPharmacyList = [];
+  await   FirebaseFirestore.instance
+        .collection('users')
+        .where('role',isEqualTo: '2')
+        .get()
+        .then((value) {
+      value.docChanges.forEach((element) {
+        getAllPharmacyList.add(UserModel.fromMap(element.doc.data()!));
+      });
+      emit(GetAllPharmacyStateSuccessful('Successful'));
+    }).catchError((onError) {
+      emit(GetAllPharmacyStateError('onError'));
+    });
+  }
+  Future<void> getAllCustomer() async{
+    emit(GetAllPharmacyStateLoading('loading'));
+    getAllCustomerList = [];
+    await   FirebaseFirestore.instance
+        .collection('users')
+        .where('role',isEqualTo: '3')
+        .get()
+        .then((value) {
+      value.docChanges.forEach((element) {
+        getAllCustomerList.add(UserModel.fromMap(element.doc.data()!));
+      });
+      emit(GetAllPharmacyStateSuccessful('Successful'));
+    }).catchError((onError) {
+      emit(GetAllPharmacyStateError('onError'));
+    });
+  }
 }

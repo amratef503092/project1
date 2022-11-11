@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:graduation_project/view/pages/admin_screen/home_admin_screen.dart';
+import 'package:graduation_project/view/pages/admin_screen/layout_admin.dart';
 import 'package:graduation_project/view/pages/auth/login_screen.dart';
 import 'package:graduation_project/view/pages/pharmacy_pages/home_pharmacy.dart';
 import 'package:graduation_project/view/pages/user/layout_screen.dart';
@@ -33,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
               if(role=='1')
               {
                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
-                  return AdminHomeScreen();
+                  return LayOutScreenAdmin();
                 },), (route) => false);
               }else if(role=='2'){
 

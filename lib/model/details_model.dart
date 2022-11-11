@@ -1,27 +1,39 @@
 class DetailsModelPharmacy{
-
   final bool approved;
   final String id;
+  final String name;
+  final String email;
+  final String phone;
+  final String photo;
 
   const DetailsModelPharmacy({
-
     required this.approved,
     required this.id,
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.photo,
   });
 
   Map<String, dynamic> toMap() {
     return {
-
       'approved': this.approved,
       'id': this.id,
+      'name': this.name,
+      'email': this.email,
+      'phone': this.phone,
+      'photo': this.photo,
     };
   }
 
   factory DetailsModelPharmacy.fromMap(Map<String, dynamic> map) {
     return DetailsModelPharmacy(
-
       approved: map['approved'] as bool,
       id: map['id'] as String,
+      name: map['name'] as String,
+      email: map['email'] as String,
+      phone: map['phone'] as String,
+      photo: map['photo'] as String,
     );
   }
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../code/resource/color_mananger.dart';
 class CustomTextField extends StatelessWidget {
-  const CustomTextField({
+   CustomTextField({
     required this.controller,
     required this.hint,
     this.password = false,
@@ -14,6 +15,7 @@ class CustomTextField extends StatelessWidget {
     this.textInputType = TextInputType.text,
     this.enable = true,
     this.maxLine = 1,
+    this.formate,
     Key? key,
   }) : super(key: key);
   final TextEditingController controller;
@@ -26,11 +28,12 @@ class CustomTextField extends StatelessWidget {
   final TextInputType textInputType;
   final bool enable;
   final int maxLine ;
+   List<TextInputFormatter> ?formate;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-
+      inputFormatters: formate,
       controller: controller,
       validator: (value) => fieldValidator(value),
       keyboardType : textInputType,

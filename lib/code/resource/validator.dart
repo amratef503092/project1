@@ -12,10 +12,25 @@ final emailValidator = MultiValidator([
 ]);
 final phoneValidator = MultiValidator([
   RequiredValidator(errorText: 'phone is required'),
-  PatternValidator(r'(^(?:[+0]9)?[0-9]{10,12}$)', errorText: 'phone Number is Not valid')
+
+  PatternValidator(r'(^05[0-9]{8}$)', errorText: 'phone Number is Not valid')
 ]);
-final numberValidator = MultiValidator([
-  RequiredValidator(errorText: 'age is required'),
-  PatternValidator(r'(^(?:[+0]9)?[0-9]{10,12}$)'
-, errorText: 'age must be number')
-]);
+// final numberValidator = MultiValidator([
+//   RequiredValidator(errorText: 'age is required'),
+//   PatternValidator(r'(^(?:[+0]9)?[0-9]{10,12}$)'
+// , errorText: 'age must be number')
+// ]);
+
+String? validateNamber(String value){
+  RegExp regExp = RegExp(
+      r"^[0-9]{2}$",
+      caseSensitive: false);
+  if (value.isEmpty) {
+    return "age is required";
+  }else if (regExp.hasMatch(value) == false) {
+    return "number only";
+
+  }else if(int.parse(value) < 0 && int.parse(value) < 100){
+    return "please enter valid age";
+  }
+}
