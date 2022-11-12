@@ -39,12 +39,16 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
         return Scaffold(
           appBar: AppBar(),
           body:
-          Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('users')
                   .doc(widget.pahrmacyModel!.id)
-                  .collection('messages').where('customerId',isEqualTo:CacheHelper.getDataString(key: 'id')).orderBy('time').snapshots(),
+                  .collection('messages')
+                  .where('customerId',
+                      isEqualTo: CacheHelper.getDataString(key: 'id'))
+                  .orderBy('time')
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Text("no message");
@@ -54,16 +58,20 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
 
                   for (var message in messages) {
                     final messageText = message.get('message');
-                    final sender = (message['senderID']==CacheHelper.getDataString(key: 'id'))?message.get('customerName'):message.get('pharmacyName');
+                    final sender = (message['senderID'] ==
+                            CacheHelper.getDataString(key: 'id'))
+                        ? message.get('customerName')
+                        : message.get('pharmacyName');
 
                     messageWidgets.add(MessageLine(
-                        type: message['type'],
-                        sender: sender,
-                        messageText: messageText,
-                        isMe: message['senderID']==CacheHelper.getDataString(key: 'id'),
-                      baseName:  message['baseName'],
-
-                ));
+                      type: message['type'],
+                      sender: sender,
+                      messageText: messageText,
+                      isMe: message['senderID'] ==
+                          CacheHelper.getDataString(key: 'id'),
+                      baseName: message['baseName'],
+                      dateTime: message['time'],
+                    ));
                   }
 
                   return Expanded(
@@ -127,13 +135,14 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
                       ),
                       onPressed: () {
                         cubit.sendMessage(
-                            senderID: CacheHelper.getDataString(key: 'id').toString(),
+                            senderID:
+                                CacheHelper.getDataString(key: 'id').toString(),
                             pharmacyID: widget.pahrmacyModel!.id,
                             message: messageController.text,
                             pharmacyName: widget.pahrmacyModel!.name,
-                            customerId: CacheHelper.getDataString(key: 'id').toString(),
+                            customerId:
+                                CacheHelper.getDataString(key: 'id').toString(),
                             customerName: cubit.userModel!.name,
-
                             type: 'text');
                         // cubit.sendMessage(text: cubit.messageController.text , time:DateTime.now().toString() );
                         //
@@ -152,7 +161,8 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
                         cubit.pickFileMessage(
                             pharmacyID: widget.pahrmacyModel!.id,
                             pharmacyName: widget.pahrmacyModel!.name,
-                            customerId: CacheHelper.getDataString(key: 'id').toString(),
+                            customerId:
+                                CacheHelper.getDataString(key: 'id').toString(),
                             customerName: cubit.userModel!.name,
                             type: 'pdf');
 
@@ -199,5 +209,3 @@ Future<io.File?> downloadFile(String url, String filName) async {
   print("Amr");
   return filePath;
 }
-
-

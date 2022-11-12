@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../pages/pharmacy_pages/pharmactMessage.dart';
 class MessageLine extends StatelessWidget {
-  MessageLine({this.messageText, this.sender, this.isMe, this.type ,this.baseName});
+  MessageLine({super.key, this.messageText, this.sender, this.isMe, this.type ,this.baseName , required this.dateTime});
 
   String? type;
   String? messageText;
   String? sender;
   bool? isMe;
   String? baseName;
+  String ? dateTime ;
+
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +58,7 @@ class MessageLine extends StatelessWidget {
                     )
                 ),
               ),
+              Text(DateFormat.yMEd().add_jms().format(DateTime.parse(dateTime!)))
             ],
         ),
       ),
@@ -87,6 +91,8 @@ class MessageLine extends StatelessWidget {
                 ),
               ),
             ),
+            Text(DateFormat.yMEd().add_jms().format(DateTime.parse(dateTime!)))
+
 
           ],
         ),
@@ -133,6 +139,8 @@ class MessageLine extends StatelessWidget {
                     )
                 ),
               ),
+              Text(DateFormat.yMEd().add_jms().format(DateTime.parse(dateTime!)))
+
             ],
           ),
         ),
@@ -164,6 +172,9 @@ class MessageLine extends StatelessWidget {
                 ),
               ),
             ),
+            Text(DateFormat.yMEd().add_jms().format(DateTime.parse(dateTime!)))
+
+
           ],
         ),
       ),

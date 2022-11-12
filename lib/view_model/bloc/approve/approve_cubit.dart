@@ -82,7 +82,6 @@ class ApproveCubit extends Cubit<ApproveState> {
         .doc(userID)
         .update({'approved': true}).then((value) {
       detailsModelPharmacyAdminApproved.removeAt(index);
-      detailsModelPharmacyAdminApproved.removeAt(index);
       emit(ApprovePharmacyStateSuccessful());
     }).catchError((onError) {
       print(onError);

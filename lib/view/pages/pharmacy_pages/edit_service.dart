@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/view/components/custom_button.dart';
 import 'package:graduation_project/view/components/custom_text_field.dart';
 import 'package:graduation_project/view_model/bloc/services/services_cubit.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class EditService extends StatefulWidget {
   const EditService({Key? key, required this.index}) : super(key: key);
@@ -38,34 +39,39 @@ class _EditServiceState extends State<EditService> {
           appBar: AppBar(
             title: const Text('Edit Service'),
           ),
-          body: Column(
-              children: [
-            CustomTextField(
-                controller: titleController,
-                hint: 'Title',
-                fieldValidator: (String? value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter the cost';
-                  }
-                }),
-            CustomTextField(
-                controller: priceController,
-                hint: "cost",
-                fieldValidator: (String? value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter the cost';
-                  }
-                }),
-            SizedBox(height: 20.h,),
-                CustomButton(disable: true,widget: const Text("Edit"), function: (){
-                  ServicesCubit.get(context).editService(
-                      title: titleController.text,
-                      price: int.parse(priceController.text),
-                      id: ServicesCubit.get(context).serviceModel[widget.index].id
-                  );
+          body: ModalProgressHUD(
+            inAsyncCall: state is EditSuccessfulLoading,
+            child: Column(
+                children: [
+              CustomTextField(
+                  controller: titleController,
+                  hint: 'Title',
+                  fieldValidator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter the cost';
+                    }
+                  }),
+              CustomTextField(
+                  controller: priceController,
+                  hint: "cost",
+                  fieldValidator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter the cost';
+                    }
+                  }),
+              SizedBox(height: 20.h,),
+                  CustomButton(disable: true,widget: const Text("Edit"), function: (){
+                    ServicesCubit.get(context).editService(
+                        title: titleController.text,
+                        price: int.parse(priceController.text),
+                        id: ServicesCubit.get(context).serviceModel[widget.index].id
+                    ).then((value) {
+                      Navigator.pop(context);
+                    });
 
-                })
-          ]),
+                  })
+            ]),
+          ),
         );
       },
     );

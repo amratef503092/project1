@@ -3,14 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/model/pharmacy_model.dart';
+import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
+import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
+import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
+import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
+import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
+import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
+import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
+import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
 import 'package:graduation_project/view_model/bloc/pharmacy_product/pharmacy_cubit.dart';
 
 import 'MedicineDetailsScreen.dart';
 import 'chat_screen.dart';
 
 class PharmacyProduct extends StatefulWidget {
-  PharmacyProduct({Key? key, required this.pahrmacyModel}) : super(key: key);
-  PharmacyModel? pahrmacyModel;
+  PharmacyProduct({Key? key,}) : super(key: key);
 
   @override
   State<PharmacyProduct> createState() => _PharmacyProductState();
@@ -21,14 +28,14 @@ class _PharmacyProductState extends State<PharmacyProduct> {
   void initState() {
     // TODO: implement initState
     PharmacyCubit.get(context).getPharmacySpecificProduct(
-        pharmacyID: widget.pahrmacyModel!.id.toString());
+        pharmacyID: LayoutCubit.get(context).pahrmacyModel!.id.toString());
     super.initState();
   }
 
   double? rating;
 
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     return BlocConsumer<PharmacyCubit, PharmacyState>(
       listener: (context, state) {
         // TODO: implement listener
@@ -39,14 +46,14 @@ class _PharmacyProductState extends State<PharmacyProduct> {
         return Scaffold(
           backgroundColor: Color(0xffF2F3F7),
           appBar: AppBar(
-            title: Text(widget.pahrmacyModel!.name),
+            title: Text(LayoutCubit.get(context).pahrmacyModel!.name),
             actions: [
               IconButton(
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(
                       builder: (context) {
                         return ChatUserScreen(
-                          pahrmacyModel: widget.pahrmacyModel,
+                          pahrmacyModel: LayoutCubit.get(context).pahrmacyModel,
                         );
                       },
                     ));
@@ -59,10 +66,10 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                   onPressed: () {
                     cubit
                         .getRatePharmacy(
-                            pharmacyId: widget.pahrmacyModel!.id.toString())
+                            pharmacyId: LayoutCubit.get(context).pahrmacyModel!.id.toString())
                         .then((value) {
                       cubit
-                          .getUserRate(pharmacyId: widget.pahrmacyModel!.id)
+                          .getUserRate(pharmacyId: LayoutCubit.get(context).pahrmacyModel!.id)
                           .then((value) {
                         showDialog(
                           context: context,
@@ -105,7 +112,7 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                                     PharmacyCubit.get(context)
                                         .postRateToPharmacy(
                                             pharmacyId:
-                                                widget.pahrmacyModel!.id,
+                                                LayoutCubit.get(context).pahrmacyModel!.id,
                                             rate: rating!)
                                         .then((value) {
                                       Navigator.pop(context);

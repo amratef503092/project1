@@ -82,95 +82,136 @@ class _PendingState extends State<Pending> {
                 child: CircularProgressIndicator(),
               )
             : (PharmacyCubit.get(context).orders.isNotEmpty)
-                ?  Padding(
-          padding: const EdgeInsets.all(20),
-          child: GridView.builder(
-            gridDelegate:
-            SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-                crossAxisSpacing: 20,
-                childAspectRatio:  (widget.data=="pending")?0.5.w :0.6.w,
-                mainAxisSpacing: 20),
-            itemCount: PharmacyCubit.get(context)
-                .orders
-                .length,
-            itemBuilder: (context, index) {
-              return Container(
-                padding: EdgeInsets.all(2),
-                width: 200.w,
-                height: 300.h,
-
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius:
-                  BorderRadius.circular(10.r),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 200,
-                      height: 100,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.r),
-                          image: DecorationImage(
-                            image: NetworkImage(
-                                PharmacyCubit.get(
-                                    context)
-                                    .productsOrder[
-                                index]
-                                    .image),
-                            fit: BoxFit.cover,
-                          )),
+                ? Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 3,
+                        mainAxisSpacing: 3,
+                        mainAxisExtent:
+                            (widget.data == 'pending') ? 530.h : 420.h,
+                      ),
+                      itemCount: PharmacyCubit.get(context).orders.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(20.r),
+                                  child: Image(
+                                      image: NetworkImage(
+                                          PharmacyCubit.get(context)
+                                              .productsOrder[index]
+                                              .image),
+                                      width: 200.w,
+                                      height: 200.h),
+                                ),
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                Text(
+                                  PharmacyCubit.get(context)
+                                      .orders[index]
+                                      .title,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      fontSize: 24.sp,
+                                      fontWeight: FontWeight.w900),
+                                ),
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                Text(
+                                  "${PharmacyCubit.get(context).orders[index].totalPrice.toString()} SAR ",
+                                  style: TextStyle(fontSize: 24.sp),
+                                ),
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                Text(
+                                  "Quantity : ${PharmacyCubit.get(context).orders[index].quantity.toString()}  ",
+                                  style: TextStyle(fontSize: 24.sp),
+                                ),
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                Text(
+                                  "Address : ${PharmacyCubit.get(context).orders[index].address.toString()}  ",
+                                  style: TextStyle(fontSize: 24.sp),
+                                ),
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                (widget.data == 'pending')
+                                    ? Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          CustomButton(
+                                            disable: true,
+                                            color: Colors.red,
+                                            radius: 0,
+                                            size: const Size(200, 20),
+                                            function: () {
+                                              PharmacyCubit.get(context).reject(
+                                                  index: index,
+                                                  orderID:
+                                                      PharmacyCubit.get(context)
+                                                          .orders[index]
+                                                          .id,
+                                                  productID:
+                                                      PharmacyCubit.get(context)
+                                                          .orders[index]
+                                                          .productID);
+                                            },
+                                            widget: SizedBox(
+                                              height: 40.h,
+                                              width: 200,
+                                              child: const Center(
+                                                  child: Text("Delete")),
+                                            ),
+                                          ),
+                                          CustomButton(
+                                            disable: true,
+                                            radius: 0,
+                                            color: Colors.blueAccent,
+                                            size: const Size(200, 20),
+                                            function: () {
+                                              PharmacyCubit.get(context)
+                                                  .acceptOrder(
+                                                      orderID:
+                                                          PharmacyCubit.get(
+                                                                  context)
+                                                              .orders[index]
+                                                              .id,
+                                                      productID:
+                                                          PharmacyCubit.get(
+                                                                  context)
+                                                              .orders[index]
+                                                              .productID,
+                                                      index: index);
+                                            },
+                                            widget: SizedBox(
+                                              height: 40.h,
+                                              width: 200.w,
+                                              child: Center(
+                                                  child: Text("Accepted")),
+                                            ),
+                                          )
+                                        ],
+                                      )
+                                    : SizedBox()
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                    SizedBox(height: 10.h,),
-                    Text(
-                     "Name : ${ PharmacyCubit.get(context).orders[index].title}",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: TextStyle(
-                          fontSize: 24.sp , fontWeight: FontWeight.w900),
-                    ),
-                    SizedBox(height: 10.h,),
-                    Text(
-                      "SAR : ${  PharmacyCubit.get(context).orders[index].totalPrice.toString()}",
-                      style: TextStyle(
-                          fontSize: 24.sp),
-                    ),
-                    SizedBox(height: 10.h,),
-                    Text(
-                      "quantity : ${  PharmacyCubit.get(context).orders[index].quantity.toString()}",
-                      style: TextStyle(
-                          fontSize: 24.sp),
-                    ),
-                    SizedBox(height: 10.h,),
-                    SizedBox(height: 10.h,),
-                    Text(
-                      "address : ${  PharmacyCubit.get(context).orders[index].address.toString()}",
-                      style: TextStyle(
-                          fontSize: 24.sp),
-                    ),
-                    SizedBox(height: 10.h,),
-                    (widget.data=="pending")?Row(
-                      children: [
-
-                        ElevatedButton(onPressed: ()
-                        {
-                          PharmacyCubit.get(context).acceptOrder(orderID: PharmacyCubit.get(context).orders[index].id, productID: PharmacyCubit.get(context).orders[index].productID);
-                        }, child: const Text("Accept")),
-                        SizedBox(width: 10.w,),
-                        ElevatedButton(onPressed: () {
-                          PharmacyCubit.get(context).reject(orderID: PharmacyCubit.get(context).orders[index].id, productID: PharmacyCubit.get(context).orders[index].productID);
-
-                        }, child: Text("Reject")),
-                      ],
-                    ):SizedBox(),
-                  ],
-                ),
-              );
-            },
-          ),
-        )
+                  )
                 : Center(
                     child: Text("No Data"),
                   );
@@ -235,27 +276,7 @@ Widget accepted({required BuildContext context}) {
                                       'Total Price: ${PharmacyCubit.get(context).orders[index].totalPrice}'),
                                 ],
                               ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    PharmacyCubit.get(context).acceptOrder(
-                                      orderID: PharmacyCubit.get(context)
-                                          .orders[index]
-                                          .id,
-                                      productID: PharmacyCubit.get(context)
-                                          .orders[index]
-                                          .productID,
-                                    );
-                                  },
-                                  child: const Text('Accepted'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Reject'),
-                                ),
-                              ],
+                              actions: [],
                             );
                           },
                         );
@@ -322,27 +343,7 @@ Widget rejected({required BuildContext context}) {
                                   'Total Price: ${PharmacyCubit.get(context).orders[index].totalPrice}'),
                             ],
                           ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                PharmacyCubit.get(context).acceptOrder(
-                                  orderID: PharmacyCubit.get(context)
-                                      .orders[index]
-                                      .id,
-                                  productID: PharmacyCubit.get(context)
-                                      .orders[index]
-                                      .productID,
-                                );
-                              },
-                              child: const Text('Accepted'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Reject'),
-                            ),
-                          ],
+                          actions: [],
                         );
                       },
                     );

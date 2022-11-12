@@ -123,3 +123,28 @@ class GetUserRateError extends PharmacyState {
   final String message;
   GetUserRateError(this.message);
 }
+class GetServiceSuccsseful extends PharmacyState {
+  final String message;
+  GetServiceSuccsseful(this.message);
+}
+class GetServiceLoading extends PharmacyState {
+  final String message;
+  GetServiceLoading(this.message);
+}
+class GetServiceError extends PharmacyState {
+  final String message;
+  GetServiceError(this.message);
+}
+
+class BuyServiceSuccessful extends PharmacyState {
+  final String message;
+  BuyServiceSuccessful(this.message);
+}
+class BuyServiceError extends PharmacyState {
+  final String message;
+  BuyServiceError(this.message);
+}
+class BuyServiceLoading extends PharmacyState {
+  final String message;
+  BuyServiceLoading(this.message);
+}

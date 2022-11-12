@@ -13,6 +13,7 @@ import '../../components/custom_texts.dart';
 import '../admin_screen/layout_admin.dart';
 import '../pharmacy_pages/approvedPage.dart';
 import '../pharmacy_pages/home_pharmacy.dart';
+import '../pharmacy_pages/layout_pharmacy.dart';
 import '../user/layout_screen.dart';
 import '../user/user_home_screen.dart';
 
@@ -67,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const HomePharmacyScreen(),
+                      builder: (context) => const LayoutPharmacy(),
                     ),
                         (route) => false);
               }else{

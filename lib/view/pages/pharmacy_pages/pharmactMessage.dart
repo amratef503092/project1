@@ -62,7 +62,9 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
                         sender: sender,
                         messageText: messageText,
                         isMe: message['senderID']==CacheHelper.getDataString(key: 'id'),
-                      baseName:  message['baseName'],));
+                      baseName:  message['baseName'],
+                      dateTime: message['time'],
+                    ));
                   }
 
                   return Expanded(

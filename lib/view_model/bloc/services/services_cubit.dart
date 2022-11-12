@@ -42,7 +42,10 @@ class ServicesCubit extends Cubit<ServicesState> {
       emit(DeleteSuccessfulState());
     });
   }
-  Future<void> editService({required String title , required int price ,required  String id}) async{
+  Future<void> editService({required String title , required int price ,required  String id}) async
+  {
+    emit(EditSuccessfulLoading());
+
     await FirebaseFirestore.instance
         .collection('services')
         .doc(id)

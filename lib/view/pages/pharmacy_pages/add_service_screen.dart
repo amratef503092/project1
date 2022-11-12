@@ -4,6 +4,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import '../../../view_model/bloc/approve/approve_cubit.dart';
 import '../../components/custom_button.dart';
@@ -68,67 +69,73 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
           appBar: AppBar(
             title: const Text('Create Service'),
           ),
-          body: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: SingleChildScrollView(
-              child: Form(
-                key: formKey,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CustomTextField(
-                            controller: titleController,
-                            fieldValidator: (String ?value) {
-                              if (value!.isEmpty) {
-                                return 'Title is required';
-                              }
-                            },
-                            hint: 'Title',
-                            iconData: Icons.title,
-                          ),
-                          SizedBox(
-                            height: 20.h,
-                          ),
+          body: ModalProgressHUD(
+            inAsyncCall: (state is CreateServicesStateLoading),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomTextField(
+                              controller: titleController,
+                              fieldValidator: (String ?value) {
+                                if (value!.isEmpty) {
+                                  return 'Title is required';
+                                }
+                              },
+                              hint: 'Title',
+                              iconData: Icons.title,
+                            ),
+                            SizedBox(
+                              height: 20.h,
+                            ),
 
-                          CustomTextField(
-                            textInputType: TextInputType.number,
-                            controller: costController,
-                            fieldValidator: (String?value) {
-                              if (value!.isEmpty) {
-                                return "cost is required";
-                              }
-                            },
-                            hint: 'Const',
-                            iconData: Icons.price_change,
-                          ),
-                          SizedBox(
-                            height: 20.h,
-                          ),
+                            CustomTextField(
+                              textInputType: TextInputType.number,
+                              controller: costController,
+                              fieldValidator: (String?value) {
+                                if (value!.isEmpty) {
+                                  return "cost is required";
+                                }
+                              },
+                              hint: 'Const',
+                              iconData: Icons.price_change,
+                            ),
+                            SizedBox(
+                              height: 20.h,
+                            ),
 
-                          CustomButton(
-                            function: () {
-                              if (formKey.currentState!.validate()) {
-                                ApproveCubit.get(context).creteServices(
-                                  title: titleController.text,
-                                  cost: int.parse(costController.text),
-                                );
-                              }
-                            },
-                            widget: const Text("Post Service"),
-                            size: Size(300.w, 50.h),
-                            radius: 20.r,
-                            disable: true,
-                          ),
-                        ],
+                            CustomButton(
+                              function: () {
+                                if (formKey.currentState!.validate()) {
+                                  ApproveCubit.get(context).creteServices(
+                                    title: titleController.text,
+                                    cost: int.parse(costController.text),
+                                  ).whenComplete(() {
+                                    titleController.clear();
+                                    costController.clear();
+                                  });
+                                }
+                              },
+                              widget: const Text("Post Service"),
+                              size: Size(300.w, 50.h),
+                              radius: 20.r,
+                              disable: true,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

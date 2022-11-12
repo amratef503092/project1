@@ -4,6 +4,7 @@ import 'package:graduation_project/view/pages/admin_screen/home_admin_screen.dar
 import 'package:graduation_project/view/pages/admin_screen/layout_admin.dart';
 import 'package:graduation_project/view/pages/auth/login_screen.dart';
 import 'package:graduation_project/view/pages/pharmacy_pages/home_pharmacy.dart';
+import 'package:graduation_project/view/pages/pharmacy_pages/layout_pharmacy.dart';
 import 'package:graduation_project/view/pages/user/layout_screen.dart';
 import 'package:graduation_project/view/pages/user/user_home_screen.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
@@ -39,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
               }else if(role=='2'){
 
                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
-                  return HomePharmacyScreen();
+                  return LayoutPharmacy();
                 },), (route) => false);
               }else{
                 // user

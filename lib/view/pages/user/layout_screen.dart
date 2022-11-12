@@ -11,8 +11,10 @@ import '../../../view_model/bloc/auth/auth_cubit.dart';
 import '../../../view_model/database/local/cache_helper.dart';
 import '../admin_screen/settings_screen.dart';
 import '../auth/login_screen.dart';
+import '../pharmacy_pages/show_all_service_order.dart';
 import 'EditUserInfo.dart';
 import 'orderUser.dart';
+import 'order_pharmacy_service.dart';
 
 class LayoutScreen extends StatefulWidget {
   const LayoutScreen({Key? key}) : super(key: key);
@@ -65,6 +67,18 @@ class _LayoutScreenState extends State<LayoutScreen> {
                               MaterialPageRoute(
                                 builder: (context) =>
                                 const SettingsScreen(),
+                              ));
+                        },
+                      ),
+
+                      ListTile(
+                        leading: const Icon(Icons.shopping_cart),
+                        title: const Text("My order Service"),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ShowOrderPharmacyService(),
                               ));
                         },
                       ),
@@ -179,6 +193,10 @@ class _LayoutScreenState extends State<LayoutScreen> {
               BottomNavigationBarItem(
                   icon: FaIcon(FontAwesomeIcons.stethoscope),
                   label: 'Device'
+              ),
+              BottomNavigationBarItem(
+                  icon: FaIcon(FontAwesomeIcons.search),
+                  label: 'search'
               ),
             ],
           ),

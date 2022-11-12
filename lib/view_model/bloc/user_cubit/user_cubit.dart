@@ -5,6 +5,7 @@ import 'package:graduation_project/model/product_model.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:meta/meta.dart';
 
+import '../../../model/get_service_model.dart';
 import '../../../model/order_model.dart';
 import '../../../model/pharmacy_model.dart';
 
@@ -15,11 +16,15 @@ class UserCubit extends Cubit<UserState> {
 
   static UserCubit get(context) => BlocProvider.of<UserCubit>(context);
   List<ProductModel> productModel = [];
+  List<ProductModel> search = [];
+
+
   List<ProductModel> productModelOrder = [];
 
   Future<void> getMedicine() async {
     productModel = [];
     emit(GetMedicineLoadingState());
+
     await FirebaseFirestore.instance.collection('product').get().then((value) {
       value.docs.forEach((element) {
         productModel.add(ProductModel.fromMap(element.data()));
@@ -54,8 +59,7 @@ class UserCubit extends Cubit<UserState> {
       {required ProductModel productModel,
       required int quantity,
       required String address,
-      required String title
-      }) async {
+      required String title}) async {
     int price = productModel.price * quantity;
     emit(BuyProductLoadingState());
     await FirebaseFirestore.instance
@@ -71,7 +75,7 @@ class UserCubit extends Cubit<UserState> {
       'orderDate': DateTime.now(),
       'orderStatus': 'pending',
       'address': address,
-      'title':title
+      'title': title
     }).then((value) async {
       await FirebaseFirestore.instance
           .collection('product')
@@ -88,6 +92,7 @@ class UserCubit extends Cubit<UserState> {
   }
 
   List<OrderModel> myOrders = [];
+  List<GetServiceModel> myServiceOrders = [];
 
   Future<void> getMyOrderProduct() async {
     emit(GetMyProductLoadingState());
@@ -101,7 +106,7 @@ class UserCubit extends Cubit<UserState> {
             .collection('orders')
             .where('userID', isEqualTo: CacheHelper.getDataString(key: 'id'))
             .get()
-            .then((value) async{
+            .then((value) async {
           for (var element in value.docs) {
             myOrders.add(OrderModel.fromMap(element.data()));
             print(element.data());
@@ -110,14 +115,13 @@ class UserCubit extends Cubit<UserState> {
         });
       });
       emit(GetMyProductSuccessfulState());
-
-
     }).catchError((onError) {
       emit(GetMyProductErrorState(onError.toString()));
     });
   }
+
   Future<void> getInfo() async {
-     myOrders.forEach((element) async{
+    myOrders.forEach((element) async {
       await FirebaseFirestore.instance
           .collection('product')
           .doc(element.productID)
@@ -126,9 +130,31 @@ class UserCubit extends Cubit<UserState> {
         productModelOrder.add(ProductModel.fromMap(value.data()!));
       });
       emit(GetMyProductSuccessfulState());
-
-     });
-
+    });
   }
 
+  Future<void> getMyServiceOrder() async {
+    emit(GetMyProductLoadingState());
+
+    myServiceOrders = [];
+    await FirebaseFirestore.instance.collection('services').get().then((value) {
+      value.docs.forEach((element) async {
+        await FirebaseFirestore.instance
+            .collection('services')
+            .doc(element.id)
+            .collection('orders')
+            .where('userID', isEqualTo: CacheHelper.getDataString(key: 'id'))
+            .get()
+            .then((value) async {
+          for (var element in value.docs) {
+            myServiceOrders.add(GetServiceModel.fromMap(element.data()));
+            print(element.data());
+          }
+        });
+        emit(GetMyProductSuccessfulState());
+      });
+    }).catchError((onError) {
+      emit(GetMyProductErrorState(onError.toString()));
+    });
+  }
 }

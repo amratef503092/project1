@@ -9,4 +9,5 @@ class GetServiceSuccessful extends ServicesState{}
 class GetServiceError extends ServicesState{}
 class DeleteSuccessfulState extends ServicesState{}
 class EditSuccessfulState extends ServicesState{}
+class EditSuccessfulLoading extends ServicesState{}
 

@@ -11,6 +11,7 @@ import 'package:graduation_project/view_model/bloc/user_cubit/user_cubit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../code/constants_value.dart';
+import '../../../view_model/bloc/pharmacy_product/pharmacy_cubit.dart';
 import '../../../view_model/database/local/cache_helper.dart';
 import '../auth/login_screen.dart';
 import 'EditUserInfo.dart';
@@ -28,6 +29,7 @@ class _HomeUserScreenState extends State<HomeUserScreen> {
   @override
   void initState() {
     // TODO: implement initState
+    UserCubit.get(context).getMedicine();
 
 
     super.initState();
@@ -60,8 +62,9 @@ class _HomeUserScreenState extends State<HomeUserScreen> {
                             },
                             builder: (context, state) {
                               var cubit = UserCubit.get(context);
-                              return (cubit.productModel.isNotEmpty)
-                                  ? (cubit.productModel.isEmpty)? const Center(child: Text("No Product"),): CarouselSlider.builder(
+                              return (state is GetMedicineSuccessfulState)
+                                  ? (cubit.productModel.isEmpty)? const Center(child: Text("No Product"),):
+                              CarouselSlider.builder(
                                       options: CarouselOptions(
                                         height: 200.0,
                                         aspectRatio: 16 / 9,
