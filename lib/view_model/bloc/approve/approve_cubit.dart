@@ -2,6 +2,7 @@ import 'dart:io' as io;
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -88,7 +89,21 @@ class ApproveCubit extends Cubit<ApproveState> {
       emit(ApprovePharmacyStateError());
     });
   }
-
+  Future<void> rejectPharmacy(
+      {required String userID, required int index}) async {
+    emit(ApprovePharmacyStateLoading());
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userID)
+        .update({'ban': false ,'role':'4'}).then((value) {
+      detailsModelPharmacyAdminApproved.removeAt(index);
+      detailsModelPharmacyAdminApproved.removeAt(index);
+      emit(ApprovePharmacyStateSuccessful());
+    }).catchError((onError) {
+      print(onError);
+      emit(ApprovePharmacyStateError());
+    });
+  }
   bool uploadFileCheck = false;
 
   Future<void> uploadFile(

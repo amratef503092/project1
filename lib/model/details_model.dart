@@ -5,6 +5,7 @@ class DetailsModelPharmacy{
   final String email;
   final String phone;
   final String photo;
+  final String address;
 
   const DetailsModelPharmacy({
     required this.approved,
@@ -13,6 +14,7 @@ class DetailsModelPharmacy{
     required this.email,
     required this.phone,
     required this.photo,
+    required this.address,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,7 @@ class DetailsModelPharmacy{
       'email': this.email,
       'phone': this.phone,
       'photo': this.photo,
+      'address': this.address,
     };
   }
 
@@ -34,6 +37,7 @@ class DetailsModelPharmacy{
       email: map['email'] as String,
       phone: map['phone'] as String,
       photo: map['photo'] as String,
+      address: map['address'] as String,
     );
   }
 }

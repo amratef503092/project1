@@ -29,17 +29,28 @@ class _PharmacyScreenAdminState extends State<PharmacyScreenAdmin> {
         var authCubit = AuthCubit.get(context);
         return Scaffold(
 
-          body: SizedBox(
+          body: (state is GetAllPharmacyStateLoading)? Center(child: CircularProgressIndicator(),) : SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: (AuthCubit.get(context).userModel == null)
                   ? const Center(
                 child: CircularProgressIndicator(),
               )
-                  : (authCubit.adminData.isEmpty)
-                  ? const Center(
-                child: Text("No Admin Found"),
-              )
+                  : (authCubit.getAllPharmacyList.isEmpty)
+                  ?  Column(children: [
+                Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      onPressed: () {
+                        authCubit.getAllPharmacy();
+                      },
+                      icon: const Icon(Icons.refresh),
+
+                    )),
+                Center(
+                  child: Text("No Pharmacy Found"),
+                )
+              ],)
                   : Column(
                 children: [
                   Align(

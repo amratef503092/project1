@@ -500,19 +500,20 @@ required String customerName,
     getAllPharmacyList = [];
   await   FirebaseFirestore.instance
         .collection('users')
-        .where('role',isEqualTo: '2')
+        .where('role',isEqualTo: '2').where('approved',isEqualTo: true)
         .get()
         .then((value) {
-      value.docChanges.forEach((element) {
+      for (var element in value.docChanges) {
         getAllPharmacyList.add(UserModel.fromMap(element.doc.data()!));
-      });
+      }
+      print(getAllPharmacyList.length);
       emit(GetAllPharmacyStateSuccessful('Successful'));
     }).catchError((onError) {
       emit(GetAllPharmacyStateError('onError'));
     });
   }
   Future<void> getAllCustomer() async{
-    emit(GetAllPharmacyStateLoading('loading'));
+    emit(GetAllCustomerScreenLoading());
     getAllCustomerList = [];
     await   FirebaseFirestore.instance
         .collection('users')
@@ -522,9 +523,9 @@ required String customerName,
       value.docChanges.forEach((element) {
         getAllCustomerList.add(UserModel.fromMap(element.doc.data()!));
       });
-      emit(GetAllPharmacyStateSuccessful('Successful'));
+      emit(GetAllCustomerScreenSuccessful());
     }).catchError((onError) {
-      emit(GetAllPharmacyStateError('onError'));
+      emit(GetAllCustomerScreenError());
     });
   }
 }

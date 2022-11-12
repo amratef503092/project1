@@ -37,10 +37,18 @@ class _ApproveScreenState extends State<ApproveScreen> {
             ? const Center(child: CircularProgressIndicator(),)
             : (  ApproveCubit.get(context)
             .detailsModelPharmacyAdminApproved.isNotEmpty)?GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2 ,
-            childAspectRatio: 1,
+            gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+
+              childAspectRatio: 1 / 1.23,
+              crossAxisSpacing: 2,
+              mainAxisSpacing: 2,
+              crossAxisCount: 2,
+
+
             ),
-                itemBuilder: (context, index) {
+          shrinkWrap: true,
+
+          itemBuilder: (context, index) {
 
                   return Card(
                     color: Colors.white,
@@ -51,21 +59,23 @@ class _ApproveScreenState extends State<ApproveScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CircleAvatar(
+                            radius: 40.r,
                             backgroundImage: NetworkImage(
                               ApproveCubit.get(context)
                                   .detailsModelPharmacyAdminApproved[index]
                                   .photo.toString(),
                             ),
                           ),
-                          const SizedBox(
-                            width: 20,
+                           SizedBox(
+                            width: 10.h,
                           ),
                           SizedBox(
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
                                   ApproveCubit.get(context)
@@ -81,23 +91,56 @@ class _ApproveScreenState extends State<ApproveScreen> {
                                   style: const TextStyle(
                                       fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
+                                Text(
+                                  ApproveCubit.get(context)
+                                      .detailsModelPharmacyAdminApproved[index]
+                                      .address,
+                                  style: const TextStyle(
+                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
 
                               ],
                             ),
                           ),
-                          Column(children: [
-                            TextButton(onPressed: (){
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xff30CA00),
+                                  fixedSize: Size(70.w, 30.h)
+                                ),
+                                  onPressed: (){
 
-                              ApproveCubit.get(context).approvePharmacy(
+                                ApproveCubit.get(context).approvePharmacy(
 
-                                userID: ApproveCubit.get(context)
-                                    .detailsModelPharmacyAdminApproved[index].id,
-                                index :index
-                              );
+                                  userID: ApproveCubit.get(context)
+                                      .detailsModelPharmacyAdminApproved[index].id,
+                                  index :index
+                                );
 
-                            }, child: const Text('Approve',style: TextStyle(color: Colors.green ,fontSize: 20),)),
+                              }, child:  Text('Approve',style: TextStyle(color: Colors.white ,fontSize: 12.sp,fontWeight: FontWeight.bold),)),
+                              SizedBox(width: 10.w,),
+                              ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      fixedSize: Size(70.w, 30.h)
 
-                          ],)
+                                  ),
+
+                                  onPressed: (){
+
+                                    ApproveCubit.get(context).rejectPharmacy(
+
+                                        userID: ApproveCubit.get(context)
+                                            .detailsModelPharmacyAdminApproved[index].id,
+                                        index :index
+                                    );
+
+                                  }, child:  Text('Reject',style: TextStyle(color: Colors.white ,fontSize: 12.sp,fontWeight: FontWeight.bold),)),
+                            ],
+                          )
                         ],
                       ),
                     ),

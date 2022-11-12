@@ -167,6 +167,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         SizedBox(
                           height: 20.h,
                         ),
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceAround,children: [
                         (state is RegisterLoadingState)
                             ? const Center(
                           child: CircularProgressIndicator(),
@@ -178,7 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             });
                           },
                           widget: const Text("Start Edit"),
-                          size: Size(300.w, 50.h),
+                          size: Size(170.w,40.h),
                           radius: 20.r,
                           disable: !enable,
                         ),
@@ -201,10 +202,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             }
                           },
                           widget: const Text("confirm Update"),
-                          size: Size(300.w, 50.h),
+                          size: Size(170.w,40.h),
                           radius: 20.r,
                           disable: enable,
                         ),
+                      ],)
 
                       ],
                     ),

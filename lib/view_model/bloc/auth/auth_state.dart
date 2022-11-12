@@ -143,3 +143,6 @@ class GetAllPharmacyStateLoading extends AuthState{
   String message;
   GetAllPharmacyStateLoading(this.message);
 }
+class GetAllCustomerScreenLoading extends AuthState{}
+class GetAllCustomerScreenSuccessful extends AuthState{}
+class GetAllCustomerScreenError extends AuthState{}

@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../code/constants_value.dart';
 import '../../../view_model/bloc/auth/auth_cubit.dart';
 import '../../../view_model/database/local/cache_helper.dart';
+import '../admin_screen/settings_screen.dart';
 import '../auth/login_screen.dart';
 import 'EditUserInfo.dart';
 import 'orderUser.dart';
@@ -62,7 +63,8 @@ class _LayoutScreenState extends State<LayoutScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const EditUserInfo(),
+                                builder: (context) =>
+                                const SettingsScreen(),
                               ));
                         },
                       ),

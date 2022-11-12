@@ -39,7 +39,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         var authCubit = AuthCubit.get(context);
         return Scaffold(
 
-          body: SizedBox(
+          body: (state is GetAdminsStateLoading)? Center(child: CircularProgressIndicator(),):SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: (AuthCubit.get(context).userModel == null)
@@ -47,9 +47,20 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                       child: CircularProgressIndicator(),
                     )
                   : (authCubit.adminData.isEmpty)
-                      ? const Center(
-                          child: Text("No Admin Found"),
-                        )
+                      ?  Column(children: [
+                Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      onPressed: () {
+                        authCubit.getAdmin();
+                      },
+                      icon: const Icon(Icons.refresh),
+
+                    )),
+                Center(
+                  child: Text("No Admin Found"),
+                )
+              ],)
                       : Column(
                         children: [
                           Align(

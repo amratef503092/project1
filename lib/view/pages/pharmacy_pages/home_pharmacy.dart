@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_project/view/pages/admin_screen/settings_screen.dart';
 import 'package:graduation_project/view/pages/pharmacy_pages/get_pharmacy_services.dart';
 import 'package:graduation_project/view/pages/pharmacy_pages/show_orders.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
@@ -96,7 +97,7 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const EditPharamcyScreen(),
+                                        const SettingsScreen(),
                                   ));
                             },
                           ),

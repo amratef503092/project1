@@ -14,6 +14,7 @@ class _CustomerScreenAdminState extends State<CustomerScreenAdmin> {
   @override
   void initState() {
     // TODO: implement initState
+
     AuthCubit.get(context).getAllCustomer();
     super.initState();
   }
@@ -29,7 +30,7 @@ class _CustomerScreenAdminState extends State<CustomerScreenAdmin> {
         var authCubit = AuthCubit.get(context);
         return Scaffold(
 
-          body: SizedBox(
+          body: (state is GetAllCustomerScreenLoading)? Center(child: CircularProgressIndicator(),):SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: (AuthCubit.get(context).userModel == null)
@@ -46,7 +47,7 @@ class _CustomerScreenAdminState extends State<CustomerScreenAdmin> {
                       alignment: Alignment.topRight,
                       child: IconButton(
                         onPressed: () {
-                          authCubit.getAllPharmacy();
+                          authCubit.getAllCustomer();
                         },
                         icon: const Icon(Icons.refresh),
 
