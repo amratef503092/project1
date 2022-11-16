@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../view_model/bloc/auth/auth_cubit.dart';
 class PharmacyScreenAdmin extends StatefulWidget {
   const PharmacyScreenAdmin({Key? key}) : super(key: key);
@@ -165,7 +166,7 @@ class _PharmacyScreenAdminState extends State<PharmacyScreenAdmin> {
                                           ),
                                         );
                                       },
-                                      icon: const Icon(Icons.edit))
+                          icon: const FaIcon(FontAwesomeIcons.ban , color: Colors.red,))
                                 ],
                               ),
                             );

@@ -9,6 +9,11 @@ class UserModel{
   String name;
   String phone;
   bool approved;
+  String gender;
+  String description;
+  String address;
+  String bloodType;
+  List<String>chornic;
 
   UserModel({
     required this.age,
@@ -21,11 +26,16 @@ class UserModel{
     required this.name,
     required this.phone,
     required this.approved,
+    required this.gender,
+    required this.description,
+    required this.address,
+    required this.bloodType,
+    required this.chornic,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'age': this.age,
+      'age': age,
       'ban': this.ban,
       'email': this.email,
       'id': this.id,
@@ -35,6 +45,11 @@ class UserModel{
       'name': this.name,
       'phone': this.phone,
       'approved': this.approved,
+      'gender': this.gender,
+      'description': this.description,
+      'address': this.address,
+      'bloodType': this.bloodType,
+      'chornic': this.chornic,
     };
   }
 
@@ -50,6 +65,11 @@ class UserModel{
       name: map['name'] as String,
       phone: map['phone'] as String,
       approved: map['approved'] as bool,
+      gender: map['gender'] as String,
+      description: map['description'] as String,
+      address: map['address'] as String,
+      bloodType: map['bloodType'] as String,
+      chornic: List<String>.from(map['chornic'].map((x) => x)),
     );
   }
 }

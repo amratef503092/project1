@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_project/code/resource/string_manager.dart';
 import 'package:graduation_project/view_model/bloc/pharmacy_product/pharmacy_cubit.dart';
 
 import '../../../view_model/bloc/user_cubit/user_cubit.dart';
@@ -39,78 +40,82 @@ class _AllMedicineScreenState extends State<AllMedicineScreen> {
           width: double.infinity,
           child: Padding(
             padding: const EdgeInsets.all(20),
-            child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 15.w,
-                  mainAxisSpacing: 15.h,
-                  mainAxisExtent: 300.h,
-                ),
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: cubit.getProductByType.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MedicineDetailsScreen(
-                                productModel:
-                                cubit.getProductByType[index],
-                              )));
-                    },
-                    child: Container(
-                      width: 514.w,
-                      height: 540.h,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15.r)),
-                      child: Column(
-                        children: [
-                          Image.network(
-                            cubit.getProductByType[index].image,
-                            width: 80.w,
-                            height: 168.h,
-                          ),
-                          Text(cubit.getProductByType[index].title,
-                              style: TextStyle(
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.w800,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis),
-                          Text(
-                              "SAR ${cubit.getProductByType[index].price}",
-                              style: TextStyle(
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis),
-                          ElevatedButton.icon(
-                            icon: Icon(Icons.shopping_cart),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          MedicineDetailsScreen(
-                                            productModel: cubit
-                                                .getProductByType[index],
-                                          )));
-                            },
-                            label: const Text("BUY"),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xff30CA00)),
-                          )
-                        ],
-                      ),
+            child: RefreshIndicator(
+              onRefresh: () async {
+              await  PharmacyCubit.get(context).getByTypes(type: 'medicine');
+              },
+              child:  GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 15.w,
+                      mainAxisSpacing: 15.h,
+                      mainAxisExtent: 300.h,
                     ),
-                  );
-                }),
-          ),
-        )
+                    shrinkWrap: true,
+                    itemCount: cubit.getProductByType.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MedicineDetailsScreen(
+                                    productModel:
+                                    cubit.getProductByType[index],
+                                  )));
+                        },
+                        child: Container(
+                          width: 514.w,
+                          height: 540.h,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15.r)),
+                          child: Column(
+                            children: [
+                              Image.network(
+                                cubit.getProductByType[index].image,
+                                width: 80.w,
+                                height: 168.h,
+                              ),
+                              Text(cubit.getProductByType[index].title,
+                                  style: TextStyle(
+                                    fontSize: 20.sp,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis),
+                              Text(
+                                  "SAR ${cubit.getProductByType[index].price}",
+                                  style: TextStyle(
+                                    fontSize: 20.sp,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis),
+                              ElevatedButton.icon(
+                                icon: Icon(Icons.shopping_cart),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              MedicineDetailsScreen(
+                                                productModel: cubit
+                                                    .getProductByType[index],
+                                              )));
+                                },
+                                label: const Text(ADD_TO_CARD),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xff30CA00)),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+              ),
+            )
+          )
             : const Center(
           child: CircularProgressIndicator(),
         );

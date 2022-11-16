@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:graduation_project/view/components/custom_text_field.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 
@@ -22,7 +23,8 @@ TextEditingController passwordController = TextEditingController();
 
 TextEditingController nameController = TextEditingController();
 
-TextEditingController ageController = TextEditingController();
+TextEditingController addressController = TextEditingController();
+TextEditingController descriptionController = TextEditingController();
 
 TextEditingController phoneController = TextEditingController();
 bool showPassword = false;
@@ -33,8 +35,9 @@ class _EditPharamcyScreenState extends State<EditPharamcyScreen> {
     // TODO: implement initState
     nameController.text = AuthCubit.get(context).userModel!.name;
     phoneController.text = AuthCubit.get(context).userModel!.phone;
-    ageController.text = AuthCubit.get(context).userModel!.age;
     emailController.text = AuthCubit.get(context).userModel!.email;
+    addressController.text = AuthCubit.get(context).userModel!.address;
+    descriptionController.text = AuthCubit.get(context).userModel!.description;
 
     super.initState();
   }
@@ -141,21 +144,7 @@ class _EditPharamcyScreenState extends State<EditPharamcyScreen> {
                         SizedBox(
                           height: 20.h,
                         ),
-                        CustomTextField(
-                          textInputType: TextInputType.number,
-                          controller: ageController,
-                          fieldValidator: (String value) {
-                            if (value.isEmpty) {
-                              return "age is required";
-                            }
-                          },
-                          hint: 'age',
-                          iconData: Icons.date_range,
-                          enable: enable,
-                        ),
-                        SizedBox(
-                          height: 20.h,
-                        ),
+
                         CustomTextField(
                           textInputType: TextInputType.phone,
                           controller: phoneController,
@@ -167,45 +156,82 @@ class _EditPharamcyScreenState extends State<EditPharamcyScreen> {
                         SizedBox(
                           height: 20.h,
                         ),
-                        (state is RegisterLoadingState)
-                            ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                            : CustomButton(
-                          function: () {
-                            setState(() {
-                              enable = !enable;
-                            });
-                          },
-                          widget: const Text("Start Edit"),
-                          size: Size(300.w, 50.h),
-                          radius: 20.r,
-                          disable: !enable,
-                        ),
-                        (state is UpdateDataLoadingState)
-                            ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                            : CustomButton(
-                          function: () {
-                            if (formKey.currentState!.validate()) {
-                              AuthCubit.get(context).update(
-                                  email: emailController.text,
-                                  phone: phoneController.text,
-                                  age: ageController.text,
-                                  name: nameController.text).then((value) {
-
-                              }).then((value) {
-                                enable = false;
-                              });
+                        CustomTextField(
+                          textInputType: TextInputType.text,
+                          controller: addressController,
+                          fieldValidator: (String ?value){
+                            if(value!.isEmpty){
+                              return 'This field is required';
                             }
                           },
-                          widget: const Text("confirm Update"),
-                          size: Size(300.w, 50.h),
-                          radius: 20.r,
-                          disable: enable,
+                          hint: 'Address',
+                          iconData: FontAwesomeIcons.locationCrosshairs,
+                          enable: enable,
                         ),
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        CustomTextField(
+                          textInputType: TextInputType.text,
+                          controller: descriptionController,
+                          fieldValidator: (String ?value){
+                            if(value!.isEmpty){
+                              return 'This field is required';
+                            }
+                          },
+                          hint: 'Address',
+                          iconData: FontAwesomeIcons.audioDescription,
+                          enable: enable,
+                        ),
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                       Row(
+                         mainAxisAlignment: MainAxisAlignment.spaceAround,
+                         children: [
+                           (state is RegisterLoadingState)
+                               ? const Center(
+                             child: CircularProgressIndicator(),
+                           )
+                               : CustomButton(
+                             function: () {
+                               setState(() {
+                                 enable = !enable;
+                               });
+                             },
+                             widget: const Text("Start Edit"),
+                             size: Size(150.w, 50.h),
+                             radius: 20.r,
+                             disable: !enable,
+                           ),
+                           (state is UpdateDataLoadingState)
+                               ? const Center(
+                             child: CircularProgressIndicator(),
+                           )
+                               : CustomButton(
+                             function: () {
+                               if (formKey.currentState!.validate()) {
+                                 AuthCubit.get(context).update(
+                                     email: emailController.text,
+                                     phone: phoneController.text,
+                                     age: '',
+                                     description: descriptionController.text,
+                                     address: addressController.text,
+                                     name: nameController.text).then((value) {
 
+                                 }).then((value) {
+                                   enable = false;
+                                 });
+                               }
+                             },
+                             widget: const Text("confirm Update"),
+                             size: Size(150.w, 50.h),
+                             radius: 20.r,
+                             disable: enable,
+                           ),
+
+                         ],
+                       )
                       ],
                     ),
                   )

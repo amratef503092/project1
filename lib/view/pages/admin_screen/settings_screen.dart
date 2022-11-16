@@ -120,6 +120,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         SizedBox(
                           height: 20.h,
                         ),
+
+                        SizedBox(
+                          height: 20.h,
+                        ),
                         CustomTextField(
                           controller: nameController,
                           fieldValidator: (String value) {
@@ -191,6 +195,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           function: () {
                             if (formKey.currentState!.validate()) {
                               AuthCubit.get(context).update(
+                                 address: '',
+                                  description: '',
                                   email: emailController.text,
                                   phone: phoneController.text,
                                   age: ageController.text,

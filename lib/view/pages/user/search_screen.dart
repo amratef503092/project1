@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/model/product_model.dart';
 import 'package:graduation_project/view_model/bloc/user_cubit/user_cubit.dart';
 
+import '../../../code/resource/string_manager.dart';
 import 'MedicineDetailsScreen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -126,7 +127,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                     index],
                                                           )));
                                             },
-                                            label: const Text("BUY"),
+                                            label: const Text(ADD_TO_CARD),
                                             style: ElevatedButton.styleFrom(
                                                 backgroundColor:
                                                     const Color(0xff30CA00)),
@@ -194,7 +195,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                     index],
                                                           )));
                                             },
-                                            label: const Text("BUY"),
+                                            label: const Text(ADD_TO_CARD),
                                             style: ElevatedButton.styleFrom(
                                                 backgroundColor:
                                                     const Color(0xff30CA00)),

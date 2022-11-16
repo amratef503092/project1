@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:graduation_project/view/pages/admin_screen/settings_screen.dart';
 import 'package:graduation_project/view/pages/auth/login_screen.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
@@ -175,7 +176,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                                   ),
                                                 );
                                               },
-                                              icon: const Icon(Icons.edit))
+                                              icon:  FaIcon(FontAwesomeIcons.ban ,color: Colors.red,))
                                         ],
                                       ),
                                     );

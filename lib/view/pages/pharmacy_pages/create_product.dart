@@ -139,24 +139,11 @@ class _CreateProductState extends State<CreateProduct> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  CustomTextField(
-                                    controller: titleController,
-                                    fieldValidator: (String? value) {
-                                      if (value!.isEmpty) {
-                                        return 'Title is required';
-                                      }
-                                    },
-                                    hint: 'Title',
-                                    iconData: Icons.title,
-                                  ),
-                                  SizedBox(
-                                    height: 20.h,
-                                  ),
                                   Row(
                                     children: [
                                       const Text("Type : "),
                                       SizedBox(
-                                        width: 20.w,
+                                        width: 10.w,
                                       ),
                                       SizedBox(
                                         width: 300.w,
@@ -167,20 +154,20 @@ class _CreateProductState extends State<CreateProduct> {
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 color:
-                                                    Theme.of(context).hintColor,
+                                                Theme.of(context).hintColor,
                                               ),
                                             ),
                                             items: items
                                                 .map((item) =>
-                                                    DropdownMenuItem<String>(
-                                                      value: item,
-                                                      child: Text(
-                                                        item,
-                                                        style: const TextStyle(
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                    ))
+                                                DropdownMenuItem<String>(
+                                                  value: item,
+                                                  child: Text(
+                                                    item,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ))
                                                 .toList(),
                                             value: selectedValue,
                                             onChanged: (value) {
@@ -196,6 +183,24 @@ class _CreateProductState extends State<CreateProduct> {
                                       ),
                                     ],
                                   ),
+
+                                  SizedBox(
+                                    height: 20.h,
+                                  ),
+                                  CustomTextField(
+                                    controller: titleController,
+                                    fieldValidator: (String? value) {
+                                      if (value!.isEmpty) {
+                                        return 'Title is required';
+                                      }
+                                    },
+                                    hint: 'Title',
+                                    iconData: Icons.title,
+                                  ),
+                                  SizedBox(
+                                    height: 20.h,
+                                  ),
+
                                   CustomTextField(
                                     controller: descriptionController,
                                     fieldValidator: (String? value) {

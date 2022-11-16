@@ -39,64 +39,68 @@ class _AllPharmacyScreenState extends State<AllPharmacyScreen> {
                 width: double.infinity,
                 child: Padding(
                   padding: const EdgeInsets.all(20),
-                  child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 15.w,
-                        mainAxisSpacing: 15.h,
-                        mainAxisExtent: 300.h,
-                      ),
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: cubit.pahrmacyModel.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            LayoutCubit.get(context).x(cubit.pahrmacyModel[index]);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LayOutUserPharmacy(
-                                          pahrmacyModel:
-                                              cubit.pahrmacyModel[index],
-                                        )));
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      await UserCubit.get(context).getPharmacy();
+                    },
+                    child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 15.w,
+                          mainAxisSpacing: 15.h,
+                          mainAxisExtent: 300.h,
+                        ),
+                        shrinkWrap: true,
+                        itemCount: cubit.pahrmacyModel.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              LayoutCubit.get(context).x(cubit.pahrmacyModel[index]);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LayOutUserPharmacy(
+                                            pahrmacyModel:
+                                                cubit.pahrmacyModel[index],
+                                          )));
 
-                          },
-                          child: Container(
-                            width: 514.w,
-                            height: 540.h,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15.r)),
-                            child: Column(
-                              children: [
-                                SizedBox(height: 20,),
-                                Image.network(
-                                  cubit.pahrmacyModel[index].photo,
-                                  width: 80.w,
-                                  height: 168.h,
-                                ),
-                                SizedBox(height: 20,),
-                                Text(cubit.pahrmacyModel[index].name,
-                                    style: TextStyle(
-                                      fontSize: 20.sp,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis),
-                                SizedBox(height: 20,),
-                                Text(cubit.pahrmacyModel[index].address,
-                                    style: TextStyle(
-                                      fontSize: 20.sp,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis),
-                              ],
+                            },
+                            child: Container(
+                              width: 514.w,
+                              height: 540.h,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15.r)),
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 20,),
+                                  Image.network(
+                                    cubit.pahrmacyModel[index].photo,
+                                    width: 80.w,
+                                    height: 168.h,
+                                  ),
+                                  SizedBox(height: 20,),
+                                  Text(cubit.pahrmacyModel[index].name,
+                                      style: TextStyle(
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis),
+                                  SizedBox(height: 20,),
+                                  Text(cubit.pahrmacyModel[index].address,
+                                      style: TextStyle(
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      }),
+                          );
+                        }),
+                  ),
                 ),
               )
             : const Center(

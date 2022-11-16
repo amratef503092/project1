@@ -1,8 +1,12 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 
 import '../../code/resource/validator.dart';
 import '../../view_model/bloc/auth/auth_cubit.dart';
@@ -33,17 +37,19 @@ TextEditingController address = TextEditingController();
 
 bool showPassword = true;
 int selectedValue = 1;
-String dropdownvalue = 'User';
+String dropdownvalue = 'Customer';
 String bloodTypeSelected = 'O+';
+String ?  valueGender = 'Male';
 
 RegExp regExp = RegExp(r"^[0-9]{2}$", caseSensitive: false);
 
 // List of items in our dropdown menu
 var items = [
-  'User',
+  'Customer',
   'Pharmacy',
 ];
 List<String> bloodType = ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'];
+List<String> gender = ['Male' , 'Female'];
 class _UserIfoState extends State<UserIfo> {
   @override
   void dispose() {
@@ -59,6 +65,8 @@ class _UserIfoState extends State<UserIfo> {
 
     super.dispose();
   }
+  List<String> items =['ALS (Lou Gehrig\'s Disease)','Alzheimer\'s Disease and other Dementias','Arthritis','Asthma','Autism','Cancer','Cerebral Palsy','Chronic Obstructive Pulmonary Disease (COPD)','Crohn\'s Disease','Diabetes','Epilepsy','Fibromyalgia','Heart Disease','Huntington\'s Disease','Inflammatory Bowel Disease (IBD)','Kidney Disease','Liver Disease','Lupus','Multiple Sclerosis (MS)','Muscular Dystrophy','Myasthenia Gravis','Neurofibromatosis','Parkinson\'s Disease','Rheumatoid Arthritis','Sickle Cell Disease','Stroke','Tourette Syndrome','Traumatic Brain Injury (TBI)','Other'];
+List<String> _selecteditems = [];
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
@@ -128,7 +136,7 @@ class _UserIfoState extends State<UserIfo> {
                         onChanged: (String? newValue) {
                           print(newValue);
                           setState(() {
-                            dropdownvalue = newValue!;
+                            bloodTypeSelected = newValue!;
                           });
                         },
                       ),
@@ -159,7 +167,52 @@ class _UserIfoState extends State<UserIfo> {
               SizedBox(
                 height: 20,
               ),
-
+              Row(
+                children: [
+                  FaIcon(FontAwesomeIcons.marsAndVenus , color: Colors.grey,),
+                  SizedBox(width: 20.w,),
+                  SizedBox(
+                    width: 320.w,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2(
+                        hint: Text(
+                          'Select Item',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Theme
+                                .of(context)
+                                .hintColor,
+                          ),
+                        ),
+                        items: gender
+                            .map((item) =>
+                            DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(
+                                item,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ))
+                            .toList(),
+                        value: valueGender,
+                        onChanged: (value) {
+                          setState(() {
+                            valueGender = value as String ;
+                          });
+                        },
+                        buttonHeight: 40,
+                        buttonWidth: 140,
+                        itemHeight: 40,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
               text(text: 'Age'),
               CustomTextField(
                 textInputType: TextInputType.number,
@@ -193,21 +246,6 @@ class _UserIfoState extends State<UserIfo> {
                 height: 20,
               ),
               // creat drop down button
-              text(text: 'chronic-diseases'),
-              CustomTextField(
-                controller: chronicDiseases,
-                fieldValidator: (String value) {
-                  if (value.trim().isEmpty || value == ' ') {
-                    return 'This field is required';
-                  }
-                },
-                hint: 'chronic-diseases',
-                maxLine: 3,
-                iconData: Icons.perm_identity,
-              ),
-              SizedBox(
-                height: 20,
-              ),
               text(text: 'Address'),
               CustomTextField(
                 controller: address,
@@ -222,6 +260,19 @@ class _UserIfoState extends State<UserIfo> {
               SizedBox(
                 height: 20,
               ),
+              text(text: 'chronic-diseases'),
+              MultiSelectDialogField(
+                items: items.map((e) => MultiSelectItem(e, e)).toList(),
+                listType: MultiSelectListType.CHIP,
+
+                onConfirm: (values) {
+                  setState(() {
+                    _selecteditems = values;
+                  });
+
+                  print(_selecteditems);
+                },
+              ),
               (state is RegisterLoadingState)
                   ? const Center(
                 child: CircularProgressIndicator(),
@@ -232,6 +283,7 @@ class _UserIfoState extends State<UserIfo> {
                   // send data to BackEnd
                   if (formKey.currentState!.validate()) {
                     cubit.registerUser(
+                        gender:valueGender!,
                         email: emailController.text.trim(),
                         password: passwordController.text,
                         phone: phoneController.text,
@@ -241,7 +293,7 @@ class _UserIfoState extends State<UserIfo> {
                         // will change
                         address: address.text,
                         boldType: bloodTypeSelected,
-                        chornic: chronicDiseases.text);
+                        chornic: _selecteditems);
                   }
                 },
                 color: Color(0xff1A81F7),

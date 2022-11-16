@@ -63,145 +63,131 @@ class _PharmacyInfoState extends State<PharmacyInfo> {
       listener: (context, state) {},
       builder: (context, state) {
         var cubit = AuthCubit.get(context);
-        return WillPopScope(
-          onWillPop: () async {
-            emailController.text = '';
-            passwordController.text  = '';
-            nameController.text = '';
-            ageController.text = '';
-            descriptionController.text = '';
-            phoneController.text = '';
-            chronicDiseases.text = '';
-            address.text = '';
-            Navigator.pop(context);
-            return false;
-          },
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                text(text: 'Email'),
-                CustomTextField(
-                  controller: emailController,
-                  fieldValidator: emailValidator,
-                  hint: 'email',
-                  iconData: Icons.email,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                text(text: 'password'),
-                CustomTextField(
-                  controller: passwordController,
-                  fieldValidator: passwordValidator,
-                  hint: 'Password',
-                  iconData: Icons.lock,
-                  password: showPassword,
-                  passwordTwo: true,
-                  function: () {
-                    setState(() {
-                      showPassword = !showPassword;
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                text(text: 'Name'),
-                CustomTextField(
-                  controller: nameController,
-                  fieldValidator: (String value) {
-                    if (value.trim().isEmpty || value == ' ') {
-                      return 'This field is required';
-                    }
-                    if (!RegExp(r'^[a-zA-Z]+(\s[a-zA-Z]+)?$').hasMatch(value)) {
-                      return 'please enter only two names with one space';
-                    }
-                    if (value.length < 3 || value.length > 32) {
-                      return 'First name must be between 2 and 32 characters';
-                    }
-                  },
-                  hint: 'name',
-                  iconData: Icons.perm_identity,
-                ),
+        return Form(
+          key: formKey,
+          child: Column(
+            children: [
+              text(text: 'Email'),
+              CustomTextField(
+                controller: emailController,
+                fieldValidator: emailValidator,
+                hint: 'email',
+                iconData: Icons.email,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              text(text: 'password'),
+              CustomTextField(
+                controller: passwordController,
+                fieldValidator: passwordValidator,
+                hint: 'Password',
+                iconData: Icons.lock,
+                password: showPassword,
+                passwordTwo: true,
+                function: () {
+                  setState(() {
+                    showPassword = !showPassword;
+                  });
+                },
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              text(text: 'Name'),
+              CustomTextField(
+                controller: nameController,
+                fieldValidator: (String value) {
+                  if (value.trim().isEmpty || value == ' ') {
+                    return 'This field is required';
+                  }
+                  if (!RegExp(r'^[a-zA-Z]+(\s[a-zA-Z]+)?$').hasMatch(value)) {
+                    return 'please enter only two names with one space';
+                  }
+                  if (value.length < 3 || value.length > 32) {
+                    return 'First name must be between 2 and 32 characters';
+                  }
+                },
+                hint: 'name',
+                iconData: Icons.perm_identity,
+              ),
 
-                const SizedBox(
-                  height: 20,
-                ),
+              const SizedBox(
+                height: 20,
+              ),
 
-                text(text: 'Address'),
-                CustomTextField(
-                  controller: address,
-                  fieldValidator: (String value) {
-                    if (value.trim().isEmpty || value == ' ') {
-                      return 'This field is required';
-                    }
-                  },
-                  hint: 'Address',
-                  iconData: Icons.location_city,
-                ),
+              text(text: 'Address'),
+              CustomTextField(
+                controller: address,
+                fieldValidator: (String value) {
+                  if (value.trim().isEmpty || value == ' ') {
+                    return 'This field is required';
+                  }
+                },
+                hint: 'Address',
+                iconData: Icons.location_city,
+              ),
 
-                const SizedBox(
-                  height: 20,
-                ),
-                text(text: 'Description'),
-                CustomTextField(
-                  controller: descriptionController,
-                  fieldValidator: (String value) {
-                    if (value.trim().isEmpty || value == ' ') {
-                      return 'This field is required';
-                    }
-                  },
-                  hint: 'Description',
-                  maxLine: 3,
-                  iconData: Icons.description,
-                ),
+              const SizedBox(
+                height: 20,
+              ),
+              text(text: 'Description'),
+              CustomTextField(
+                controller: descriptionController,
+                fieldValidator: (String value) {
+                  if (value.trim().isEmpty || value == ' ') {
+                    return 'This field is required';
+                  }
+                },
+                hint: 'Description',
+                maxLine: 3,
+                iconData: Icons.description,
+              ),
 
-                const SizedBox(
-                  height: 20,
-                ),
+              const SizedBox(
+                height: 20,
+              ),
 
-                text(text: 'Phone'),
-                CustomTextField(
-                  textInputType: TextInputType.phone,
-                  controller: phoneController,
-                  fieldValidator: phoneValidator,
-                  hint: 'phone',
-                  iconData: Icons.phone,
-                ),
-                // creat drop down button
+              text(text: 'Phone'),
+              CustomTextField(
+                textInputType: TextInputType.phone,
+                controller: phoneController,
+                fieldValidator: phoneValidator,
+                hint: 'phone',
+                iconData: Icons.phone,
+              ),
+              // creat drop down button
 
-                const SizedBox(
-                  height: 20,
-                ),
-                (state is RegisterLoadingState)
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : CustomButton(
-                        function: () {
-                          // i validate if user Enter all data and then
-                          // send data to BackEnd
-                          if (formKey.currentState!.validate()) {
-                            cubit.registerPharamcy(
-                              email: emailController.text.trim(),
-                              password: passwordController.text,
-                              phone: phoneController.text,
-                              name: nameController.text,
-                              address: address.text,
-                              description: descriptionController.text,
-                              role: '2', // will change
-                            );
-                          }
-                        },
-                        color: const Color(0xff1A81F7),
-                        widget: const Text("Register"),
-                        size: Size(300.w, 50.h),
-                        radius: 20.r,
-                        disable: true,
-                      )
-              ],
-            ),
+              const SizedBox(
+                height: 20,
+              ),
+              (state is RegisterLoadingState)
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : CustomButton(
+                      function: () {
+                        // i validate if user Enter all data and then
+                        // send data to BackEnd
+                        if (formKey.currentState!.validate()) {
+                          cubit.registerPharamcy(
+                            email: emailController.text.trim(),
+                            password: passwordController.text,
+                            phone: phoneController.text,
+                            name: nameController.text,
+                            address: address.text,
+                            description: descriptionController.text,
+                            role: '2', // will change
+                          );
+                        }
+                      },
+                      color: const Color(0xff1A81F7),
+                      widget: const Text("Register"),
+                      size: Size(300.w, 50.h),
+                      radius: 20.r,
+                      disable: true,
+                    )
+            ],
           ),
         );
       },

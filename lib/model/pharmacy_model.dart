@@ -5,6 +5,7 @@ class PharmacyModel{
   String phone;
   String photo;
   String address;
+  String description;
 
   PharmacyModel({
     required this.name,
@@ -13,6 +14,7 @@ class PharmacyModel{
     required this.phone,
     required this.photo,
     required this.address,
+    required this.description,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,7 @@ class PharmacyModel{
       'phone': this.phone,
       'photo': this.photo,
       'address': this.address,
+      'description': this.description,
     };
   }
 
@@ -34,6 +37,7 @@ class PharmacyModel{
       phone: map['phone'] as String,
       photo: map['photo'] as String,
       address: map['address'] as String,
+      description: map['description'] as String,
     );
   }
 }

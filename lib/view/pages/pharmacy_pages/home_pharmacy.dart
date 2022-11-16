@@ -16,6 +16,7 @@ import '../auth/login_screen.dart';
 import 'Edit_Product_Screen.dart';
 import 'add_service_screen.dart';
 import 'create_product.dart';
+import 'edit_pharmacy_info.dart';
 import 'messageScreen.dart';
 
 class HomePharmacyScreen extends StatefulWidget {
@@ -104,7 +105,7 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const SettingsScreen(),
+                                        const EditPharamcyScreen(),
                                   ));
                             },
                           ),
@@ -144,7 +145,7 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                             },
                           ),
                           ListTile(
-                            leading: const Icon(Icons.shopify),
+                            leading: const Icon(Icons.chat),
                             title: const Text("messages"),
                             onTap: () {
                               Navigator.push(

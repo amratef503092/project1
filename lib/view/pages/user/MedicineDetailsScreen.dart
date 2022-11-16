@@ -5,6 +5,9 @@ import 'package:graduation_project/model/product_model.dart';
 import 'package:graduation_project/view/components/custom_button.dart';
 import 'package:graduation_project/view/components/custom_text_field.dart';
 import 'package:graduation_project/view_model/bloc/user_cubit/user_cubit.dart';
+import 'package:graduation_project/view_model/database/local/sql_lite.dart';
+
+import '../../../code/resource/string_manager.dart';
 
 class MedicineDetailsScreen extends StatefulWidget {
   MedicineDetailsScreen({Key? key, required this.productModel})
@@ -89,7 +92,7 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                     child: IconButton(onPressed: () {
                       if (count < widget.productModel.quantity) {
                         setState(() {
-                          count++;
+                          ++count;
                         });
                       }
                     }, icon: Icon(Icons.add , color: Colors.white,)),
@@ -109,7 +112,7 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
 
                       } else {
                         setState(() {
-                          count--;
+                          --count;
                         });
                       }
                     }, icon: Text("-" , style: TextStyle(color: Colors.white, fontSize: 30.sp),)),
@@ -118,24 +121,24 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
               ),
               SizedBox(height: 20.h,),
 
-              Form(
-                key: formKey,
-                child: CustomTextField(controller: controller, hint: 'EnterAddress', fieldValidator: (String ? value){
-                  if(value!.isEmpty){
-                    return 'Enter Address';
-                  }
-                  return null;
-
-                },
-                iconData: Icons.location_on_outlined,),
-              ),
+              // Form(
+              //   key: formKey,
+              //   child: CustomTextField(controller: controller, hint: 'EnterAddress', fieldValidator: (String ? value){
+              //     if(value!.isEmpty){
+              //       return 'Enter Address';
+              //     }
+              //     return null;
+              //
+              //   },
+              //   iconData: Icons.location_on_outlined,),
+              // ),
               SizedBox(height: 20.h,),
 
               BlocConsumer<UserCubit, UserState>(
                 listener: (context, state) {
                 if(state is BuyProductSuccessfulState){
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('we received your order'),
+                    content: Text('Adding to Card Successful'),
                   ));
                   Navigator.pop(context);
                 }
@@ -144,16 +147,29 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                 builder: (context, state) {
                   return (state is BuyProductLoadingState) ? const Center(
                     child: CircularProgressIndicator(),) : CustomButton(
-                    widget: const Text("Buy"),
+                    widget: const Text(ADD_TO_CARD),
                     color: Color(0xff30CA00),
-                    function: () {
-                      if(formKey.currentState!.validate()){
-                        UserCubit.get(context).buyProduct(
-                            productModel: widget.productModel, quantity: count
-                            ,address: controller.text,
-                          title: widget.productModel.title
-                        );
-                      }
+                    function: ()
+                    {
+                      SQLHelper.addCard(
+                          title: widget.productModel.title,
+                          idProduct:  widget.productModel.id,
+                          price: widget.productModel.price,
+                          image: widget.productModel.image,
+                          pharmacyID: widget.productModel.id,
+                          quantity: count).then((value)
+                      {
+
+                        debugPrint('Add Data in card Successful');
+
+                      });
+                      // if(formKey.currentState!.validate()){
+                      //   UserCubit.get(context).buyProduct(
+                      //       productModel: widget.productModel, quantity: count
+                      //       ,address: controller.text,
+                      //     title: widget.productModel.title
+                      //   );
+                      // }
 
                     },
                     disable: true,

@@ -36,20 +36,35 @@ class ServicesCubit extends Cubit<ServicesState> {
     await FirebaseFirestore.instance
         .collection('services')
         .doc(id)
-        .delete()
-        .then((value) {
-      getServices();
-      emit(DeleteSuccessfulState());
+        .collection('orders')
+        .get().then((value) async{
+      for (var element in value.docChanges) {
+        await FirebaseFirestore.instance
+            .collection('services')
+            .doc(id)
+            .collection('orders')
+            .doc(element.doc.id)
+            .delete();
+      }
+    }).whenComplete(() async {
+     await FirebaseFirestore.instance
+          .collection('services')
+          .doc(id)
+          .delete()
+          .then((value) {
+        getServices();
+      });
     });
   }
-  Future<void> editService({required String title , required int price ,required  String id}) async
-  {
+
+  Future<void> editService(
+      {required String title, required int price, required String id}) async {
     emit(EditSuccessfulLoading());
 
     await FirebaseFirestore.instance
         .collection('services')
         .doc(id)
-        .update({'title':title , 'cost':price}).then((value) {
+        .update({'title': title, 'cost': price}).then((value) {
       getServices();
       emit(EditSuccessfulState());
     });

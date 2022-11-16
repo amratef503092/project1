@@ -1,5 +1,4 @@
 import 'dart:io' as io;
-
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -9,17 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:meta/meta.dart';
-
-import '../../../code/constants_value.dart';
 import '../../../model/get_service_model.dart';
 import '../../../model/order_model.dart';
 import '../../../model/product_model.dart';
 import '../../../model/service_model.dart';
 import '../../../model/user_model.dart';
-
 part 'pharmacy_state.dart';
-
 class PharmacyCubit extends Cubit<PharmacyState> {
   PharmacyCubit() : super(PharmacyInitial());
 
@@ -116,11 +110,22 @@ class PharmacyCubit extends Cubit<PharmacyState> {
 
   Future<void> deleteProduct({required String id}) async {
     emit(DeleteProductLoading());
+
     await FirebaseFirestore.instance
         .collection('product')
         .doc(id)
-        .delete()
-        .then((value) {
+        .collection('orders').get().then((value) {
+          for (var element in value.docs) {
+            FirebaseFirestore.instance
+                .collection('product')
+                .doc(id)
+                .collection('orders').doc(element.id).delete();
+          }
+
+    }).then((value) async{
+     await FirebaseFirestore.instance
+          .collection('product')
+          .doc(id).delete();
       getPharmacyProduct();
       emit(DeleteProductSuccessful('Successful'));
     }).catchError((onError) {
@@ -176,15 +181,16 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     emit(GetOrderLoading());
     services = [];
     await FirebaseFirestore.instance.collection('services').where('pharmacyID', isEqualTo: CacheHelper.getDataString(key: 'id')).get().then((value) async {
-      value.docs.forEach((element) async {
+      for (var element in value.docs)  {
         await FirebaseFirestore.instance.collection('services').doc(element.id).collection('orders').where('status', isEqualTo: status).get().then((value) {
           for (var element in value.docs) {
             services.add(GetServiceModel.fromMap(element.data()));
           }
           print(services.length);
         });
-        emit(GetOrderSuccessful('Successful'));
-      });
+
+      }
+      emit(GetOrderSuccessful('Successful'));
     }).catchError((onError) {
       print(onError);
       emit(GetOrderError('Error'));

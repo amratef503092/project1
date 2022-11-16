@@ -29,13 +29,13 @@ class _MyOrderState extends State<MyOrder> {
         var cubit = UserCubit.get(context);
         return Scaffold(
           appBar: AppBar(
-            title: Text('My Order'),
+            title: const Text('My Order'),
           ),
           body: (state is GetMyProductLoadingState)
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : ListView.builder(
+              :(cubit.myOrders.isNotEmpty)?ListView.builder(
                   itemCount: cubit.myOrders.length,
                   itemBuilder: (context, index) {
                     return InkWell(
@@ -66,7 +66,7 @@ class _MyOrderState extends State<MyOrder> {
                       ),
                     );
                   },
-                ),
+                ) : Center(child: Text("No order"),),
         );
       },
     );

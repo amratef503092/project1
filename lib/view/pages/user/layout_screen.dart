@@ -13,6 +13,7 @@ import '../admin_screen/settings_screen.dart';
 import '../auth/login_screen.dart';
 import '../pharmacy_pages/show_all_service_order.dart';
 import 'EditUserInfo.dart';
+import 'my_order_list.dart';
 import 'orderUser.dart';
 import 'order_pharmacy_service.dart';
 
@@ -66,7 +67,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                const SettingsScreen(),
+                                const EditUserInfo(),
                               ));
                         },
                       ),
@@ -106,17 +107,17 @@ class _LayoutScreenState extends State<LayoutScreen> {
                       // },
                       // ),
                       //
-                      // ListTile(
-                      // leading: const Icon(Icons.shopify),
-                      // title: const Text("Show all Orders"),
-                      // onTap: () {
-                      // Navigator.push(
-                      // context,
-                      // MaterialPageRoute(
-                      // builder: (context) => const ShowOrders(),
-                      // ));
-                      // },
-                      // ),
+                      ListTile(
+                      leading: const Icon(Icons.shopify),
+                      title: const Text("Show all Orders"),
+                      onTap: () {
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                      builder: (context) => const MyOrderList(),
+                      ));
+                      },
+                      ),
                       // ListTile(
                       // leading: const Icon(Icons.logout),
                       // title: const Text("Logout"),

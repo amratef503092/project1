@@ -35,7 +35,7 @@ class _ShowOrderPharmacyServiceState extends State<ShowOrderPharmacyService> {
               ? const Center(
             child: CircularProgressIndicator(),
           )
-              : ListView.builder(
+              :(cubit.myServiceOrders.isNotEmpty)?ListView.builder(
             itemCount: cubit.myServiceOrders.length,
             itemBuilder: (context, index) {
               return InkWell(
@@ -69,7 +69,7 @@ class _ShowOrderPharmacyServiceState extends State<ShowOrderPharmacyService> {
                 ),
               );
             },
-          ),
+          ):Center(child: Text("No Order"),),
         );
       },
     );

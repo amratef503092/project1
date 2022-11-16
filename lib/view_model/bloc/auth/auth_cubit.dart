@@ -12,12 +12,10 @@ import 'package:graduation_project/code/constants_value.dart';
 import 'package:graduation_project/model/pharmacy_model.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:meta/meta.dart';
 import 'package:path/path.dart';
 
 import '../../../model/details_model.dart';
 import '../../../model/product_model.dart';
-import '../../../model/user_data_Model.dart';
 import '../../../model/user_model.dart';
 
 part 'auth_state.dart';
@@ -33,24 +31,27 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> login({required String email, required String password}) async {
     emit(LoginLoadingState());
     userModel = null; // here i remove all old data to receive New Data
-    await FirebaseAuth.instance  // firebase auth this library i use it to login i send request Email and password
+    await FirebaseAuth
+        .instance // firebase auth this library i use it to login i send request Email and password
         .signInWithEmailAndPassword(email: email, password: password)
         .then((value) async {
-          // if login successful i will update user is online to true
+      // if login successful i will update user is online to true
       FirebaseFirestore.instance
           .collection('users')
           .doc(value.user!.uid)
           .update({'online': true});
-      await CacheHelper.put(key: 'id', value: value.user!.uid); // i cache user id to use
+      await CacheHelper.put(
+          key: 'id', value: value.user!.uid); // i cache user id to use
       // if login successful i will get user id and i will use it to get user data from firebase
       FirebaseFirestore.instance
           .collection('users')
           .doc(value.user!.uid)
           .get()
           .then((value) async {
-            // here i will store user data in userModel
+        // here i will store user data in userModel
         userModel = UserModel.fromMap(value.data()!);
-        await CacheHelper.put(key: 'role', value: userModel!.role); //  cashing role user
+        await CacheHelper.put(
+            key: 'role', value: userModel!.role); //  cashing role user
         emit(LoginSuccessfulState(
             role: value['role'],
             message: 'login success',
@@ -59,30 +60,33 @@ class AuthCubit extends Cubit<AuthState> {
       });
     }).catchError((onError) {
       // if email Error or password Error show message :D
-      if(onError is FirebaseAuthException)
-      {
+      if (onError is FirebaseAuthException) {
         emit(LoginErrorState(onError.message!));
       }
     });
   }
 
-
-  Future<void> register({
-    required String email,
-    required String password,
-    required String phone,
-    required String age,
-    required String name,
-    required String role,
-
-  }) async {
+  Future<void> register(
+      {required String email,
+      required String password,
+      required String phone,
+      required String age,
+      required String name,
+      required String role,
+      required String gender}) async {
     // register function start
     emit(RegisterLoadingState());
-    await FirebaseAuth.instance // firebase auth this library i use it to register i send request Email and password
+    await FirebaseAuth
+        .instance // firebase auth this library i use it to register i send request Email and password
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) {
       // if register successful i will add user data to firebase
       userModel = UserModel(
+          address: '',
+          description: '',
+          bloodType: '',
+          chornic: [],
+          gender: gender,
           phone: phone,
           age: age,
           ban: false,
@@ -97,18 +101,20 @@ class AuthCubit extends Cubit<AuthState> {
       FirebaseFirestore.instance
           .collection('users')
           .doc(value.user!.uid)
-          .set(userModel!.toMap()).then((value) async{
+          .set(userModel!.toMap())
+          .then((value) async {
         emit(RegisterSuccessfulState('Register success'));
       });
     }).catchError((onError) {
-      if(onError is FirebaseAuthException)
-      {
+      if (onError is FirebaseAuthException) {
+        print(onError.message);
         emit(RegisterErrorState(onError.message!));
       }
     });
   }
-  UserDataModel? userDataModel;
+
   Future<void> registerUser({
+    required String gender,
     required String email,
     required String password,
     required String phone,
@@ -117,54 +123,51 @@ class AuthCubit extends Cubit<AuthState> {
     required String role,
     required String boldType,
     required String address,
-    required String chornic,
-
+    required List<String>chornic,
   }) async {
     // register function start
     emit(RegisterLoadingState());
     print(password);
-    await FirebaseAuth.instance // firebase auth this library i use it to register i send request Email and password
+    await FirebaseAuth
+        .instance // firebase auth this library i use it to register i send request Email and password
         .createUserWithEmailAndPassword(email: email, password: password)
-        .then((value)async {
+        .then((value) async {
       // if register successful i will add user data to firebase
       userModel = UserModel(
-          phone: phone,
-          age: age,
-          ban: false,
-          email: email,
-          id: value.user!.uid,
-          online: false,
-          photo:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH6PjyUR8U-UgBWkOzFe38qcO29regN43tlGGk4sRd&s',
-          approved: (role == '2') ? false : true,
-          role: role,
-          name: name ,
-      );
-      userDataModel = UserDataModel(
-        address: address,
-        bloodType: boldType,
         chornic: chornic,
+        bloodType: boldType,
+        description: '',
+        address:address,
+        phone: phone,
+        age: age,
+        ban: false,
+        email: email,
+        id: value.user!.uid,
+        online: false,
+        photo:
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH6PjyUR8U-UgBWkOzFe38qcO29regN43tlGGk4sRd&s',
+        approved: (role == '2') ? false : true,
+        role: role,
+        name: name,
+        gender: gender,
       );
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(value.user!.uid)
-          .set(userModel!.toMap()).then((value) async{
-      });
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(value.user!.uid)
-          .update(userDataModel!.toMap()).then((value) async{
-        emit(RegisterSuccessfulState('Register success'));
-      });
 
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(value.user!.uid)
+          .set(userModel!.toMap())
+          .then((value) async {});
+
+      emit(RegisterSuccessfulState('Register success'));
     }).catchError((onError) {
-      if(onError is FirebaseAuthException)
-      {
+      if (onError is FirebaseAuthException) {
         emit(RegisterErrorState(onError.message!));
       }
     });
   }
-  PharmacyModel ? pharmacyModel;
+
+  PharmacyModel? pharmacyModel;
+
   Future<void> registerPharamcy({
     required String email,
     required String password,
@@ -173,17 +176,21 @@ class AuthCubit extends Cubit<AuthState> {
     required String role,
     required String description,
     required String address,
-
   }) async {
     // register function start
     emit(RegisterLoadingState());
 
-    await FirebaseAuth.instance // firebase auth this library i use it to register i send request Email and password
+    await FirebaseAuth
+        .instance // firebase auth this library i use it to register i send request Email and password
         .createUserWithEmailAndPassword(email: email, password: password)
-        .then((value) async{
-          print(password);
+        .then((value) async {
+      print(password);
       // if register successful i will add user data to firebase
       userModel = UserModel(
+        address: address,
+        description:description,
+        bloodType: '',
+        chornic: [],
         phone: phone,
         age: '',
         ban: false,
@@ -191,30 +198,23 @@ class AuthCubit extends Cubit<AuthState> {
         id: value.user!.uid,
         online: false,
         photo:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH6PjyUR8U-UgBWkOzFe38qcO29regN43tlGGk4sRd&s',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH6PjyUR8U-UgBWkOzFe38qcO29regN43tlGGk4sRd&s',
         approved: (role == '2') ? false : true,
         role: role,
-        name: name ,
+        name: name,
+        gender: '',
       );
 
       await FirebaseFirestore.instance
           .collection('users')
           .doc(value.user!.uid)
-          .set(userModel!.toMap()).then((value) async{
+          .set(userModel!.toMap())
+          .then((value) async {
         emit(RegisterSuccessfulState('Register success'));
       });
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(value.user!.uid)
-          .update({
-        'description':description,
-        'address':address,
-      }).then((value) async{
-        emit(RegisterSuccessfulState('Register success'));
-      });
+      emit(RegisterSuccessfulState('Register success'));
     }).catchError((onError) {
-      if(onError is FirebaseAuthException)
-      {
+      if (onError is FirebaseAuthException) {
         emit(RegisterErrorState(onError.message!));
       }
     });
@@ -230,6 +230,7 @@ class AuthCubit extends Cubit<AuthState> {
         .get()
         .then((value) {
       userModel = UserModel.fromMap(value.data()!);
+
       emit(GetUserDataSuccessfulState('data come true'));
     }).catchError((onError) {
       print(onError.toString());
@@ -242,6 +243,8 @@ class AuthCubit extends Cubit<AuthState> {
     required String phone,
     required String age,
     required String name,
+    required String address,
+    required String description
     // required String role,
   }) async {
     emit(UpdateDataLoadingState());
@@ -254,6 +257,8 @@ class AuthCubit extends Cubit<AuthState> {
       'phone': phone,
       'age': age,
       'email': email,
+      'address': address,
+      'description':description,
     }).then((value) {
       emit(UpdateDataSuccessfulState('done'));
     }).catchError((onError) {
@@ -329,36 +334,38 @@ class AuthCubit extends Cubit<AuthState> {
     adminData = [];
     FirebaseFirestore.instance
         .collection('users')
-        .where('role', isEqualTo: '1',)
+        .where(
+          'role',
+          isEqualTo: '1',
+        )
         .get()
         .then((value) {
       print(value.docs.length);
       value.docChanges.forEach((element) {
-        if(element.doc.data()!['id']==CacheHelper.getDataString(key: 'id')) {
+        if (element.doc.data()!['id'] == CacheHelper.getDataString(key: 'id')) {
           print('same');
-        }else{
+        } else {
           adminData.add(UserModel.fromMap(element.doc.data()!));
-
         }
       });
       emit(GetAdminsStateSuccessful('loading'));
     }).catchError((onError) {
+      print(onError.toString());
       print('Amr');
       emit(GetAdminsStateError('loading'));
     });
   }
 
   // send message firebase
-  Future<void> sendMessage({
-    required String message,
-    required String pharmacyID,
-    required String customerName,
-    required String customerId,
-    required String pharmacyName,
-    required String senderID,
-    required String type,
-    String ? baseName
-  }) async {
+  Future<void> sendMessage(
+      {required String message,
+      required String pharmacyID,
+      required String customerName,
+      required String customerId,
+      required String pharmacyName,
+      required String senderID,
+      required String type,
+      String? baseName}) async {
     emit(SendMessageStateLoading('loading'));
     print(baseName);
     FirebaseFirestore.instance
@@ -367,14 +374,14 @@ class AuthCubit extends Cubit<AuthState> {
         .collection('messages')
         .add({
       'message': message,
-      'senderID':senderID,
+      'senderID': senderID,
       'customerName': customerName,
       'pharmacyID': pharmacyID,
       'pharmacyName': pharmacyName,
       'customerId': customerId,
       'type': type,
       'time': DateTime.now().toString(),
-      'baseName':baseName
+      'baseName': baseName
     }).then((value) {
       print(value);
       emit(SendMessageStateSuccessful('Successful'));
@@ -388,8 +395,8 @@ class AuthCubit extends Cubit<AuthState> {
         .add({
       'message': message,
       'customerName': customerName,
-      'senderID':senderID,
-      'baseName':baseName,
+      'senderID': senderID,
+      'baseName': baseName,
       'pharmacyID': pharmacyID,
       'pharmacyName': pharmacyName,
       'customerId': customerId,
@@ -402,7 +409,9 @@ class AuthCubit extends Cubit<AuthState> {
       emit(SendMessageStateError('onError'));
     });
   }
-  FilePickerResult? result ;
+
+  FilePickerResult? result;
+
   Future<void> pickFile() async {
     result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -417,12 +426,15 @@ class AuthCubit extends Cubit<AuthState> {
       });
     }
   }
-  String  ? baseName ;
-  Future<void> pickFileMessage({required String customerId,required String pharmacyID,
-  required String pharmacyName,
-required String customerName,
-    required String type}) async {
 
+  String? baseName;
+
+  Future<void> pickFileMessage(
+      {required String customerId,
+      required String pharmacyID,
+      required String pharmacyName,
+      required String customerName,
+      required String type}) async {
     result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'doc'],
@@ -431,22 +443,26 @@ required String customerName,
       io.File file = io.File(result!.files.single.path.toString());
       baseName = basename(file.path);
 
-      FirebaseStorage.instance.ref().child(result!.files.single.path.toString()).putFile(file).then((p0) {
+      FirebaseStorage.instance
+          .ref()
+          .child(result!.files.single.path.toString())
+          .putFile(file)
+          .then((p0) {
         p0.ref.getDownloadURL().then((value) {
           sendMessage(
               senderID: CacheHelper.getDataString(key: 'id').toString(),
-            pharmacyName: pharmacyName,
+              pharmacyName: pharmacyName,
               customerId: customerId,
               customerName: customerName,
               message: value,
               pharmacyID: pharmacyID,
               type: type,
-            baseName: baseName
-          );
+              baseName: baseName);
         });
       });
     }
   }
+
   DetailsModelPharmacy? detailsModelPharmacy;
 
   Future<void> getPharmacyDetails() async {
@@ -483,8 +499,8 @@ required String customerName,
       'address': address,
       'approved': false,
       'id': CacheHelper.getDataString(key: 'id'),
-    }).then((value) async{
-     await getPharmacyDetails();
+    }).then((value) async {
+      await getPharmacyDetails();
       emit(AddPharmacyDetailsStateSuccessful('Successful'));
     }).catchError((onError) {
       emit(AddPharmacyDetailsStateError('onError'));
@@ -495,12 +511,13 @@ required String customerName,
   List<UserModel> getAllPharmacyList = [];
   List<UserModel> getAllCustomerList = [];
 
-  Future<void> getAllPharmacy() async{
+  Future<void> getAllPharmacy() async {
     emit(GetAllPharmacyStateLoading('loading'));
     getAllPharmacyList = [];
-  await   FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('users')
-        .where('role',isEqualTo: '2').where('approved',isEqualTo: true)
+        .where('role', isEqualTo: '2')
+        .where('approved', isEqualTo: true)
         .get()
         .then((value) {
       for (var element in value.docChanges) {
@@ -512,12 +529,13 @@ required String customerName,
       emit(GetAllPharmacyStateError('onError'));
     });
   }
-  Future<void> getAllCustomer() async{
+
+  Future<void> getAllCustomer() async {
     emit(GetAllCustomerScreenLoading());
     getAllCustomerList = [];
-    await   FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('users')
-        .where('role',isEqualTo: '3')
+        .where('role', isEqualTo: '3')
         .get()
         .then((value) {
       value.docChanges.forEach((element) {

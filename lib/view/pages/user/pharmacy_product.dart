@@ -13,6 +13,7 @@ import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
 import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
 import 'package:graduation_project/view_model/bloc/pharmacy_product/pharmacy_cubit.dart';
 
+import '../../../code/resource/string_manager.dart';
 import 'MedicineDetailsScreen.dart';
 import 'chat_screen.dart';
 
@@ -87,7 +88,7 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                                   height: 10.h,
                                 ),
                                 RatingBar.builder(
-                                  initialRating: 3,
+                                  initialRating: cubit.userRate.toDouble(),
                                   minRating: 1,
                                   direction: Axis.horizontal,
                                   allowHalfRating: true,
@@ -134,6 +135,18 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                     Icons.star,
                     color: Colors.white,
                   )),
+              IconButton(
+                  onPressed: () {
+                 showDialog(context: context, builder: (context) {
+                   return AlertDialog(
+                     content: Text(LayoutCubit.get(context).pahrmacyModel!.description),
+                   );
+                 },);
+                  },
+                  icon: Icon(
+                    Icons.info,
+                    color: Colors.white,
+                  )),
             ],
           ),
           body: (state is GetProductLodaing)
@@ -144,77 +157,82 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                   width: double.infinity,
                   child: Padding(
                     padding: const EdgeInsets.all(20),
-                    child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 15.w,
-                          mainAxisSpacing: 15.h,
-                          mainAxisExtent: 300.h,
-                        ),
-                        shrinkWrap: true,
-                        itemCount: cubit.productsModel.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          MedicineDetailsScreen(
-                                            productModel:
-                                                cubit.productsModel[index],
-                                          )));
-                            },
-                            child: Container(
-                              width: 514.w,
-                              height: 540.h,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15.r)),
-                              child: Column(
-                                children: [
-                                  Image.network(
-                                    cubit.productsModel[index].image,
-                                    width: 80.w,
-                                    height: 168.h,
-                                  ),
-                                  Text(cubit.productsModel[index].title,
-                                      style: TextStyle(
-                                        fontSize: 20.sp,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis),
-                                  Text(
-                                      "SAR ${cubit.productsModel[index].price}",
-                                      style: TextStyle(
-                                        fontSize: 20.sp,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis),
-                                  ElevatedButton.icon(
-                                    icon: Icon(Icons.shopping_cart),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  MedicineDetailsScreen(
-                                                    productModel: cubit
-                                                        .productsModel[index],
-                                                  )));
-                                    },
-                                    label: const Text("BUY"),
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xff30CA00)),
-                                  )
-                                ],
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        PharmacyCubit.get(context).getPharmacySpecificProduct(
+                            pharmacyID: LayoutCubit.get(context).pahrmacyModel!.id.toString());
+                      },
+                      child: GridView.builder(
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 15.w,
+                            mainAxisSpacing: 15.h,
+                            mainAxisExtent: 300.h,
+                          ),
+                          itemCount: cubit.productsModel.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            MedicineDetailsScreen(
+                                              productModel:
+                                                  cubit.productsModel[index],
+                                            )));
+                              },
+                              child: Container(
+                                width: 514.w,
+                                height: 540.h,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15.r)),
+                                child: Column(
+                                  children: [
+                                    Image.network(
+                                      cubit.productsModel[index].image,
+                                      width: 80.w,
+                                      height: 168.h,
+                                    ),
+                                    Text(cubit.productsModel[index].title,
+                                        style: TextStyle(
+                                          fontSize: 20.sp,
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis),
+                                    Text(
+                                        "SAR ${cubit.productsModel[index].price}",
+                                        style: TextStyle(
+                                          fontSize: 20.sp,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis),
+                                    ElevatedButton.icon(
+                                      icon: Icon(Icons.shopping_cart),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    MedicineDetailsScreen(
+                                                      productModel: cubit
+                                                          .productsModel[index],
+                                                    )));
+                                      },
+                                      label: const Text(ADD_TO_CARD),
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              const Color(0xff30CA00)),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        }),
+                            );
+                          }),
+                    ),
                   ),
                 ),
         );

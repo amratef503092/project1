@@ -15,10 +15,10 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
 
   var items = [
-    'User',
+    'Customer',
     'Pharmacy',
   ];
-  String dropdownvalue = 'User';
+  String dropdownvalue = 'Customer';
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
@@ -30,7 +30,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             backgroundColor: Colors.green,
           ));
 
-          Navigator.pop(context);
+          Navigator.maybePop(context);
         } else if (state is RegisterErrorState) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(state.message),
@@ -86,7 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           });
                         },
                       ),
-                      (dropdownvalue == 'User') ? const UserIfo() : const PharmacyInfo(),
+                      (dropdownvalue == 'Customer') ? const UserIfo() : const PharmacyInfo(),
                     ],
                   ),
                 ),

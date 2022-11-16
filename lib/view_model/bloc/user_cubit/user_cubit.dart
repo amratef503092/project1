@@ -17,8 +17,6 @@ class UserCubit extends Cubit<UserState> {
   static UserCubit get(context) => BlocProvider.of<UserCubit>(context);
   List<ProductModel> productModel = [];
   List<ProductModel> search = [];
-
-
   List<ProductModel> productModelOrder = [];
 
   Future<void> getMedicine() async {
@@ -43,6 +41,23 @@ class UserCubit extends Cubit<UserState> {
 
     FirebaseFirestore.instance
         .collection('users')
+        .where('role', isEqualTo: '2').where('approved',isEqualTo: true)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        pahrmacyModel.add(PharmacyModel.fromMap(element.data()));
+      }
+      emit(GetPharmacySuccessfulState());
+    }).catchError((onError) {
+      emit(GetPharmacyErrorState(onError.toString()));
+    });
+  }
+  Future<void> getPharmacyAdmin() async {
+    emit(GetPharmacyLoadingState());
+    pahrmacyModel = [];
+
+    FirebaseFirestore.instance
+        .collection('users')
         .where('role', isEqualTo: '2')
         .get()
         .then((value) {
@@ -54,7 +69,6 @@ class UserCubit extends Cubit<UserState> {
       emit(GetPharmacyErrorState(onError.toString()));
     });
   }
-
   Future<void> buyProduct(
       {required ProductModel productModel,
       required int quantity,
@@ -148,11 +162,14 @@ class UserCubit extends Cubit<UserState> {
             .then((value) async {
           for (var element in value.docs) {
             myServiceOrders.add(GetServiceModel.fromMap(element.data()));
-            print(element.data());
           }
+        }).whenComplete(() {
+          emit(GetMyProductSuccessfulState());
+
         });
-        emit(GetMyProductSuccessfulState());
+
       });
+
     }).catchError((onError) {
       emit(GetMyProductErrorState(onError.toString()));
     });
