@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 class SQLHelper {
   static Future<Database> initDb() async {
     return sql.openDatabase(
-      'cardProduct2.db', //database name
+      'cardProduct30.db', //database name
       version: 1, //version number
       onCreate: (Database database, int version) async {
         await createTable(database);
@@ -16,11 +16,9 @@ class SQLHelper {
   static Future<void> createTable(Database database) async {
     await database.execute("""CREATE TABLE card(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        title TEXT,
         idProduct TEXT,
-        price NUMERIC,
-        image TEXT,
         pharmacyID TEXT,
+        image TEXT,
         quantity NUMERIC)
       """);
     debugPrint("table Created");
@@ -34,22 +32,18 @@ class SQLHelper {
   // quantity INTEGER,
   //add
   static Future<dynamic> addCard({
-    required String title,
     required String idProduct,
-    required num price,
-    required String image,
     required num quantity,
     required String pharmacyID,
+    required String image
   }) async {
     print(quantity);
     final db = await SQLHelper.initDb(); //open database
     final data = {
-      'title': title,
       'idProduct': idProduct,
-      'price': price,
-      'image': image,
+      'pharmacyID':pharmacyID,
       'quantity': quantity,
-      'pharmacyID': pharmacyID
+      'image':image
     }; //create data in map
     var id;
     if (quantity == 0) {
@@ -131,7 +125,7 @@ class SQLHelper {
   static Future<void> deleteTable(int id) async {
     final db = await SQLHelper.initDb();
     try {
-      await db.delete('card');
+      await db.delete("card");
     } catch (err) {
       print("Something went wrong when : $err");
     }

@@ -7,6 +7,8 @@ class ProductModel{
   String title;
   String type;
   int quantity;
+  String imagePharmacy;
+  bool needPrescription;
 
   ProductModel({
     required this.description,
@@ -17,6 +19,8 @@ class ProductModel{
     required this.title,
     required this.type,
     required this.quantity,
+    required this.imagePharmacy,
+    required this.needPrescription,
   });
 
   Map<String, dynamic> toMap() {
@@ -29,6 +33,8 @@ class ProductModel{
       'title': this.title,
       'type': this.type,
       'quantity': this.quantity,
+      'imagePharmacy': this.imagePharmacy,
+      'needPrescription': this.needPrescription,
     };
   }
 
@@ -42,6 +48,8 @@ class ProductModel{
       title: map['title'] as String,
       type: map['type'] as String,
       quantity: map['quantity'] as int,
+      imagePharmacy: map['imagePharmacy'] ?? '' ,
+      needPrescription: map['needPrescription'] as bool,
     );
   }
 }

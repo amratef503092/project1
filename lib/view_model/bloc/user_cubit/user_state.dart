@@ -33,4 +33,17 @@ class GetMyProductErrorState extends UserState {
   final String error;
   GetMyProductErrorState(this.error);
 }
+// get My Product state end
+class PickImageLoadingState extends UserState {}
+class PickImageSuccessfulState extends UserState {}
+class PickImageErrorState extends UserState {
+  final String error;
+  PickImageErrorState(this.error);
+}
+class UploadImageStateLoading extends UserState {}
+class UploadImageSuccessfulState extends UserState {}
+class UploadImageErrorState extends UserState {
+  final String error;
+  UploadImageErrorState(this.error);
+}
 

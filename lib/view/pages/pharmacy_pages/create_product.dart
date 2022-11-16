@@ -4,11 +4,11 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import '../../../view_model/bloc/approve/approve_cubit.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_text_field.dart';
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class CreateProduct extends StatefulWidget {
   const CreateProduct({Key? key}) : super(key: key);
@@ -30,7 +30,13 @@ final List<String> items = [
   'medicine',
   'Medical equipment',
 ];
+final List<String> items2 = [
+  'No',
+  'Yes',
+
+];
 String? selectedValue;
+String ? selectedValue2;
 
 class _CreateProductState extends State<CreateProduct> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -64,7 +70,7 @@ class _CreateProductState extends State<CreateProduct> {
       builder: (context, state) {
         var approveCubit = ApproveCubit.get(context);
         return ModalProgressHUD(
-          inAsyncCall:approveCubit.wait ,
+          inAsyncCall: approveCubit.wait,
           child: Scaffold(
             appBar: AppBar(
               title: const Text('Create Product'),
@@ -135,7 +141,8 @@ class _CreateProductState extends State<CreateProduct> {
                               height: 20,
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -154,20 +161,20 @@ class _CreateProductState extends State<CreateProduct> {
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 color:
-                                                Theme.of(context).hintColor,
+                                                    Theme.of(context).hintColor,
                                               ),
                                             ),
                                             items: items
                                                 .map((item) =>
-                                                DropdownMenuItem<String>(
-                                                  value: item,
-                                                  child: Text(
-                                                    item,
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ))
+                                                    DropdownMenuItem<String>(
+                                                      value: item,
+                                                      child: Text(
+                                                        item,
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ))
                                                 .toList(),
                                             value: selectedValue,
                                             onChanged: (value) {
@@ -183,7 +190,53 @@ class _CreateProductState extends State<CreateProduct> {
                                       ),
                                     ],
                                   ),
-
+                                  SizedBox(
+                                    height: 20.h,
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Text("Need prescription : "),
+                                      SizedBox(
+                                        width: 10.w,
+                                      ),
+                                      SizedBox(
+                                        width: 220.w,
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton2(
+                                            hint: Text(
+                                              'Select Item',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color:
+                                                Theme.of(context).hintColor,
+                                              ),
+                                            ),
+                                            items: items2
+                                                .map((item) =>
+                                                DropdownMenuItem<String>(
+                                                  value: item,
+                                                  child: Text(
+                                                    item,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ))
+                                                .toList(),
+                                            value: selectedValue2,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                selectedValue2 = value as String;
+                                              });
+                                            },
+                                            buttonHeight: 40,
+                                            buttonWidth: 140,
+                                            itemHeight: 40,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   SizedBox(
                                     height: 20.h,
                                   ),
@@ -200,7 +253,6 @@ class _CreateProductState extends State<CreateProduct> {
                                   SizedBox(
                                     height: 20.h,
                                   ),
-
                                   CustomTextField(
                                     controller: descriptionController,
                                     fieldValidator: (String? value) {
@@ -243,18 +295,21 @@ class _CreateProductState extends State<CreateProduct> {
                                   SizedBox(
                                     height: 20.h,
                                   ),
+
                                   CustomButton(
                                     function: () {
                                       if (formKey.currentState!.validate() &&
                                           approveCubit.image != null &&
-                                          selectedValue != null) {
+                                          selectedValue != null&&selectedValue2 != null) {
                                         ApproveCubit.get(context)
                                             .addProduct(
+                                          needPrescription: (selectedValue2 == 'Yes')? true : false,
                                           title: titleController.text,
-                                          description: descriptionController.text,
+                                          description:
+                                              descriptionController.text,
                                           price: int.parse(costController.text),
-                                          quantity:
-                                              int.parse(quantityController.text),
+                                          quantity: int.parse(
+                                              quantityController.text),
                                           context: context,
                                           type: selectedValue!,
                                         )
@@ -264,18 +319,19 @@ class _CreateProductState extends State<CreateProduct> {
                                           descriptionController.text = '';
                                           costController.text = '';
 
-                                          ApproveCubit.get(context).image = null;
+                                          ApproveCubit.get(context).image =
+                                              null;
                                         }).whenComplete(() {});
                                       } else if (selectedValue == null) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(const SnackBar(
-                                                content:
-                                                    Text("Please Select Type")));
+                                                content: Text(
+                                                    "Please Select Type")));
                                       } else {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(const SnackBar(
-                                                content:
-                                                    Text("Please Select Image")));
+                                                content: Text(
+                                                    "Please Select Image")));
                                       }
                                     },
                                     widget: Text("Post Product"),

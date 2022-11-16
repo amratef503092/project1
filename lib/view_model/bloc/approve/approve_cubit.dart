@@ -228,6 +228,7 @@ class ApproveCubit extends Cubit<ApproveState> {
     required int quantity,
     required BuildContext context,
     required String type,
+    required bool needPrescription,
   }) async {
     String? docId;
     emit(AddProductStateLoading());
@@ -239,6 +240,7 @@ class ApproveCubit extends Cubit<ApproveState> {
       'pharmacyID': CacheHelper.getDataString(key: 'id'),
       'quantity': quantity,
       'type': type,
+      'needPrescription' : needPrescription
     }).then((value) async {
       docId = value.id;
       await FirebaseFirestore.instance

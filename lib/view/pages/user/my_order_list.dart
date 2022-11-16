@@ -1,9 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/view_model/bloc/order_cubit/order_cubit.dart';
+import 'package:graduation_project/view_model/database/local/sql_lite.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
-import '../../../view_model/bloc/edit_cubit/edit_cubit.dart';
+import '../../../view_model/bloc/get_price/get_price_cubit.dart';
 
 class MyOrderList extends StatefulWidget {
   const MyOrderList({Key? key}) : super(key: key);
@@ -13,10 +17,24 @@ class MyOrderList extends StatefulWidget {
 }
 
 class _MyOrderListState extends State<MyOrderList> {
+  num totalPrice = 0;
+
+  GetPriceCubit priceCubit = GetPriceCubit();
+  List<int> priceList = [];
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => OrderCubit(),
+    priceList.clear();
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => OrderCubit()..getOrderData(),
+        ),
+        BlocProvider(
+          create: (context) =>
+              priceCubit..totalPrice(OrderCubit.get(context).product),
+        ),
+      ],
       child: Scaffold(
         appBar: AppBar(
           title: const Text("My Order List"),
@@ -26,92 +44,157 @@ class _MyOrderListState extends State<MyOrderList> {
             // TODO: implement listener
           },
           builder: (context, state) {
-            return FutureBuilder(
-              future: OrderCubit.get(context).getOrderData(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return ListView.builder(
+            var orderCubit = OrderCubit.get(context);
+            priceCubit.totalPrice(OrderCubit.get(context).product);
+            return ModalProgressHUD(
+              inAsyncCall: state is SendDataToDataBaseLoading,
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: SizedBox(
+                  height: 1.sh,
+                  width: 1.sw,
+                  child: ListView.builder(
+                    itemCount: orderCubit.product.length,
                     itemBuilder: (context, index) {
-                      print('Amr');
-                      return Padding(
-                        padding: EdgeInsets.all(14),
-                        child: Card(
-                          child: SizedBox(
-                            height: 90,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      return Card(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Column(
                               children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image(
-                                      image: NetworkImage(snapshot
-                                          .data![index].image
-                                          .toString()),
-                                      width: 100.w,
-                                      height: 50.h,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    BlocProvider(
-                                      create: (context) => EditCubit(),
-                                      child: BlocConsumer<EditCubit, EditState>(
-                                        listener: (context, state) {
-                                          // TODO: implement listener
-                                        },
-                                        builder: (context, state) {
-                                          var cubit = EditCubit.get(context);
-
-                                          return Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              IconButton(
-                                                  onPressed: () {
-                                                    // cubit.decrement(
-                                                    //     count: snapshot.data![index]
-                                                    //         ['quantity']);
-
-                                                    // SQLHelper.updateCardOrder(
-                                                    //   quantity: quantity,
-                                                    //   idProduct: snapshot.data![index]
-                                                    //   ['idProduct'],
-                                                    // );
-                                                  },
-                                                  icon:
-                                                      const Icon(Icons.remove)),
-                                              Text(snapshot
-                                                  .data![index].quantity
-                                                  .toString()),
-                                              IconButton(
-                                                  onPressed: () {
-                                                    cubit.increase(snapshot
-                                                        .data![index]
-                                                        .quantity++);
-                                                  },
-                                                  icon: const Icon(Icons.add)),
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    )
-                                  ],
+                                SizedBox(
+                                  height: 0.1.sh,
+                                  width: 0.2.sw,
+                                  child: Image.network(
+                                    orderCubit.product[index].image,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                                Text(snapshot.data![index].title),
-                                Text(snapshot.data![index].price.toString()),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            if (orderCubit
+                                                    .product[index].quantity >
+                                                1) {
+                                              orderCubit
+                                                  .product[index].quantity--;
+                                              priceCubit.totalPrice(
+                                                  orderCubit.product);
+                                            }
+                                            SQLHelper.updateCardOrder(
+                                              idProduct:
+                                                  orderCubit.product[index].id,
+                                              quantity: orderCubit
+                                                  .product[index].quantity,
+                                            ).then((value) {
+                                              if (kDebugMode) {
+                                                print("update");
+                                              }
+                                            });
+                                          });
+                                        },
+                                        icon: const Icon(Icons.remove)),
+                                    const Text("Quantity : "),
+                                    Text(orderCubit.product[index].quantity
+                                        .toString()),
+                                    IconButton(
+                                        onPressed: () {
+                                          ScaffoldMessenger.of(context)
+                                              .clearSnackBars();
+                                          FirebaseFirestore.instance
+                                              .collection('product')
+                                              .doc(orderCubit.product[index].id)
+                                              .get()
+                                              .then((value) {
+                                            if (value.data()!['quantity'] >
+                                                orderCubit
+                                                    .product[index].quantity) {
+                                              setState(() {
+                                                orderCubit
+                                                    .product[index].quantity++;
+                                                priceCubit.totalPrice(
+                                                    orderCubit.product);
+                                                SQLHelper.updateCardOrder(
+                                                  idProduct: orderCubit
+                                                      .product[index].id,
+                                                  quantity: orderCubit
+                                                      .product[index].quantity,
+                                                ).then((value) {
+                                                  if (kDebugMode) {
+                                                    print("update");
+                                                  }
+                                                });
+                                              });
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(const SnackBar(
+                                                      content: Text(
+                                                          "Sorry, we don't have enough quantity")));
+                                            }
+                                          });
+                                        },
+                                        icon: const Icon(Icons.add)),
+                                  ],
+                                )
                               ],
                             ),
-                          ),
+                            Text(
+                              orderCubit.product[index].title.toString(),
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                    orderCubit.product[index].price.toString()),
+
+                              ],
+                            ),
+                          ],
                         ),
                       );
                     },
-                    itemCount: snapshot.data!.length,
-                  );
-                } else if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else {
-                  return const CircularProgressIndicator();
-                }
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+        bottomSheet: BlocConsumer<OrderCubit, OrderState>(
+          listener: (context, state) {
+            // TODO: implement listener
+          },
+          builder: (context, state) {
+            return InkWell(
+              onTap: () async {
+                OrderCubit.get(context).sendData(context).whenComplete(() {
+                  OrderCubit.get(context).product.clear();
+                  OrderCubit.get(context).RemoveData();
+                });
               },
+              child: Container(
+                height: 0.1.sh,
+                width: 1.sw,
+                color: Colors.green,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Text(
+                      "Total Price",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    BlocConsumer<GetPriceCubit, GetPriceState>(
+                      listener: (context, state) {
+                        // TODO: implement listener
+                      },
+                      builder: (context, state) {
+                        return Text("${GetPriceCubit.get(context).total} SAR",
+                            style: const TextStyle(color: Colors.white));
+                      },
+                    ),
+                  ],
+                ),
+              ),
             );
           },
         ),

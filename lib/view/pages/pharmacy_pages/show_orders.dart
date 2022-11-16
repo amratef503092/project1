@@ -212,7 +212,7 @@ class _PendingState extends State<Pending> {
                       },
                     ),
                   )
-                : Center(
+                : const Center(
                     child: Text("No Data"),
                   );
       },

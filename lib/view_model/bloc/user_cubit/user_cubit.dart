@@ -1,13 +1,19 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/model/product_model.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
-
+import 'dart:io' as io;
 import '../../../model/get_service_model.dart';
 import '../../../model/order_model.dart';
 import '../../../model/pharmacy_model.dart';
+import '../../database/local/sql_lite.dart';
 
 part 'user_state.dart';
 
@@ -41,7 +47,7 @@ class UserCubit extends Cubit<UserState> {
 
     FirebaseFirestore.instance
         .collection('users')
-        .where('role', isEqualTo: '2').where('approved',isEqualTo: true)
+        .where('role', isEqualTo: '2').where('approved', isEqualTo: true)
         .get()
         .then((value) {
       for (var element in value.docs) {
@@ -52,6 +58,7 @@ class UserCubit extends Cubit<UserState> {
       emit(GetPharmacyErrorState(onError.toString()));
     });
   }
+
   Future<void> getPharmacyAdmin() async {
     emit(GetPharmacyLoadingState());
     pahrmacyModel = [];
@@ -69,11 +76,11 @@ class UserCubit extends Cubit<UserState> {
       emit(GetPharmacyErrorState(onError.toString()));
     });
   }
-  Future<void> buyProduct(
-      {required ProductModel productModel,
-      required int quantity,
-      required String address,
-      required String title}) async {
+
+  Future<void> buyProduct({required ProductModel productModel,
+    required int quantity,
+    required String address,
+    required String title}) async {
     int price = productModel.price * quantity;
     emit(BuyProductLoadingState());
     await FirebaseFirestore.instance
@@ -165,13 +172,88 @@ class UserCubit extends Cubit<UserState> {
           }
         }).whenComplete(() {
           emit(GetMyProductSuccessfulState());
-
         });
-
       });
-
     }).catchError((onError) {
       emit(GetMyProductErrorState(onError.toString()));
     });
   }
+
+  XFile ?image;
+
+  Future<void> pickImageFromCamera() async
+  {
+    emit(PickImageLoadingState());
+    image = (await ImagePicker().pickImage(source: ImageSource.camera))!;
+    if (image != null) {
+      emit(PickImageSuccessfulState());
+    }
+  }
+
+  Future<void> pickImageFromGallery() async
+  {
+    emit(PickImageLoadingState());
+    image = (await ImagePicker().pickImage(source: ImageSource.gallery))!;
+    if (image != null) {
+      emit(PickImageSuccessfulState());
+    }
+  }
+
+  String ? url;
+
+  Future<void> uploadFile(BuildContext context , ProductModel productModel ,count) async {
+    emit(UploadImageStateLoading());
+    if (image == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No file was selected'),
+        ),
+      );
+
+      return;
+    }
+
+    UploadTask uploadTask;
+
+    // Create a Reference to the file
+    Reference ref = FirebaseStorage.instance.ref().child('/${image!.name}');
+
+    final metadata = SettableMetadata(
+      contentType: 'image/jpeg',
+      customMetadata: {'picked-file-path': image!.path},
+    );
+
+    if (kIsWeb) {
+      uploadTask = ref.putData(await image!.readAsBytes(), metadata);
+    } else {
+      if (kDebugMode) {
+        print('Amr2');
+      }
+      ref.putFile(io.File(image!.path), metadata).then((p0) =>
+      {
+        ref.getDownloadURL().then((value) {
+          // here modify the profile pic
+          SQLHelper.addCard(
+            image: value,
+            idProduct: productModel.id,
+            pharmacyID: productModel.pharmacyID,
+            quantity: count ,
+          )
+              .then((value) {
+            Navigator.pop(context);
+            debugPrint('Add Data in card Successful');
+          });
+          if (kDebugMode) {
+            print(value);
+          }
+          emit(UploadImageSuccessfulState());
+        })
+      }).catchError((onError) {
+        print(onError);
+        emit(UploadImageErrorState(onError.toString())
+        );
+      });
+    }
+  }
+
 }
