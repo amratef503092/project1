@@ -33,9 +33,9 @@ class _LayoutPharmacyState extends State<LayoutPharmacy> {
         return Scaffold(
 
 
-          body:cubit.Pharmacy[cubit.currentIndex],
+          body:cubit.Pharmacy[cubit.currentPharamcy],
           bottomNavigationBar: BottomNavigationBar(
-            currentIndex: cubit.currentIndex,
+            currentIndex: cubit.currentPharamcy,
             type: BottomNavigationBarType.fixed,
             onTap: (index){
               cubit.changeBottomNavBar(index);

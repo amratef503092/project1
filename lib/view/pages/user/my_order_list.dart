@@ -147,7 +147,21 @@ class _MyOrderListState extends State<MyOrderList> {
                               children: [
                                 Text(
                                     orderCubit.product[index].price.toString()),
-
+                                IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        SQLHelper.deleteCardOrder(
+                                                idProduct: orderCubit
+                                                    .product[index].id)
+                                            .then((value) {
+                                          orderCubit.product.removeAt(index);
+                                          if (kDebugMode) {
+                                            print("delete");
+                                          }
+                                        });
+                                      });
+                                    },
+                                    icon: const Icon(Icons.delete))
                               ],
                             ),
                           ],

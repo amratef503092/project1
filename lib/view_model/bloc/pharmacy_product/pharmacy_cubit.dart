@@ -1,4 +1,5 @@
 import 'dart:io' as io;
+
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -8,12 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../../model/get_product_model.dart';
 import '../../../model/get_service_model.dart';
 import '../../../model/order_model.dart';
 import '../../../model/product_model.dart';
 import '../../../model/service_model.dart';
+import '../../../model/user_info_model.dart';
 import '../../../model/user_model.dart';
+
 part 'pharmacy_state.dart';
+
 class PharmacyCubit extends Cubit<PharmacyState> {
   PharmacyCubit() : super(PharmacyInitial());
 
@@ -114,18 +120,19 @@ class PharmacyCubit extends Cubit<PharmacyState> {
     await FirebaseFirestore.instance
         .collection('product')
         .doc(id)
-        .collection('orders').get().then((value) {
-          for (var element in value.docs) {
-            FirebaseFirestore.instance
-                .collection('product')
-                .doc(id)
-                .collection('orders').doc(element.id).delete();
-          }
-
-    }).then((value) async{
-     await FirebaseFirestore.instance
-          .collection('product')
-          .doc(id).delete();
+        .collection('orders')
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        FirebaseFirestore.instance
+            .collection('product')
+            .doc(id)
+            .collection('orders')
+            .doc(element.id)
+            .delete();
+      }
+    }).then((value) async {
+      await FirebaseFirestore.instance.collection('product').doc(id).delete();
       getPharmacyProduct();
       emit(DeleteProductSuccessful('Successful'));
     }).catchError((onError) {
@@ -136,59 +143,62 @@ class PharmacyCubit extends Cubit<PharmacyState> {
 
   List<OrderModel> orders = [];
   List<ProductModel> productsOrder = [];
-  List<DataRow> productData = [];
   List<GetServiceModel> services = [];
+  List<GetProductModel> products = [];
+  List<UserInfo> users = [];
+
   Future<void> getOrders(String status) async {
     emit(GetOrderLoading());
-    orders = [];
+    products = [];
     await FirebaseFirestore.instance
-        .collection('product')
-        .where('pharmacyID', isEqualTo: CacheHelper.getDataString(key: 'id'))
+        .collection('Orders')
+        .where('PharmacyId', isEqualTo: CacheHelper.getDataString(key: 'id'))
+        .where('orderStatus', isEqualTo: status)
         .get()
         .then((value) async {
-      value.docs.forEach((element) async {
+      for (var element in value.docs) {
+        products.add(GetProductModel.fromMap(element.data()));
+      }
+      for (var element in products) {
         await FirebaseFirestore.instance
-            .collection('product')
-            .doc(element.id)
-            .collection('orders')
-            .where('orderStatus', isEqualTo: status)
+            .collection('users')
+            .where('id', isEqualTo: element.userID)
             .get()
             .then((value) {
-          value.docs.forEach((element) {
-            orders.add(OrderModel.fromMap(element.data()));
-          });
-        });
-        for (var element in orders) {
-          await FirebaseFirestore.instance
-              .collection('product')
-              .where(element.productID)
-              .get()
-              .then((value) {
-            for (var element in value.docs) {
-              productsOrder.add(ProductModel.fromMap(element.data()));
-            }
-          });
-        }
+          users.add(UserInfo.fromMap(value.docs[0].data()));
+        }).then((value) {
 
-        emit(GetOrderSuccessful('Successful'));
-      });
+        });
+      }
+      emit(GetOrderSuccessful('Successful'));
+
     }).catchError((onError) {
       print(onError);
       emit(GetOrderError('Error'));
     });
   }
+
   Future<void> getOrdersService(String status) async {
     emit(GetOrderLoading());
     services = [];
-    await FirebaseFirestore.instance.collection('services').where('pharmacyID', isEqualTo: CacheHelper.getDataString(key: 'id')).get().then((value) async {
-      for (var element in value.docs)  {
-        await FirebaseFirestore.instance.collection('services').doc(element.id).collection('orders').where('status', isEqualTo: status).get().then((value) {
+    await FirebaseFirestore.instance
+        .collection('services')
+        .where('pharmacyID', isEqualTo: CacheHelper.getDataString(key: 'id'))
+        .get()
+        .then((value) async {
+      for (var element in value.docs) {
+        await FirebaseFirestore.instance
+            .collection('services')
+            .doc(element.id)
+            .collection('orders')
+            .where('status', isEqualTo: status)
+            .get()
+            .then((value) {
           for (var element in value.docs) {
             services.add(GetServiceModel.fromMap(element.data()));
           }
           print(services.length);
         });
-
       }
       emit(GetOrderSuccessful('Successful'));
     }).catchError((onError) {
@@ -196,9 +206,11 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       emit(GetOrderError('Error'));
     });
   }
-  Future<void> rejectService(
-      {required String orderID, required String productID,required int index}) async {
 
+  Future<void> rejectService(
+      {required String orderID,
+      required String productID,
+      required int index}) async {
     emit(AcceptOrderLoading());
     await FirebaseFirestore.instance
         .collection('services')
@@ -213,62 +225,61 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       emit(AcceptOrderError('Error'));
     });
   }
+
   Future<void> acceptOrderService(
-      {required String orderID, required String productID , required int index}) async {
+      {required String orderID,
+      required String productID,
+      required int index}) async {
     emit(AcceptOrderLoading());
-      await FirebaseFirestore.instance
-          .collection('services')
-          .doc(productID)
-          .collection('orders')
-          .doc(orderID)
-          .update({
-        'status': 'Accepted',
+    await FirebaseFirestore.instance
+        .collection('services')
+        .doc(productID)
+        .collection('orders')
+        .doc(orderID)
+        .update({
+      'status': 'Accepted',
     }).then((value) {
       getOrdersService('Pending');
-      }).catchError((onError) {
+    }).catchError((onError) {
       emit(AcceptOrderError('Error'));
     });
   }
+
   Future<void> acceptOrder(
-      {required String orderID, required String productID , required int index}) async {
+      {required String orderID,
+      required String productID,
+        required int quantity,
+      required int index}) async {
     emit(AcceptOrderLoading());
     await FirebaseFirestore.instance
         .collection('product')
         .doc(productID)
         .update({
-      'quantity': FieldValue.increment(-1),
+      'quantity': FieldValue.increment(-quantity),
     }).then((value) async {
       await FirebaseFirestore.instance
-          .collection('product')
-          .doc(productID)
-          .collection('orders')
+          .collection('Orders')
           .doc(orderID)
           .update({
         'orderStatus': 'Accepted',
       }).then((value) {
-        orders.removeAt(index);
+        products.removeAt(index);
         emit(AcceptOrderSuccessful('Successful'));
       });
     }).catchError((onError) {
       emit(AcceptOrderError('Error'));
     });
   }
-  Future<void> reject(
-      {required String orderID, required String productID,required int index}) async {
+
+  Future<void> reject({required String orderID, required int index}) async {
     emit(AcceptOrderLoading());
 
-      await FirebaseFirestore.instance
-          .collection('product')
-          .doc(productID)
-          .collection('orders')
-          .doc(orderID)
-          .update({
-        'orderStatus': 'Reject',
-      }).then((value) {
-
-        orders.removeAt(index);
-        emit(AcceptOrderSuccessful('Successful'));
-      }).catchError((onError) {
+    await FirebaseFirestore.instance.collection('Orders').doc(orderID).update({
+      'orderStatus': 'Reject',
+    }).then((value) {
+      products.removeAt(index);
+      emit(AcceptOrderSuccessful('Successful'));
+    }).catchError((onError) {
       emit(AcceptOrderError('Error'));
     });
   }
@@ -292,7 +303,9 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       emit(GetProductError('onError'));
     });
   }
+
   List<ServiceModel> allservices = [];
+
   Future<void> getPharmacySpecificService({required String pharmacyID}) async {
     allservices = [];
     emit(GetServiceLoading(''));
@@ -387,7 +400,6 @@ class PharmacyCubit extends Cubit<PharmacyState> {
           .add({
         'userID': CacheHelper.getDataString(key: 'id'),
         'rate': rate,
-
       }).then((value) async {
         await FirebaseFirestore.instance
             .collection('users')
@@ -399,27 +411,31 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         }).then((value) {
           emit(PostRateSuccessful('Successful'));
         });
-      }
-
-      ).catchError((onError) {
+      }).catchError((onError) {
         print(onError);
         emit(PostRateError('Error'));
       });
-    }else{
+    } else {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(pharmacyId)
-          .collection('rate').where('userID',isEqualTo: CacheHelper.getDataString(key: 'id'))
-          .get().then((value) {
-            value.docs.forEach((element) {
-              FirebaseFirestore.instance.collection('users').doc(pharmacyId).collection('rate').doc(element.id).update({
-                'rate': rate,
-              }).then((value) {
-                emit(PostRateSuccessful('Successful'));
-              });
-            });
-
-    });
+          .collection('rate')
+          .where('userID', isEqualTo: CacheHelper.getDataString(key: 'id'))
+          .get()
+          .then((value) {
+        value.docs.forEach((element) {
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(pharmacyId)
+              .collection('rate')
+              .doc(element.id)
+              .update({
+            'rate': rate,
+          }).then((value) {
+            emit(PostRateSuccessful('Successful'));
+          });
+        });
+      });
     }
   }
 
@@ -471,26 +487,35 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       emit(GetUserRateError('Error'));
     });
   }
-  Future<void>buyService({required String serviceID , required String pharmacyID ,required String address ,required int cost ,
-    required String title}) async
-  {
+
+  Future<void> buyService(
+      {required String serviceID,
+      required String pharmacyID,
+      required String address,
+      required int cost,
+      required String title}) async {
     emit(BuyServiceLoading(''));
-    await FirebaseFirestore.instance.collection('services').
-    doc(serviceID).collection('orders').add({
-      'userID':CacheHelper.getDataString(key: 'id'),
-      'pharmacyID':pharmacyID,
-      'serviceID':serviceID,
-      'address'  :address,
-      'status' : 'pending',
-      'title' :title,
-      "cost" : cost,
-
-    }).then((value)  async{
-      await FirebaseFirestore.instance.collection('services').
-      doc(serviceID).collection('orders').doc(value.id).update({
-        'id':value.id,
+    await FirebaseFirestore.instance
+        .collection('services')
+        .doc(serviceID)
+        .collection('orders')
+        .add({
+      'userID': CacheHelper.getDataString(key: 'id'),
+      'pharmacyID': pharmacyID,
+      'serviceID': serviceID,
+      'address': address,
+      'status': 'pending',
+      'title': title,
+      "cost": cost,
+    }).then((value) async {
+      await FirebaseFirestore.instance
+          .collection('services')
+          .doc(serviceID)
+          .collection('orders')
+          .doc(value.id)
+          .update({
+        'id': value.id,
       }).then((value) {
-
         emit(BuyServiceSuccessful('Successful'));
       });
     }).catchError((onError) {

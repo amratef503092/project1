@@ -23,29 +23,97 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3)).then((value) async {
-      String? token =  CacheHelper.getDataString(key: 'id');
 
+    Future.delayed(const Duration(seconds: 4)).then((value) async {
+      String? token =  CacheHelper.getDataString(key: 'id');
       if (token != null) {
       await  FirebaseFirestore.instance
             .collection('users')
             .doc(token)
             .get()
             .then((value) {
+
               if(role=='1')
               {
                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
-                  return LayOutScreenAdmin();
-                },), (route) => false);
-              }else if(role=='2'){
+                  return StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(token)
+                          .snapshots(),
+                      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                        if (snapshot.hasData) {
+                          if (!snapshot.data!['ban']) {
+                            return const LayOutScreenAdmin();
+                          } else {
+                            CacheHelper.removeData(key: 'id');
+                            return LoginScreen();
+                          }
+                        } else {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                      }
 
-                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
-                  return LayoutPharmacy();
+
+                  );
+
+
                 },), (route) => false);
+
+              }else if(role=='2')
+              {
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
+                  return StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(token)
+                          .snapshots(),
+                      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                        if (snapshot.hasData) {
+                          if (!snapshot.data!['ban']) {
+                            return const LayoutPharmacy();
+                          } else {
+                            CacheHelper.removeData(key: 'id');
+                            return LoginScreen();
+                          }
+                        } else {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                      }
+
+
+                  );
+
+
+                },), (route) => false);
+
+
               }else{
                 // user
+
                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
-                  return LayoutScreen();
+                 return StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(token)
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                      if (snapshot.hasData) {
+                        if (!snapshot.data!['ban']) {
+                          return const LayoutScreen();
+                        } else {
+                          CacheHelper.removeData(key: 'id');
+                          return LoginScreen();
+                        }
+                      } else {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                    }
+
+
+                  );
+
+
                 },), (route) => false);
               }
         });
@@ -68,14 +136,14 @@ class _SplashScreenState extends State<SplashScreen> {
           body: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/splash-bg.png'),
               ),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
               Center(
                   child: Image(
                     image: AssetImage(

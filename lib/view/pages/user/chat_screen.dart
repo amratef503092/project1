@@ -62,9 +62,11 @@ class _ChatUserScreenState extends State<ChatUserScreen> {
                             CacheHelper.getDataString(key: 'id'))
                         ? message.get('customerName')
                         : message.get('pharmacyName');
-
                     messageWidgets.add(MessageLine(
                       type: message['type'],
+                      customerID: message['customerId'],
+                      pharmacyID: message['pharmacyID'],
+                      id: message.id,
                       sender: sender,
                       messageText: messageText,
                       isMe: message['senderID'] ==

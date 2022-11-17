@@ -15,6 +15,7 @@ import 'package:graduation_project/view_model/bloc/services/services_cubit.dart'
 import 'package:graduation_project/view_model/bloc/user_cubit/user_cubit.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:graduation_project/view_model/database/local/sql_lite.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'code/BlocObserver.dart';
 import 'firebase_options.dart';
@@ -64,12 +65,11 @@ class MyApp extends StatelessWidget {
             BlocProvider(
               create: (context) => SearchScreenCubit(),
             ),
-
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: getTheme(),
-            home: const SplashScreen(),
+            home: const SplashScreen()
           ),
         );
       },

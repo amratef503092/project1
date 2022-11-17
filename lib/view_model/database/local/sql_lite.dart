@@ -67,7 +67,19 @@ class SQLHelper {
 
     return id;
   }
+  static Future<dynamic> deleteCardOrder({
+    required String idProduct,
 
+  }) async {
+    final db = await SQLHelper.initDb(); //open database
+    //create data in map
+    var id;
+
+    await db.delete('card',
+        where: "idProduct = ?", whereArgs: [idProduct]);
+
+    return id;
+  }
   static Future<dynamic> updateCardOrder({
     required String idProduct,
     required num quantity,
@@ -80,8 +92,6 @@ class SQLHelper {
 
       await db.update('card', {'quantity': quantity},
           where: "idProduct = ?", whereArgs: [idProduct]);
-
-
 
     return id;
   }

@@ -46,8 +46,6 @@ class LayoutCubit extends Cubit<LayoutState> {
   List<Widget> Pharmacy = [
     const HomePharmacyScreen(),
     const SearchPharmacy(),
-
-
   ];
   List<String> titles = [
     'Home',

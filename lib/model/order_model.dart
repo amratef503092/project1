@@ -1,6 +1,6 @@
 class OrderModel
 {
-   var orderDate;
+  var orderDate;
   String orderStatus;
   String pharmacyID;
   String productID;
@@ -39,16 +39,16 @@ class OrderModel
 
   factory OrderModel.fromMap(Map<String, dynamic> map) {
     return OrderModel(
-      address: map['address'],
-      id: map['id'],
-      orderDate: map['orderDate'] ,
+      address: map['address'] ?? '',
+      id: map['orderId'],
+      orderDate: map['orderDate']  ??'' ,
       orderStatus: map['orderStatus'] as String,
-      pharmacyID: map['pharmacyID'] as String,
-      productID: map['productID'] as String,
-      quantity: map['quantity'] as num,
-      totalPrice: map['totalPrice'] as num,
-      userID: map['userID'] as String,
-      title: map['title']
+      pharmacyID: map['PharmacyId'] as String,
+      productID: map['product']['productID'] as String,
+      quantity: map['product']['quantity'] as num,
+      totalPrice: map['product']['totalPrice'] as num,
+      userID: map['userId'] as String,
+      title: map['product']['title']
     );
   }
 }

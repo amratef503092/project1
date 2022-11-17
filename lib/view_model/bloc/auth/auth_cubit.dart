@@ -355,7 +355,8 @@ class AuthCubit extends Cubit<AuthState> {
       emit(GetAdminsStateError('loading'));
     });
   }
-
+  String ? docOne;
+  String ? docTwo;
   // send message firebase
   Future<void> sendMessage(
       {required String message,
@@ -382,9 +383,15 @@ class AuthCubit extends Cubit<AuthState> {
       'type': type,
       'time': DateTime.now().toString(),
       'baseName': baseName
-    }).then((value) {
-      print(value);
-      emit(SendMessageStateSuccessful('Successful'));
+    }).then((value)
+    {
+      docOne = value.id;
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(customerId)
+          .collection('messages').doc(value.id).update({
+        'id': value.id,
+      });
     }).catchError((onError) {
       emit(SendMessageStateError('onError'));
     });
@@ -403,6 +410,18 @@ class AuthCubit extends Cubit<AuthState> {
       'type': type,
       'time': DateTime.now().toString(),
     }).then((value) {
+      docTwo = value.id;
+      FirebaseFirestore.instance.collection('users').doc(pharmacyID).collection('messages').doc(value.id).update({
+        'id': value.id,
+        'docOne': docOne,
+      }).then((value) {
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(customerId)
+            .collection('messages').doc(docOne).update({
+          'docOne': docTwo,
+        });
+      });
       print(value);
       emit(SendMessageStateSuccessful('Successful'));
     }).catchError((onError) {

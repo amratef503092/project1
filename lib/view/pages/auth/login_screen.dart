@@ -5,8 +5,10 @@ import 'package:graduation_project/view/pages/admin_screen/approve_screen.dart';
 import 'package:graduation_project/view/pages/admin_screen/home_admin_screen.dart';
 import 'package:graduation_project/view/pages/auth/register_screen.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../code/resource/validator.dart';
+import '../../../view_model/database/local/cache_helper.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_text_field.dart';
 import '../../components/custom_texts.dart';
@@ -37,6 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is LoginSuccessfulState) {
+          String? token =  CacheHelper.getDataString(key: 'id');
+
           if (state.role == '1') {
             if(state.ban){
               ScaffoldMessenger.of(context).showSnackBar(
@@ -46,12 +50,31 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               );
             }else{
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LayOutScreenAdmin(),
-                  ),
-                      (route) => false);
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
+                return StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(token)
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                      if (snapshot.hasData) {
+                        if (!snapshot.data!['ban']) {
+                          return const LayOutScreenAdmin();
+                        } else {
+                          CacheHelper.removeData(key: 'id');
+                          return LoginScreen();
+                        }
+                      } else {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                    }
+
+
+                );
+
+
+              },), (route) => false);
+
             }
 
           } else if (state.role == '2') {
@@ -64,13 +87,32 @@ class _LoginScreenState extends State<LoginScreen> {
               );
             }else{
               if(state.approved){
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
+                  return StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(token)
+                          .snapshots(),
+                      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                        if (snapshot.hasData) {
+                          if (!snapshot.data!['ban']) {
+                            return const LayoutPharmacy();
+                          } else {
+                            CacheHelper.removeData(key: 'id');
+                            return LoginScreen();
+                          }
+                        } else {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                      }
 
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LayoutPharmacy(),
-                    ),
-                        (route) => false);
+
+                  );
+
+
+                },), (route) => false);
+
+
               }else{
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Waiting admin approve'),
@@ -89,12 +131,32 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               );
             }else{
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LayoutScreen(),
-                  ),
-                      (route) => false);
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
+                return StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(token)
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                      if (snapshot.hasData) {
+                        if (!snapshot.data!['ban']) {
+                          return const LayoutScreen();
+                        } else {
+                          CacheHelper.removeData(key: 'id');
+                          return LoginScreen();
+                        }
+                      } else {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                    }
+
+
+                );
+
+
+              },), (route) => false);
+
+
             }
 
           }

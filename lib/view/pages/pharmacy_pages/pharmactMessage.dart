@@ -11,7 +11,6 @@ import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../../model/pharmacy_model.dart';
 import '../../components/message.dart';
 
 class PharmacyMessage extends StatefulWidget {
@@ -40,12 +39,16 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
         return Scaffold(
           appBar: AppBar(),
           body:
-          Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('users')
                   .doc(widget.pahrmacyModel!.id)
-                  .collection('messages').where('pharmacyID',isEqualTo:CacheHelper.getDataString(key: 'id')).orderBy('time').snapshots(),
+                  .collection('messages')
+                  .where('pharmacyID',
+                      isEqualTo: CacheHelper.getDataString(key: 'id'))
+                  .orderBy('time')
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Text("no message");
@@ -54,15 +57,23 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
                   List<MessageLine> messageWidgets = [];
 
                   for (var message in messages) {
-                    final messageText = message.get('message');
-                    final sender = (message['senderID']==CacheHelper.getDataString(key: 'id'))?message.get('pharmacyName'):message.get('customerName');
 
-                    messageWidgets.add(MessageLine(
-                        type: message['type'],
-                        sender: sender,
-                        messageText: messageText,
-                        isMe: message['senderID']==CacheHelper.getDataString(key: 'id'),
-                      baseName:  message['baseName'],
+                    final messageText = message.get('message');
+                    final sender = (message['senderID'] ==
+                            CacheHelper.getDataString(key: 'id'))
+                        ? message.get('pharmacyName')
+                        : message.get('customerName');
+                    messageWidgets.add(MessageLine
+                      (
+                      type: message['type'],
+                      id: message.id,
+                      sender: sender,
+                      customerID: message['customerId'],
+                      pharmacyID: message['pharmacyID'],
+                      messageText: messageText,
+                      isMe: message['senderID'] ==
+                          CacheHelper.getDataString(key: 'id'),
+                      baseName: message['baseName'],
                       dateTime: message['time'],
                     ));
                   }
@@ -131,11 +142,13 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
                       ),
                       onPressed: () {
                         cubit.sendMessage(
-                            pharmacyID: CacheHelper.getDataString(key: 'id').toString(),
+                            pharmacyID:
+                                CacheHelper.getDataString(key: 'id').toString(),
                             message: messageController.text,
                             pharmacyName: cubit.userModel!.name,
                             customerId: widget.pahrmacyModel!.id,
-                            senderID: CacheHelper.getDataString(key: 'id').toString(),
+                            senderID:
+                                CacheHelper.getDataString(key: 'id').toString(),
                             customerName: widget.pahrmacyModel!.name,
                             type: 'text');
                         // cubit.sendMessage(text: cubit.messageController.text , time:DateTime.now().toString() );
@@ -143,7 +156,9 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
                         messageController.clear();
                       },
                     )),
-                SizedBox(width: 5,),
+                SizedBox(
+                  width: 5,
+                ),
                 CircleAvatar(
                     backgroundColor: buttonColor,
                     radius: 20,
@@ -154,7 +169,8 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
                       ),
                       onPressed: () async {
                         cubit.pickFileMessage(
-                            pharmacyID: CacheHelper.getDataString(key: 'id').toString(),
+                            pharmacyID:
+                                CacheHelper.getDataString(key: 'id').toString(),
                             pharmacyName: cubit.userModel!.name,
                             customerId: widget.pahrmacyModel!.id,
                             customerName: widget.pahrmacyModel!.name,
@@ -172,7 +188,9 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
                         // cubit.messageController.clear();
                       },
                     )),
-                SizedBox(width: 5,),
+                SizedBox(
+                  width: 5,
+                ),
               ],
             ),
           ]),
@@ -204,5 +222,3 @@ Future<io.File?> downloadFile(String url, String filName) async {
   print("Amr");
   return filePath;
 }
-
-

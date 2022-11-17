@@ -81,7 +81,7 @@ class _PendingState extends State<Pending> {
             ? const Center(
                 child: CircularProgressIndicator(),
               )
-            : (PharmacyCubit.get(context).orders.isNotEmpty)
+            : (PharmacyCubit.get(context).products.isNotEmpty)
                 ? Padding(
                     padding: const EdgeInsets.all(20),
                     child: GridView.builder(
@@ -92,19 +92,56 @@ class _PendingState extends State<Pending> {
                         mainAxisExtent:
                             (widget.data == 'pending') ? 530.h : 420.h,
                       ),
-                      itemCount: PharmacyCubit.get(context).orders.length,
+                      itemCount: PharmacyCubit.get(context).products.length,
                       itemBuilder: (context, index) {
                         return Card(
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Column(
                               children: [
-                                ClipRRect(
+                                (PharmacyCubit.get(context).products[index].imagePharmacy!='')?Stack(
+                                  children: [
+
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(20.r),
+                                      child:  Image(
+                                              image: NetworkImage(
+                                                  PharmacyCubit.get(context)
+                                                      .products[index]
+                                                      .image),
+                                              width: 200.w,
+                                              height: 200.h),
+                                    ),
+                                    InkWell(
+                                      onTap: (){
+                                        showDialog(context: context, builder: (context) {
+                                          return AlertDialog(
+                                            content: Image(
+                                              image: NetworkImage(
+                                                  PharmacyCubit.get(context)
+                                                      .products[index]
+                                                      .imagePharmacy),
+                                              width: 200.w,
+                                              height: 200.h));
+                                        },);
+                                      },
+                                      child: Container(
+                                        height: 40.h,
+                                        width: 200.w,
+                                        decoration:
+                                        BoxDecoration(color: Colors.green),
+                                        child: Text("Click to videw Prescription" , textAlign: TextAlign.center,style: TextStyle(
+                                          color: Colors.white
+                                        )),
+                                      ),
+                                    ),
+                                  ],
+                                ) :  ClipRRect(
                                   borderRadius: BorderRadius.circular(20.r),
-                                  child: Image(
+                                  child:  Image(
                                       image: NetworkImage(
                                           PharmacyCubit.get(context)
-                                              .productsOrder[index]
+                                              .products[index]
                                               .image),
                                       width: 200.w,
                                       height: 200.h),
@@ -114,7 +151,7 @@ class _PendingState extends State<Pending> {
                                 ),
                                 Text(
                                   PharmacyCubit.get(context)
-                                      .orders[index]
+                                      .products[index]
                                       .title,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
@@ -126,21 +163,21 @@ class _PendingState extends State<Pending> {
                                   height: 10.h,
                                 ),
                                 Text(
-                                  "${PharmacyCubit.get(context).orders[index].totalPrice.toString()} SAR ",
+                                  "${PharmacyCubit.get(context).products[index].price.toString()} SAR ",
                                   style: TextStyle(fontSize: 24.sp),
                                 ),
                                 SizedBox(
                                   height: 10.h,
                                 ),
                                 Text(
-                                  "Quantity : ${PharmacyCubit.get(context).orders[index].quantity.toString()}  ",
+                                  "Quantity : ${PharmacyCubit.get(context).products[index].quantity.toString()}  ",
                                   style: TextStyle(fontSize: 24.sp),
                                 ),
                                 SizedBox(
                                   height: 10.h,
                                 ),
                                 Text(
-                                  "Address : ${PharmacyCubit.get(context).orders[index].address.toString()}  ",
+                                  "Address : ${PharmacyCubit.get(context).users[index].address.toString()}  ",
                                   style: TextStyle(fontSize: 24.sp),
                                 ),
                                 SizedBox(
@@ -158,15 +195,12 @@ class _PendingState extends State<Pending> {
                                             size: const Size(200, 20),
                                             function: () {
                                               PharmacyCubit.get(context).reject(
-                                                  index: index,
-                                                  orderID:
-                                                      PharmacyCubit.get(context)
-                                                          .orders[index]
-                                                          .id,
-                                                  productID:
-                                                      PharmacyCubit.get(context)
-                                                          .orders[index]
-                                                          .productID);
+                                                index: index,
+                                                orderID:
+                                                    PharmacyCubit.get(context)
+                                                        .products[index]
+                                                        .orderID,
+                                              );
                                             },
                                             widget: SizedBox(
                                               height: 40.h,
@@ -183,15 +217,20 @@ class _PendingState extends State<Pending> {
                                             function: () {
                                               PharmacyCubit.get(context)
                                                   .acceptOrder(
+                                                      quantity:
+                                                          PharmacyCubit.get(
+                                                                  context)
+                                                              .products[index]
+                                                              .quantity,
                                                       orderID:
                                                           PharmacyCubit.get(
                                                                   context)
-                                                              .orders[index]
-                                                              .id,
+                                                              .products[index]
+                                                              .orderID,
                                                       productID:
                                                           PharmacyCubit.get(
                                                                   context)
-                                                              .orders[index]
+                                                              .products[index]
                                                               .productID,
                                                       index: index);
                                             },

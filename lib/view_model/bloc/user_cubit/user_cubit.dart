@@ -1,3 +1,5 @@
+import 'dart:io' as io;
+
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -9,7 +11,8 @@ import 'package:graduation_project/model/product_model.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
-import 'dart:io' as io;
+
+import '../../../model/get_product_model.dart';
 import '../../../model/get_service_model.dart';
 import '../../../model/order_model.dart';
 import '../../../model/pharmacy_model.dart';
@@ -47,7 +50,8 @@ class UserCubit extends Cubit<UserState> {
 
     FirebaseFirestore.instance
         .collection('users')
-        .where('role', isEqualTo: '2').where('approved', isEqualTo: true)
+        .where('role', isEqualTo: '2')
+        .where('approved', isEqualTo: true)
         .get()
         .then((value) {
       for (var element in value.docs) {
@@ -77,10 +81,11 @@ class UserCubit extends Cubit<UserState> {
     });
   }
 
-  Future<void> buyProduct({required ProductModel productModel,
-    required int quantity,
-    required String address,
-    required String title}) async {
+  Future<void> buyProduct(
+      {required ProductModel productModel,
+      required int quantity,
+      required String address,
+      required String title}) async {
     int price = productModel.price * quantity;
     emit(BuyProductLoadingState());
     await FirebaseFirestore.instance
@@ -112,37 +117,32 @@ class UserCubit extends Cubit<UserState> {
     });
   }
 
-  List<OrderModel> myOrders = [];
+  List<GetProductModel> myOrders = [];
   List<GetServiceModel> myServiceOrders = [];
 
   Future<void> getMyOrderProduct() async {
     emit(GetMyProductLoadingState());
     myOrders = [];
     productModelOrder = [];
-    await FirebaseFirestore.instance.collection('product').get().then((value) {
-      value.docs.forEach((element) async {
-        await FirebaseFirestore.instance
-            .collection('product')
-            .doc(element.id)
-            .collection('orders')
-            .where('userID', isEqualTo: CacheHelper.getDataString(key: 'id'))
-            .get()
-            .then((value) async {
-          for (var element in value.docs) {
-            myOrders.add(OrderModel.fromMap(element.data()));
-            print(element.data());
+    await FirebaseFirestore.instance
+        .collection('Orders')
+        .where('userId', isEqualTo: CacheHelper.getDataString(key: 'id'))
+        .get()
+        .then((value) {
+          for (var element in value.docs)
+          {
+            myOrders.add(GetProductModel.fromMap(element.data()));
           }
-          await getInfo();
-        });
-      });
-      emit(GetMyProductSuccessfulState());
-    }).catchError((onError) {
+    }).whenComplete(() {
+        emit(GetMyProductSuccessfulState());
+    })
+        .catchError((onError) {
       emit(GetMyProductErrorState(onError.toString()));
     });
   }
 
   Future<void> getInfo() async {
-    myOrders.forEach((element) async {
+    for (var element in myOrders) {
       await FirebaseFirestore.instance
           .collection('product')
           .doc(element.productID)
@@ -151,7 +151,7 @@ class UserCubit extends Cubit<UserState> {
         productModelOrder.add(ProductModel.fromMap(value.data()!));
       });
       emit(GetMyProductSuccessfulState());
-    });
+    }
   }
 
   Future<void> getMyServiceOrder() async {
@@ -179,10 +179,9 @@ class UserCubit extends Cubit<UserState> {
     });
   }
 
-  XFile ?image;
+  XFile? image;
 
-  Future<void> pickImageFromCamera() async
-  {
+  Future<void> pickImageFromCamera() async {
     emit(PickImageLoadingState());
     image = (await ImagePicker().pickImage(source: ImageSource.camera))!;
     if (image != null) {
@@ -190,8 +189,7 @@ class UserCubit extends Cubit<UserState> {
     }
   }
 
-  Future<void> pickImageFromGallery() async
-  {
+  Future<void> pickImageFromGallery() async {
     emit(PickImageLoadingState());
     image = (await ImagePicker().pickImage(source: ImageSource.gallery))!;
     if (image != null) {
@@ -199,9 +197,10 @@ class UserCubit extends Cubit<UserState> {
     }
   }
 
-  String ? url;
+  String? url;
 
-  Future<void> uploadFile(BuildContext context , ProductModel productModel ,count) async {
+  Future<void> uploadFile(
+      BuildContext context, ProductModel productModel, count) async {
     emit(UploadImageStateLoading());
     if (image == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -229,31 +228,32 @@ class UserCubit extends Cubit<UserState> {
       if (kDebugMode) {
         print('Amr2');
       }
-      ref.putFile(io.File(image!.path), metadata).then((p0) =>
-      {
-        ref.getDownloadURL().then((value) {
-          // here modify the profile pic
-          SQLHelper.addCard(
-            image: value,
-            idProduct: productModel.id,
-            pharmacyID: productModel.pharmacyID,
-            quantity: count ,
-          )
-              .then((value) {
-            Navigator.pop(context);
-            debugPrint('Add Data in card Successful');
-          });
-          if (kDebugMode) {
-            print(value);
-          }
-          emit(UploadImageSuccessfulState());
-        })
-      }).catchError((onError) {
+      ref
+          .putFile(io.File(image!.path), metadata)
+          .then((p0) => {
+                ref.getDownloadURL().then((value) {
+                  // here modify the profile pic
+                  SQLHelper.addCard(
+                    image: value,
+                    idProduct: productModel.id,
+                    pharmacyID: productModel.pharmacyID,
+                    quantity: count,
+                  ).then((value) {
+                    Navigator.pop(context);
+
+                    debugPrint('Add Data in card Successful');
+                  });
+                  if (kDebugMode) {
+                    print(value);
+                  }
+                  image = null;
+                  emit(UploadImageSuccessfulState());
+                })
+              })
+          .catchError((onError) {
         print(onError);
-        emit(UploadImageErrorState(onError.toString())
-        );
+        emit(UploadImageErrorState(onError.toString()));
       });
     }
   }
-
 }

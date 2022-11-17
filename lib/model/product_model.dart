@@ -43,7 +43,7 @@ class ProductModel{
       description: map['description'] as String,
       id: map['id'] as String,
       image: map['image'] as String,
-      pharmacyID: map['pharmacyID'] as String,
+      pharmacyID: map['pharmacyID'] ?? ''  ,
       price: map['price'] as int,
       title: map['title'] as String,
       type: map['type'] as String,

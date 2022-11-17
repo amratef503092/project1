@@ -38,31 +38,26 @@ class _MyOrderState extends State<MyOrder> {
               :(cubit.myOrders.isNotEmpty)?ListView.builder(
                   itemCount: cubit.myOrders.length,
                   itemBuilder: (context, index) {
-                    return InkWell(
+                    return Card(
 
-                      onTap: (){
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Image.network(
+                            cubit.myOrders[index].image,
+                            width: 100,
+                            height: 100,
+                          ),
+                          Column(
+                            children: [
+                              Text("total price : ${cubit.myOrders[index].price*cubit.myOrders[index].quantity}"),
+                              Text("title : ${(cubit.myOrders[index].title)}"),
 
-                      },
-                      child: Card(
+                            ],
+                          ),
+                              Text("order Status: ${cubit.myOrders[index].ordeStatus}"),
 
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Image.network(
-                              cubit.productModelOrder[index].image,
-                              width: 100,
-                              height: 100,
-                            ),
-                            Column(
-                              children: [
-                                Text("total price : ${cubit.myOrders[index].totalPrice}"),
-                                Text("titile : ${cubit.productModelOrder[index].title}"),
-                              ],
-                            ),
-                            Text("order Status: ${cubit.myOrders[index].orderStatus}"),
-
-                          ],
-                        ),
+                        ],
                       ),
                     );
                   },
@@ -71,4 +66,5 @@ class _MyOrderState extends State<MyOrder> {
       },
     );
   }
+
 }

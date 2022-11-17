@@ -171,9 +171,11 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                   height: 20.h,
                 ),
 
-                BlocConsumer<UserCubit, UserState>(
+                (widget.productModel.quantity == 0 )? Text('Out of Stock' , style: TextStyle(
+                  color: Colors.red,
+                ),): BlocConsumer<UserCubit, UserState>(
                   listener: (context, state) {
-                    if (state is BuyProductSuccessfulState) {
+                    if (state is UploadImageSuccessfulState) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text('Adding to Card Successful'),
                       ));
@@ -245,8 +247,8 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                                                     disable: true,
                                                     function: () async {
                                                       if(UserCubit.get(context).image != null){
-                                                        UserCubit.get(context).uploadFile(context,widget.productModel,count);
-
+                                                        UserCubit.get(context).uploadFile(context,widget.productModel,count).whenComplete(() {
+                                                        });
                                                       }else {
 
                                                       }
@@ -271,6 +273,7 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                                         quantity: count)
                                     .then((value) {
                                   debugPrint('Add Data in card Successful');
+
                                 });
                               }
 
