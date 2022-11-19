@@ -3,12 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:graduation_project/view/pages/admin_screen/settings_screen.dart';
 import 'package:graduation_project/view/pages/pharmacy_pages/get_pharmacy_services.dart';
 import 'package:graduation_project/view/pages/pharmacy_pages/show_all_service_order.dart';
 import 'package:graduation_project/view/pages/pharmacy_pages/show_orders.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../../../view_model/bloc/pharmacy_product/pharmacy_cubit.dart';
 import '../../../view_model/database/local/cache_helper.dart';
 import '../../components/custom_button.dart';
@@ -55,7 +54,7 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                   },
                   builder: (context, state) {
                     return (state is GetProductLodaing)
-                        ? Center(
+                        ? const Center(
                             child: CircularProgressIndicator(),
                           )
                         : IconButton(
@@ -165,6 +164,20 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                                     builder: (context) =>
                                         const ShowAllServiceOrder(),
                                   ));
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.phone),
+                            title: const Text("Call Support"),
+                            onTap: () async
+                            {
+                              final Uri emailLaunchUri = Uri(
+                                scheme: 'tel',
+                                path: '+0512345678',
+
+                              );
+
+                              launchUrl(emailLaunchUri);
                             },
                           ),
                           ListTile(
@@ -299,14 +312,14 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                                                               });
                                                             },
                                                             child:
-                                                                Text("Sure")),
+                                                                const Text("Sure")),
                                                         TextButton(
                                                             onPressed: () {
                                                               Navigator.pop(
                                                                   context);
                                                             },
                                                             child:
-                                                                Text("Cancel"))
+                                                                const Text("Cancel"))
                                                       ],
                                                     );
                                                   },
@@ -315,7 +328,7 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                                               widget: SizedBox(
                                                 height: 40.h,
                                                 width: 200,
-                                                child: Center(
+                                                child: const Center(
                                                     child: Text("Delete")),
                                               ),
                                             ),
@@ -340,7 +353,7 @@ class _HomePharmacyScreenState extends State<HomePharmacyScreen> {
                                                 height: 40.h,
                                                 width: 200.w,
                                                 child:
-                                                    Center(child: Text("Edit")),
+                                                    const Center(child: Text("Edit")),
                                               ),
                                             )
                                           ],

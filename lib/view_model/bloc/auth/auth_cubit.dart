@@ -345,7 +345,7 @@ class AuthCubit extends Cubit<AuthState> {
         if (element.doc.data()!['id'] == CacheHelper.getDataString(key: 'id')) {
           print('same');
         } else {
-          adminData.add(UserModel.fromMap(element.doc.data()!));
+             adminData.add(UserModel.fromMap(element.doc.data()!));
         }
       });
       emit(GetAdminsStateSuccessful('loading'));
@@ -527,7 +527,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   List<ProductModel> productsModel = [];
-  List<UserModel> getAllPharmacyList = [];
+  List<PharmacyModel> getAllPharmacyList = [];
   List<UserModel> getAllCustomerList = [];
 
   Future<void> getAllPharmacy() async {
@@ -540,7 +540,7 @@ class AuthCubit extends Cubit<AuthState> {
         .get()
         .then((value) {
       for (var element in value.docChanges) {
-        getAllPharmacyList.add(UserModel.fromMap(element.doc.data()!));
+        getAllPharmacyList.add(PharmacyModel.fromMap(element.doc.data()!));
       }
       print(getAllPharmacyList.length);
       emit(GetAllPharmacyStateSuccessful('Successful'));

@@ -7,6 +7,7 @@ import 'package:graduation_project/view_model/bloc/order_cubit/order_cubit.dart'
 import 'package:graduation_project/view_model/database/local/sql_lite.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
+import '../../../code/constants_value.dart';
 import '../../../view_model/bloc/get_price/get_price_cubit.dart';
 
 class MyOrderList extends StatefulWidget {
@@ -189,7 +190,7 @@ class _MyOrderListState extends State<MyOrderList> {
               child: Container(
                 height: 0.1.sh,
                 width: 1.sw,
-                color: Colors.green,
+                color:buttonColor,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [

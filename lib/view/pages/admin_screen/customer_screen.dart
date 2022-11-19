@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../view_model/bloc/auth/auth_cubit.dart';
 class CustomerScreenAdmin extends StatefulWidget {
   const CustomerScreenAdmin({Key? key}) : super(key: key);
@@ -156,7 +157,15 @@ class _CustomerScreenAdminState extends State<CustomerScreenAdmin> {
                                           ),
                                         );
                                       },
-                                      icon: const FaIcon(FontAwesomeIcons.ban , color: Colors.red,))
+                                      icon: const FaIcon(FontAwesomeIcons.ban , color: Colors.red,)),
+                                  IconButton(
+                                      onPressed: ()
+                                      {
+                                        _launchInBrowser( Uri(scheme: 'https', host: 'wa.me', path: "+${authCubit
+                                            .adminData[index].phone}"));
+
+                                      },
+                                      icon:  FaIcon(FontAwesomeIcons.phone ,))
                                 ],
                               ),
                             );
@@ -315,5 +324,13 @@ class _CustomerScreenAdminState extends State<CustomerScreenAdmin> {
         );
       },
     );
+  }
+  Future<void> _launchInBrowser(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw 'Could not launch $url';
+    }
   }
 }

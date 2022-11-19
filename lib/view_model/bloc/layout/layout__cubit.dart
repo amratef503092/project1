@@ -34,7 +34,7 @@ class LayoutCubit extends Cubit<LayoutState> {
   ];
   PharmacyModel? pahrmacyModel;
   void x(PharmacyModel pharmacyModel){
-    this.pahrmacyModel = pharmacyModel;
+    pahrmacyModel = pharmacyModel;
     emit(LayoutChangeBottomNavBarState());
 
   }

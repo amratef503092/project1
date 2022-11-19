@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          CustomButton(widget: Text("Sigin in"),
+          CustomButton(widget: const Text("Sigin in"),
               function: (){
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return LoginScreen();

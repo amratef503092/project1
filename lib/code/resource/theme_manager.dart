@@ -7,14 +7,14 @@ ThemeData getTheme() {
   return ThemeData(
 
       scaffoldBackgroundColor: Color(0xffF2F3F7),
-      primaryColor: Color(0xff30CA00),
-      buttonColor: Color(0xff30CA00),
+      primaryColor: Color(0xff0099cc),
+      buttonColor:  Color(0xff0099cc),
       appBarTheme: AppBarTheme(
-        backgroundColor:  Color(0xff30CA00)
+        backgroundColor:  Color(0xff0099cc)
       ),
       // text
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: Color(0xff30CA00),
+        backgroundColor:  Color(0xff0099cc),
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white.withOpacity(0.7),
       ),

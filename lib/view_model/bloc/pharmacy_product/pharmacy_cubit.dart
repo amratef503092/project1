@@ -158,17 +158,10 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         .then((value) async {
       for (var element in value.docs) {
         products.add(GetProductModel.fromMap(element.data()));
-      }
-      for (var element in products) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .where('id', isEqualTo: element.userID)
-            .get()
-            .then((value) {
-          users.add(UserInfo.fromMap(value.docs[0].data()));
-        }).then((value) {
-
+        await FirebaseFirestore.instance.collection('users').doc(element.data()['userId']).get().then((value) {
+          users.add(UserInfo.fromMap(value.data()!));
         });
+
       }
       emit(GetOrderSuccessful('Successful'));
 
@@ -249,26 +242,47 @@ class PharmacyCubit extends Cubit<PharmacyState> {
       {required String orderID,
       required String productID,
         required int quantity,
+        required BuildContext context,
       required int index}) async {
+
     emit(AcceptOrderLoading());
-    await FirebaseFirestore.instance
-        .collection('product')
-        .doc(productID)
-        .update({
-      'quantity': FieldValue.increment(-quantity),
-    }).then((value) async {
-      await FirebaseFirestore.instance
-          .collection('Orders')
-          .doc(orderID)
-          .update({
-        'orderStatus': 'Accepted',
-      }).then((value) {
-        products.removeAt(index);
-        emit(AcceptOrderSuccessful('Successful'));
-      });
-    }).catchError((onError) {
-      emit(AcceptOrderError('Error'));
+    await FirebaseFirestore.instance.collection('product').doc(productID).get().then((value) async{
+      if(value.data()!['quantity']<=0)
+      {
+        showDialog(context: context, builder:
+        (context) {
+          return AlertDialog(
+            title: Text('Sorry'),
+            content: Text('This product is out of stock'),
+            actions: [
+              TextButton(onPressed: (){
+                Navigator.pop(context);
+              }, child: Text('Ok'))
+            ],
+          );
+        });
+      }else{
+        await FirebaseFirestore.instance
+            .collection('product')
+            .doc(productID)
+            .update({
+          'quantity': FieldValue.increment(-quantity),
+        }).then((value) async {
+          await FirebaseFirestore.instance
+              .collection('Orders')
+              .doc(orderID)
+              .update({
+            'orderStatus': 'Accepted',
+          }).then((value) {
+            products.removeAt(index);
+            emit(AcceptOrderSuccessful('Successful'));
+          });
+        }).catchError((onError) {
+          emit(AcceptOrderError('Error'));
+        });
+      }
     });
+
   }
 
   Future<void> reject({required String orderID, required int index}) async {
@@ -329,24 +343,42 @@ class PharmacyCubit extends Cubit<PharmacyState> {
 
   List<ProductModel> getProductByType = [];
 
-  Future<void> getByTypes({required String type}) async {
+  Future<void> getByTypes({required String type , int ?x}) async {
     emit(GetProductLodaing());
     getProductByType = [];
-    await FirebaseFirestore.instance
-        .collection('product')
-        .where('type', isEqualTo: type)
-        .get()
-        .then((value) {
-      print(value.docs.length);
-      for (var element in value.docs) {
-        getProductByType.add(ProductModel.fromMap(element.data()));
-      }
-      print(getProductByType.length);
-      emit(GetProductSuccsseful('Successful'));
-    }).catchError((onError) {
-      print(onError);
-      emit(GetProductError('onError'));
-    });
+    if(x==null){
+      await FirebaseFirestore.instance
+          .collection('product')
+          .where('type', isEqualTo: type)
+          .get()
+          .then((value) {
+        print(value.docs.length);
+        for (var element in value.docs) {
+          getProductByType.add(ProductModel.fromMap(element.data()));
+        }
+        print(getProductByType.length);
+        emit(GetProductSuccsseful('Successful'));
+      }).catchError((onError) {
+        print(onError);
+        emit(GetProductError('onError'));
+      });
+    }else{
+      await FirebaseFirestore.instance
+          .collection('product')
+          .get()
+          .then((value) {
+        print(value.docs.length);
+        for (var element in value.docs) {
+          getProductByType.add(ProductModel.fromMap(element.data()));
+        }
+        print(getProductByType.length);
+        emit(GetProductSuccsseful('Successful'));
+      }).catchError((onError) {
+        print(onError);
+        emit(GetProductError('onError'));
+      });
+    }
+
   }
 
   List<UserModel> usersMessage = [];

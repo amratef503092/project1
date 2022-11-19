@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../code/constants_value.dart';
 import '../../../view_model/bloc/auth/auth_cubit.dart';
@@ -140,7 +141,20 @@ class _LayoutScreenState extends State<LayoutScreen> {
                         // });
                         // },
                         // ),
+                        ListTile(
+                          leading: const Icon(Icons.phone),
+                          title: const Text("Call Support"),
+                          onTap: () async
+                          {
+                            final Uri emailLaunchUri = Uri(
+                              scheme: 'tel',
+                              path: '+0512345678',
 
+                            );
+
+                            launchUrl(emailLaunchUri);
+                          },
+                        ),
                         ListTile(
                           leading: const Icon(Icons.logout),
                           title: const Text("Logout"),

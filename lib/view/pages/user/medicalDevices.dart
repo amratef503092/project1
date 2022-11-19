@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/code/resource/string_manager.dart';
 import 'package:graduation_project/view_model/bloc/pharmacy_product/pharmacy_cubit.dart';
 
+import '../../../code/constants_value.dart';
 import '../../../view_model/bloc/user_cubit/user_cubit.dart';
 import 'MedicineDetailsScreen.dart';
 
@@ -106,8 +107,8 @@ class _AllMedicineScreenState extends State<AllMedicineScreen> {
                                 },
                                 label: const Text(ADD_TO_CARD),
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xff30CA00)),
-                              )
+                                    backgroundColor:  buttonColor,
+                              ))
                             ],
                           ),
                         ),

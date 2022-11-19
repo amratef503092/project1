@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/model/pharmacy_model.dart';
+import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
 import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
 import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
@@ -13,6 +14,7 @@ import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
 import 'package:graduation_project/view_model/bloc/layout/layout__cubit.dart';
 import 'package:graduation_project/view_model/bloc/pharmacy_product/pharmacy_cubit.dart';
 
+import '../../../code/constants_value.dart';
 import '../../../code/resource/string_manager.dart';
 import 'MedicineDetailsScreen.dart';
 import 'chat_screen.dart';
@@ -49,7 +51,7 @@ class _PharmacyProductState extends State<PharmacyProduct> {
           appBar: AppBar(
             title: Text(LayoutCubit.get(context).pahrmacyModel!.name),
             actions: [
-              IconButton(
+              (AuthCubit.get(context).userModel!.role !='1')?IconButton(
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(
                       builder: (context) {
@@ -62,8 +64,8 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                   icon: Icon(
                     Icons.chat,
                     color: Colors.white,
-                  )),
-              IconButton(
+                  )):SizedBox(),
+              (AuthCubit.get(context).userModel!.role !='1')?IconButton(
                   onPressed: () {
                     cubit
                         .getRatePharmacy(
@@ -134,7 +136,7 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                   icon: Icon(
                     Icons.star,
                     color: Colors.white,
-                  )),
+                  )) :SizedBox(),
               IconButton(
                   onPressed: () {
                  showDialog(context: context, builder: (context) {
@@ -143,7 +145,7 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                    );
                  },);
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.info,
                     color: Colors.white,
                   )),
@@ -210,7 +212,7 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                                         ),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis),
-                                    ElevatedButton.icon(
+                                    (AuthCubit.get(context).userModel!.role !='1')?ElevatedButton.icon(
                                       icon: Icon(Icons.shopping_cart),
                                       onPressed: () {
                                         Navigator.push(
@@ -225,8 +227,8 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                                       label: const Text(ADD_TO_CARD),
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor:
-                                              const Color(0xff30CA00)),
-                                    )
+                                               buttonColor),
+                                    ):SizedBox()
                                   ],
                                 ),
                               ),

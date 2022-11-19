@@ -11,7 +11,9 @@ import 'package:graduation_project/view_model/database/local/sql_lite.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
+import '../../../code/constants_value.dart';
 import '../../../code/resource/string_manager.dart';
+import '../../../view_model/bloc/auth/auth_cubit.dart' as auth;
 
 class MedicineDetailsScreen extends StatefulWidget {
   MedicineDetailsScreen({Key? key, required this.productModel})
@@ -103,7 +105,7 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                 SizedBox(
                   height: 20.h,
                 ),
-                Row(
+                (auth.AuthCubit.get(context).userModel!.role!='1')?Row(
                   children: [
                     CircleAvatar(
                       radius: 30.r,
@@ -151,7 +153,7 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                           )),
                     ),
                   ],
-                ),
+                ):SizedBox(),
                 SizedBox(
                   height: 20.h,
                 ),
@@ -171,7 +173,8 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                   height: 20.h,
                 ),
 
-                (widget.productModel.quantity == 0 )? Text('Out of Stock' , style: TextStyle(
+                (auth.AuthCubit.get(context).userModel!.role!='1')?(widget.productModel.quantity <=0 )? const Text('Out of Stock' ,
+                  style: TextStyle(
                   color: Colors.red,
                 ),): BlocConsumer<UserCubit, UserState>(
                   listener: (context, state) {
@@ -190,7 +193,7 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                           )
                         : CustomButton(
                             widget: const Text(ADD_TO_CARD),
-                            color: Color(0xff30CA00),
+                            color: buttonColor,
                             function: () {
                               if (widget.productModel.needPrescription) {
                                 showDialog(
@@ -288,7 +291,7 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                             disable: true,
                           );
                   },
-                )
+                ):SizedBox()
               ],
             ),
           ),

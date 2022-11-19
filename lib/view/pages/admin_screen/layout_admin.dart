@@ -9,6 +9,7 @@ import '../../../view_model/bloc/auth/auth_cubit.dart';
 import '../../../view_model/bloc/layout_admin/layout_admin_cubit.dart';
 import '../../../view_model/database/local/cache_helper.dart';
 import '../auth/login_screen.dart';
+import 'admin_show_broduct.dart';
 import 'approve_screen.dart';
 import 'create_admin.dart';
 
@@ -84,6 +85,18 @@ class _LayOutScreenAdminState extends State<LayOutScreenAdmin> {
                         ));
                   },
                 ),
+                ListTile(
+                  leading: const Icon(Icons.shopify),
+                  title: const Text("Product"),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AdminShowProduct(),
+                        ));
+                  },
+                ),
+
                 ListTile(
                   leading: const Icon(Icons.logout),
                   title: const Text("Logout"),

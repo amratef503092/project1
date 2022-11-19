@@ -8,6 +8,7 @@ import 'package:graduation_project/view/pages/admin_screen/settings_screen.dart'
 import 'package:graduation_project/view/pages/auth/login_screen.dart';
 import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'approve_screen.dart';
 import 'create_admin.dart';
@@ -40,7 +41,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         var authCubit = AuthCubit.get(context);
         return Scaffold(
 
-          body: (state is GetAdminsStateLoading)? Center(child: CircularProgressIndicator(),):SizedBox(
+          body: (state is GetAdminsStateLoading)? const Center(child: CircularProgressIndicator(),):SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: (AuthCubit.get(context).userModel == null)
@@ -176,7 +177,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                                   ),
                                                 );
                                               },
-                                              icon:  FaIcon(FontAwesomeIcons.ban ,color: Colors.red,))
+                                              icon:  FaIcon(FontAwesomeIcons.ban ,color: Colors.red,)),
+                                          IconButton(
+                                              onPressed: ()
+                                              {
+                                                _launchInBrowser( Uri(scheme: 'https', host: 'wa.me', path: "+${authCubit
+                                                    .adminData[index].phone}"));
+
+                                              },
+                                              icon:  FaIcon(FontAwesomeIcons.phone ,))
                                         ],
                                       ),
                                     );
@@ -335,5 +344,13 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         );
       },
     );
+  }
+  Future<void> _launchInBrowser(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw 'Could not launch $url';
+    }
   }
 }

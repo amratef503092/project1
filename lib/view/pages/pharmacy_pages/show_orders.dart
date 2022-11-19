@@ -82,175 +82,185 @@ class _PendingState extends State<Pending> {
                 child: CircularProgressIndicator(),
               )
             : (PharmacyCubit.get(context).products.isNotEmpty)
-                ? Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 3,
-                        mainAxisSpacing: 3,
-                        mainAxisExtent:
-                            (widget.data == 'pending') ? 530.h : 420.h,
-                      ),
-                      itemCount: PharmacyCubit.get(context).products.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Column(
-                              children: [
-                                (PharmacyCubit.get(context).products[index].imagePharmacy!='')?Stack(
-                                  children: [
+                ? RefreshIndicator(
+          onRefresh: () async{
+            await PharmacyCubit.get(context).getOrders(widget.data);
+          },
+                  child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 3,
+                          mainAxisSpacing: 3,
+                          mainAxisExtent:
+                              (widget.data == 'pending') ? 600.h : 470.h,
+                        ),
+                        itemCount: PharmacyCubit.get(context).products.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                children: [
+                                  (PharmacyCubit.get(context).products[index].imagePharmacy!='')?Stack(
+                                    children: [
 
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(20.r),
-                                      child:  Image(
-                                              image: NetworkImage(
-                                                  PharmacyCubit.get(context)
-                                                      .products[index]
-                                                      .image),
-                                              width: 200.w,
-                                              height: 200.h),
-                                    ),
-                                    InkWell(
-                                      onTap: (){
-                                        showDialog(context: context, builder: (context) {
-                                          return AlertDialog(
-                                            content: Image(
-                                              image: NetworkImage(
-                                                  PharmacyCubit.get(context)
-                                                      .products[index]
-                                                      .imagePharmacy),
-                                              width: 200.w,
-                                              height: 200.h));
-                                        },);
-                                      },
-                                      child: Container(
-                                        height: 40.h,
-                                        width: 200.w,
-                                        decoration:
-                                        BoxDecoration(color: Colors.green),
-                                        child: Text("Click to videw Prescription" , textAlign: TextAlign.center,style: TextStyle(
-                                          color: Colors.white
-                                        )),
-                                      ),
-                                    ),
-                                  ],
-                                ) :  ClipRRect(
-                                  borderRadius: BorderRadius.circular(20.r),
-                                  child:  Image(
-                                      image: NetworkImage(
-                                          PharmacyCubit.get(context)
-                                              .products[index]
-                                              .image),
-                                      width: 200.w,
-                                      height: 200.h),
-                                ),
-                                SizedBox(
-                                  height: 10.h,
-                                ),
-                                Text(
-                                  PharmacyCubit.get(context)
-                                      .products[index]
-                                      .title,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                      fontSize: 24.sp,
-                                      fontWeight: FontWeight.w900),
-                                ),
-                                SizedBox(
-                                  height: 10.h,
-                                ),
-                                Text(
-                                  "${PharmacyCubit.get(context).products[index].price.toString()} SAR ",
-                                  style: TextStyle(fontSize: 24.sp),
-                                ),
-                                SizedBox(
-                                  height: 10.h,
-                                ),
-                                Text(
-                                  "Quantity : ${PharmacyCubit.get(context).products[index].quantity.toString()}  ",
-                                  style: TextStyle(fontSize: 24.sp),
-                                ),
-                                SizedBox(
-                                  height: 10.h,
-                                ),
-                                Text(
-                                  "Address : ${PharmacyCubit.get(context).users[index].address.toString()}  ",
-                                  style: TextStyle(fontSize: 24.sp),
-                                ),
-                                SizedBox(
-                                  height: 10.h,
-                                ),
-                                (widget.data == 'pending')
-                                    ? Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          CustomButton(
-                                            disable: true,
-                                            color: Colors.red,
-                                            radius: 0,
-                                            size: const Size(200, 20),
-                                            function: () {
-                                              PharmacyCubit.get(context).reject(
-                                                index: index,
-                                                orderID:
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(20.r),
+                                        child:  Image(
+                                                image: NetworkImage(
                                                     PharmacyCubit.get(context)
                                                         .products[index]
-                                                        .orderID,
-                                              );
-                                            },
-                                            widget: SizedBox(
-                                              height: 40.h,
-                                              width: 200,
-                                              child: const Center(
-                                                  child: Text("Delete")),
+                                                        .image),
+                                                width: 200.w,
+                                                height: 200.h),
+                                      ),
+                                      InkWell(
+                                        onTap: (){
+                                          showDialog(context: context, builder: (context) {
+                                            return AlertDialog(
+                                              content: Image(
+                                                image: NetworkImage(
+                                                    PharmacyCubit.get(context)
+                                                        .products[index]
+                                                        .imagePharmacy),
+                                                width: 200.w,
+                                                height: 200.h));
+                                          },);
+                                        },
+                                        child: Container(
+                                          height: 40.h,
+                                          width: 200.w,
+                                          decoration:
+                                          BoxDecoration(color: Colors.green),
+                                          child: Text("Click to videw Prescription" , textAlign: TextAlign.center,style: TextStyle(
+                                            color: Colors.white
+                                          )),
+                                        ),
+                                      ),
+                                    ],
+                                  ) :  ClipRRect(
+                                    borderRadius: BorderRadius.circular(20.r),
+                                    child:  Image(
+                                        image: NetworkImage(
+                                            PharmacyCubit.get(context)
+                                                .products[index]
+                                                .image),
+                                        width: 200.w,
+                                        height: 200.h),
+                                  ),
+                                  SizedBox(
+                                    height: 10.h,
+                                  ),
+                                  Text(
+                                    PharmacyCubit.get(context)
+                                        .products[index]
+                                        .title,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                        fontSize: 24.sp,
+                                        fontWeight: FontWeight.w900),
+                                  ),
+                                  SizedBox(
+                                    height: 10.h,
+                                  ),
+                                  Text(
+                                    "${PharmacyCubit.get(context).products[index].price.toString()} SAR ",
+                                    style: TextStyle(fontSize: 24.sp),
+                                  ),
+                                  SizedBox(
+                                    height: 10.h,
+                                  ),
+                                  Text(
+                                    "Quantity : ${PharmacyCubit.get(context).products[index].quantity.toString()}  ",
+                                    style: TextStyle(fontSize: 24.sp),
+                                  ),
+                                  SizedBox(
+                                    height: 10.h,
+                                  ),
+                                  Text(
+                                    "Address : ${PharmacyCubit.get(context).users[index].address.toString()}  ",
+                                    style: TextStyle(fontSize: 24.sp),
+                                  ),
+                                  Text(
+                                    "Name : ${PharmacyCubit.get(context).users[index].userName.toString()}  ",
+                                    style: TextStyle(fontSize: 24.sp),
+                                  ),
+                                  SizedBox(
+                                    height: 10.h,
+                                  ),
+                                  (widget.data == 'pending')
+                                      ? Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            CustomButton(
+                                              disable: true,
+                                              color: Colors.red,
+                                              radius: 0,
+                                              size: const Size(200, 20),
+                                              function: () {
+                                                PharmacyCubit.get(context).reject(
+                                                  index: index,
+                                                  orderID:
+                                                      PharmacyCubit.get(context)
+                                                          .products[index]
+                                                          .orderID,
+                                                );
+                                              },
+                                              widget: SizedBox(
+                                                height: 40.h,
+                                                width: 200,
+                                                child: const Center(
+                                                    child: Text("Delete")),
+                                              ),
                                             ),
-                                          ),
-                                          CustomButton(
-                                            disable: true,
-                                            radius: 0,
-                                            color: Colors.blueAccent,
-                                            size: const Size(200, 20),
-                                            function: () {
-                                              PharmacyCubit.get(context)
-                                                  .acceptOrder(
-                                                      quantity:
-                                                          PharmacyCubit.get(
-                                                                  context)
-                                                              .products[index]
-                                                              .quantity,
-                                                      orderID:
-                                                          PharmacyCubit.get(
-                                                                  context)
-                                                              .products[index]
-                                                              .orderID,
-                                                      productID:
-                                                          PharmacyCubit.get(
-                                                                  context)
-                                                              .products[index]
-                                                              .productID,
-                                                      index: index);
-                                            },
-                                            widget: SizedBox(
-                                              height: 40.h,
-                                              width: 200.w,
-                                              child: Center(
-                                                  child: Text("Accepted")),
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    : SizedBox()
-                              ],
+                                            CustomButton(
+                                              disable: true,
+                                              radius: 0,
+                                              color: Colors.blueAccent,
+                                              size: const Size(200, 20),
+                                              function: () {
+                                                PharmacyCubit.get(context)
+                                                    .acceptOrder(
+                                                  context: context,
+                                                        quantity:
+                                                            PharmacyCubit.get(
+                                                                    context)
+                                                                .products[index]
+                                                                .quantity,
+                                                        orderID:
+                                                            PharmacyCubit.get(
+                                                                    context)
+                                                                .products[index]
+                                                                .orderID,
+                                                        productID:
+                                                            PharmacyCubit.get(
+                                                                    context)
+                                                                .products[index]
+                                                                .productID,
+                                                        index: index);
+                                              },
+                                              widget: SizedBox(
+                                                height: 40.h,
+                                                width: 200.w,
+                                                child: Center(
+                                                    child: Text("Accepted")),
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                      : SizedBox()
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  )
+                )
                 : const Center(
                     child: Text("No Data"),
                   );

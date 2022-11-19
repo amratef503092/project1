@@ -6,6 +6,8 @@ class PharmacyModel{
   String photo;
   String address;
   String description;
+  bool online;
+  bool ban;
 
   PharmacyModel({
     required this.name,
@@ -15,6 +17,8 @@ class PharmacyModel{
     required this.photo,
     required this.address,
     required this.description,
+    required this.online,
+    required this.ban,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +30,8 @@ class PharmacyModel{
       'photo': this.photo,
       'address': this.address,
       'description': this.description,
+      'online': this.online,
+      'ban': this.ban,
     };
   }
 
@@ -38,6 +44,8 @@ class PharmacyModel{
       photo: map['photo'] as String,
       address: map['address'] as String,
       description: map['description'] as String,
+      online: map['online'] as bool,
+      ban: map['ban'] as bool,
     );
   }
 }
