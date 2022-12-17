@@ -139,8 +139,10 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                       backgroundColor: Colors.blueAccent,
                       child: IconButton(
                           onPressed: () {
-                            if (count == 0) {
-                            } else {
+                            if (count == 1) {
+
+                            }
+                            else {
                               setState(() {
                                 --count;
                               });
@@ -173,7 +175,8 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                   height: 20.h,
                 ),
 
-                (auth.AuthCubit.get(context).userModel!.role!='1')?(widget.productModel.quantity <=0 )? const Text('Out of Stock' ,
+                (auth.AuthCubit.get(context).userModel!.role!='1')?
+                (widget.productModel.quantity <=0 )? const Text('Out of Stock' ,
                   style: TextStyle(
                   color: Colors.red,
                 ),): BlocConsumer<UserCubit, UserState>(
@@ -253,7 +256,6 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                                                         UserCubit.get(context).uploadFile(context,widget.productModel,count).whenComplete(() {
                                                         });
                                                       }else {
-
                                                       }
                                                       // UserCubit.get(context).pickImageFromGallery();
 
@@ -270,12 +272,16 @@ class _MedicineDetailsScreenState extends State<MedicineDetailsScreen> {
                                 );
                               } else {
                                 SQLHelper.addCard(
-                                  image: '',
+                                        image: '',
                                         idProduct: widget.productModel.id,
                                         pharmacyID: widget.productModel.id,
-                                        quantity: count)
+                                        quantity: count
+                                )
                                     .then((value) {
-                                  debugPrint('Add Data in card Successful');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('Adding to Card Successful')));
+                                  // debugPrint('Add Data in card Successful');
 
                                 });
                               }

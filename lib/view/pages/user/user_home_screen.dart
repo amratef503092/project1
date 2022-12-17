@@ -32,7 +32,6 @@ class _HomeUserScreenState extends State<HomeUserScreen> {
   void initState() {
     // TODO: implement initState
     UserCubit.get(context).getMedicine();
-
     super.initState();
   }
 

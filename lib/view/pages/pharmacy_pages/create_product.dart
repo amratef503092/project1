@@ -25,7 +25,6 @@ TextEditingController costController = TextEditingController();
 
 TextEditingController quantityController = TextEditingController();
 
-bool showPassword = false;
 final List<String> items = [
   'medicine',
   'Medical equipment',
@@ -33,7 +32,6 @@ final List<String> items = [
 final List<String> items2 = [
   'No',
   'Yes',
-
 ];
 String? selectedValue;
 String ? selectedValue2;
@@ -303,7 +301,8 @@ class _CreateProductState extends State<CreateProduct> {
                                           selectedValue != null&&selectedValue2 != null) {
                                         ApproveCubit.get(context)
                                             .addProduct(
-                                          needPrescription: (selectedValue2 == 'Yes')? true : false,
+                                          needPrescription: (selectedValue2 == 'Yes')? true
+                                              : false,
                                           title: titleController.text,
                                           description:
                                               descriptionController.text,

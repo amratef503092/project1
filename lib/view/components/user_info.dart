@@ -30,7 +30,6 @@ TextEditingController passwordController = TextEditingController();
 TextEditingController nameController = TextEditingController();
 
 TextEditingController ageController = TextEditingController();
-TextEditingController descriptionController = TextEditingController();
 TextEditingController phoneController = TextEditingController();
 TextEditingController chronicDiseases = TextEditingController();
 TextEditingController address = TextEditingController();
@@ -58,7 +57,6 @@ class _UserIfoState extends State<UserIfo> {
     passwordController.text  = '';
     nameController.text = '';
     ageController.text = '';
-    descriptionController.text = '';
     phoneController.text = '';
     chronicDiseases.text = '';
     address.text = '';

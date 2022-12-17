@@ -190,13 +190,13 @@ class _CreateAdminState extends State<CreateAdmin> {
                       function: () {
                         if (formKey.currentState!.validate()) {
                           authCubit.register(
-                            gender: selectedValue.toString(),
+                             gender: selectedValue.toString(),
                               email: emailController.text.trim(),
                               password: passwordController.text,
                               phone: phoneController.text,
                               name: nameController.text,
                               age: ageController.text,
-                            role: '1'
+                              role: '1'
                           ).then((value) {
 
                           });

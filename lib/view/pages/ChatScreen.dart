@@ -119,7 +119,8 @@
 //                             color: Colors.white,
 //                           ),
 //                           onPressed: () {
-//                             cubit.sendMessage(userid: userID.toString(),
+//                             cubit.sendMessage(
+//                             userid: userID.toString(),
 //                                 message: messageController.text,
 //                                   senderID: userID.toString(),
 //                                 senderName: cubit.userModel!.name,
@@ -229,5 +230,5 @@
 //         ),
 //       ),
 //     );
-//   }
+//   }ْ
 // }

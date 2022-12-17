@@ -77,10 +77,10 @@ class _SearchPharmacyState extends State<SearchPharmacy> {
                               itemCount: snapshots.data!.docs.length,
                               itemBuilder: (context, index) {
                                 productsModel = [];
-                                snapshots.data!.docs.forEach((element) {
-                                  productsModel.add(ProductModel.fromMap(
-                                      element.data() as Map<String, dynamic>));
-                                });
+                                for (var element in snapshots.data!.docs) {
+                                  productsModel.add(
+                                      ProductModel.fromMap(element.data() as Map<String, dynamic>));
+                                }
                                 if (name.isEmpty) {
                                   return Card(
                                     child: Padding(
@@ -169,7 +169,7 @@ class _SearchPharmacyState extends State<SearchPharmacy> {
                                                 widget: SizedBox(
                                                   height: 40.h,
                                                   width: 200,
-                                                  child: Center(
+                                                  child: const Center(
                                                       child: Text("Delete")),
                                                 ),
                                               ),
@@ -208,7 +208,8 @@ class _SearchPharmacyState extends State<SearchPharmacy> {
                                     .title
                                     .toString()
                                     .toLowerCase()
-                                    .startsWith(name.toLowerCase())) {
+                                    .startsWith(name.toLowerCase()))
+                                {
                                   return Card(
                                     child: Padding(
                                       padding: const EdgeInsets.all(10.0),

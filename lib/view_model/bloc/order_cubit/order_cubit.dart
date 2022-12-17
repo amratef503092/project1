@@ -83,8 +83,9 @@ List<ProductPriceModel> productPriceModel = [];
   Future<void> sendData(BuildContext context) async {
     emit(SendDataToDataBaseLoading());
     String? id;
-    product.forEach((element) async {
-      await FirebaseFirestore.instance.collection('Orders').add({
+    for (var element in product)  {
+      await FirebaseFirestore.instance.collection('Orders').
+      add({
         'userId': CacheHelper.getDataString(key: 'id'),
         'date': DateTime.now(),
         'orderStatus': 'pending',
@@ -113,7 +114,7 @@ List<ProductPriceModel> productPriceModel = [];
         print(onError);
         emit(SendDataToDataBaseError());
       });
-    });
+    }
   }
   void RemoveData()async
   {

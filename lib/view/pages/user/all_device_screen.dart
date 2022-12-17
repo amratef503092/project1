@@ -107,7 +107,7 @@ class _AllDeviceScreenState extends State<AllDeviceScreen> {
                                     },
                                     label:  Text(ADD_TO_CARD),
                                     style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xff30CA00)),
+                                        backgroundColor: Colors.red),
                                   )
                                 ],
                               ),

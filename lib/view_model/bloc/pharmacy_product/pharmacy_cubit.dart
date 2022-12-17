@@ -158,10 +158,10 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         .then((value) async {
       for (var element in value.docs) {
         products.add(GetProductModel.fromMap(element.data()));
-        await FirebaseFirestore.instance.collection('users').doc(element.data()['userId']).get().then((value) {
+        await FirebaseFirestore.instance.collection('users').
+        doc(element.data()['userId']).get().then((value) {
           users.add(UserInfo.fromMap(value.data()!));
         });
-
       }
       emit(GetOrderSuccessful('Successful'));
 
@@ -288,7 +288,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
   Future<void> reject({required String orderID, required int index}) async {
     emit(AcceptOrderLoading());
 
-    await FirebaseFirestore.instance.collection('Orders').doc(orderID).update({
+    await FirebaseFirestore.instance.collection('Orders').
+    doc(orderID).update({
       'orderStatus': 'Reject',
     }).then((value) {
       products.removeAt(index);
@@ -307,7 +308,8 @@ class PharmacyCubit extends Cubit<PharmacyState> {
         .get()
         .then((value) {
       print(value.docs.length);
-      for (var element in value.docs) {
+      for (var element in value.docs)
+      {
         productsModel.add(ProductModel.fromMap(element.data()));
       }
       print(productsModel.length);

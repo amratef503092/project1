@@ -23,7 +23,8 @@ part 'user_state.dart';
 class UserCubit extends Cubit<UserState> {
   UserCubit() : super(UserInitial());
 
-  static UserCubit get(context) => BlocProvider.of<UserCubit>(context);
+  static UserCubit get(context) =>
+      BlocProvider.of<UserCubit>(context);
   List<ProductModel> productModel = [];
   List<ProductModel> search = [];
   List<ProductModel> productModelOrder = [];
@@ -31,11 +32,11 @@ class UserCubit extends Cubit<UserState> {
   Future<void> getMedicine() async {
     productModel = [];
     emit(GetMedicineLoadingState());
-
-    await FirebaseFirestore.instance.collection('product').get().then((value) {
-      value.docs.forEach((element) {
+    await FirebaseFirestore.instance.collection('product').
+    get().then((value) {
+      for (var element in value.docs) {
         productModel.add(ProductModel.fromMap(element.data()));
-      });
+      }
       emit(GetMedicineSuccessfulState());
     }).catchError((onError) {
       emit(GetMedicineErrorState(onError.toString()));
@@ -47,14 +48,14 @@ class UserCubit extends Cubit<UserState> {
   Future<void> getPharmacy() async {
     emit(GetPharmacyLoadingState());
     pahrmacyModel = [];
-
-    FirebaseFirestore.instance
+ await   FirebaseFirestore.instance
         .collection('users')
         .where('role', isEqualTo: '2')
         .where('approved', isEqualTo: true)
         .get()
         .then((value) {
-      for (var element in value.docs) {
+      for (var element in value.docs)
+      {
         pahrmacyModel.add(PharmacyModel.fromMap(element.data()));
       }
       emit(GetPharmacySuccessfulState());
@@ -126,7 +127,8 @@ class UserCubit extends Cubit<UserState> {
     productModelOrder = [];
     await FirebaseFirestore.instance
         .collection('Orders')
-        .where('userId', isEqualTo: CacheHelper.getDataString(key: 'id'))
+        .where('userId', isEqualTo: CacheHelper.
+        getDataString(key: 'id'))
         .get()
         .then((value) {
           for (var element in value.docs)

@@ -28,29 +28,35 @@ class AuthCubit extends Cubit<AuthState> {
   final ImagePicker _picker = ImagePicker();
 
   // login function start
-  Future<void> login({required String email, required String password}) async {
+  Future<void> login({
+    required String email,
+    required String password
+    }) async {
     emit(LoginLoadingState());
     userModel = null; // here i remove all old data to receive New Data
     await FirebaseAuth
         .instance // firebase auth this library i use it to login i send request Email and password
-        .signInWithEmailAndPassword(email: email, password: password)
+        .signInWithEmailAndPassword(
+        email: email,
+        password: password)
         .then((value) async {
       // if login successful i will update user is online to true
-      FirebaseFirestore.instance
+    await  FirebaseFirestore.instance
           .collection('users')
           .doc(value.user!.uid)
           .update({'online': true});
       await CacheHelper.put(
           key: 'id', value: value.user!.uid); // i cache user id to use
       // if login successful i will get user id and i will use it to get user data from firebase
-      FirebaseFirestore.instance
+ await     FirebaseFirestore.instance
           .collection('users')
           .doc(value.user!.uid)
           .get()
           .then((value) async {
         // here i will store user data in userModel
         userModel = UserModel.fromMap(value.data()!);
-        await CacheHelper.put(
+        await
+        CacheHelper.put(
             key: 'role', value: userModel!.role); //  cashing role user
         emit(LoginSuccessfulState(
             role: value['role'],
@@ -78,7 +84,9 @@ class AuthCubit extends Cubit<AuthState> {
     emit(RegisterLoadingState());
     await FirebaseAuth
         .instance // firebase auth this library i use it to register i send request Email and password
-        .createUserWithEmailAndPassword(email: email, password: password)
+        .createUserWithEmailAndPassword(
+        email: email,
+        password: password)
         .then((value) {
       // if register successful i will add user data to firebase
       userModel = UserModel(
@@ -130,7 +138,9 @@ class AuthCubit extends Cubit<AuthState> {
     print(password);
     await FirebaseAuth
         .instance // firebase auth this library i use it to register i send request Email and password
-        .createUserWithEmailAndPassword(email: email, password: password)
+        .createUserWithEmailAndPassword(
+        email: email,
+        password: password)
         .then((value) async {
       // if register successful i will add user data to firebase
       userModel = UserModel(
@@ -245,7 +255,6 @@ class AuthCubit extends Cubit<AuthState> {
     required String name,
     required String address,
     required String description
-    // required String role,
   }) async {
     emit(UpdateDataLoadingState());
     print(userID);
@@ -274,7 +283,6 @@ class AuthCubit extends Cubit<AuthState> {
           content: Text('No file was selected'),
         ),
       );
-
       return;
     }
 
@@ -291,12 +299,11 @@ class AuthCubit extends Cubit<AuthState> {
     if (kIsWeb) {
       uploadTask = ref.putData(await file.readAsBytes(), metadata);
     } else {
-      print('Amr2');
       ref.putFile(io.File(file.path), metadata).then((p0) => {
-            ref.getDownloadURL().then((value) {
+            ref.getDownloadURL().then((value) async{
               // here modify the profile pic
               userModel!.photo = value;
-              FirebaseFirestore.instance
+             await  FirebaseFirestore.instance
                   .collection('users')
                   .doc(userID)
                   .update({'photo': value}).then((value) {
@@ -313,16 +320,18 @@ class AuthCubit extends Cubit<AuthState> {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image == null) {
     } else {
-      print(image.path);
       await uploadFile(image, context).then((value) {});
     }
   }
 
-  Future<void> pickImageCamera(BuildContext context) async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+  Future<void> pickImageCamera(BuildContext context) async
+  {
+    final XFile? image = await
+    _picker.pickImage(source: ImageSource.camera);
     if (image == null) {
-    } else {
-      print(image.path);
+
+    }
+    else {
       await uploadFile(image, context).then((value) {});
     }
   }
@@ -332,7 +341,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> getAdmin() async {
     emit(GetAdminsStateLoading('loading'));
     adminData = [];
-    FirebaseFirestore.instance
+   await FirebaseFirestore.instance
         .collection('users')
         .where(
           'role',
@@ -342,7 +351,9 @@ class AuthCubit extends Cubit<AuthState> {
         .then((value) {
       print(value.docs.length);
       value.docChanges.forEach((element) {
-        if (element.doc.data()!['id'] == CacheHelper.getDataString(key: 'id')) {
+        if (element.doc.data()!['id'] ==
+            CacheHelper.getDataString(key: 'id')
+        ) {
           print('same');
         } else {
              adminData.add(UserModel.fromMap(element.doc.data()!));

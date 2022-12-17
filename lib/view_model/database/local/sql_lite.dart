@@ -14,7 +14,8 @@ class SQLHelper {
   }
 
   static Future<void> createTable(Database database) async {
-    await database.execute("""CREATE TABLE card(
+    await database.execute("""
+        CREATE TABLE card(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         idProduct TEXT,
         pharmacyID TEXT,
@@ -37,7 +38,6 @@ class SQLHelper {
     required String pharmacyID,
     required String image
   }) async {
-    print(quantity);
     final db = await SQLHelper.initDb(); //open database
     final data = {
       'idProduct': idProduct,
@@ -47,9 +47,11 @@ class SQLHelper {
     }; //create data in map
     var id;
     if (quantity == 0) {
-      await db.delete("card", where: "idProduct = ?", whereArgs: [idProduct]);
-      print('delete');
-    } else {
+      await db.delete("card", where: "idProduct = ?",
+          whereArgs: [idProduct]);
+
+    }
+    else {
       await db.update('card', {'quantity': quantity},
           where: "idProduct = ?", whereArgs: [idProduct]);
       await db.query('card',

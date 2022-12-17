@@ -42,7 +42,6 @@ class _PharmacyInfoState extends State<PharmacyInfo> {
     'User',
     'Pharmacy',
   ];
-  List<String> bloodType = ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'];
 @override
   void dispose() {
     // TODO: implement dispose

@@ -57,13 +57,13 @@ class _PharmacyMessageState extends State<PharmacyMessage> {
                   List<MessageLine> messageWidgets = [];
 
                   for (var message in messages) {
-
                     final messageText = message.get('message');
                     final sender = (message['senderID'] ==
                             CacheHelper.getDataString(key: 'id'))
                         ? message.get('pharmacyName')
                         : message.get('customerName');
-                    messageWidgets.add(MessageLine
+                    messageWidgets.add(
+                        MessageLine
                       (
                       type: message['type'],
                       id: message.id,

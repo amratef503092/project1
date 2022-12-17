@@ -31,19 +31,17 @@ class ApproveCubit extends Cubit<ApproveState> {
     emit(GetDataToApprovedStateLoading('loading'));
     detailsModelPharmacyAdminApproved = [];
     // this is the path of data in database i determine it to get it
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('users')
         .where('role', isEqualTo: '2')
         .where('approved', isEqualTo: false)
         .get()
         .then((value) async {
-          value.docs.forEach((element) {
+          for (var element in value.docs) {
             print(value.docs.length);
             detailsModelPharmacyAdminApproved
                 .add(DetailsModelPharmacy.fromMap(element.data()));
           }
-
-          );
           emit(GetDataToApprovedStateSuccessful('Done'));
     }).catchError((onError) {
       print(onError);
@@ -248,7 +246,8 @@ class ApproveCubit extends Cubit<ApproveState> {
           .doc(value.id)
           .update({
         'id': value.id,
-      }).then((value) async {
+      }).then((value) async
+      {
         wait = true;
         await uploadFile(image, context, docId!).whenComplete(() async {});
         emit(AddProductSuccessfulState());

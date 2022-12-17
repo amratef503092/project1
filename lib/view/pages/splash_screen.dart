@@ -25,7 +25,6 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     Future.delayed(const Duration(seconds: 4)).then((value) async {
-      print(CacheHelper.getDataString(key: 'id'));
       String? token =  CacheHelper.getDataString(key: 'id');
       if (token != null) {
       await  FirebaseFirestore.instance
@@ -33,7 +32,9 @@ class _SplashScreenState extends State<SplashScreen> {
             .doc(token)
             .get()
             .then((value) {
-
+              // ROLE  IS ONE = ADMIN
+              // ROLE IS tWO  = PHARMACY
+            // ROLE IS THREE = CUSTOMER
               if(role=='1')
               {
                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {

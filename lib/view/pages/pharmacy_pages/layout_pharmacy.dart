@@ -38,7 +38,7 @@ class _LayoutPharmacyState extends State<LayoutPharmacy> {
             currentIndex: cubit.currentPharamcy,
             type: BottomNavigationBarType.fixed,
             onTap: (index){
-              cubit.changeBottomNavBar(index);
+              cubit.changeBottomNavBarPharamcy(index);
             },
             items: const [
               BottomNavigationBarItem(

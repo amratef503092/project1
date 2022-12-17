@@ -21,6 +21,7 @@ class _SearchScreenState extends State<SearchScreen> {
   String name = '';
   List<ProductModel> productModel = [];
 
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<UserCubit, UserState>(
       listener: (context, state) {
@@ -54,19 +55,15 @@ class _SearchScreenState extends State<SearchScreen> {
                     .collection('product')
                     .snapshots(),
                 builder: (context, snapshots) {
-                  return (snapshots.connectionState == ConnectionState.waiting)
+                  return (
+                          snapshots.connectionState ==
+                          ConnectionState.waiting)
                       ? const Center(
                           child: CircularProgressIndicator(),
                         )
                       : Expanded(
-                          child: GridView.builder(
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 15.w,
-                                mainAxisSpacing: 15.h,
-                                mainAxisExtent: 300.h,
-                              ),
+                          child: ListView.builder(
+
                               itemCount: snapshots.data!.docs.length,
                               itemBuilder: (context, index) {
                                 productModel = [];
@@ -86,53 +83,56 @@ class _SearchScreenState extends State<SearchScreen> {
                                                         productModel[index],
                                                   )));
                                     },
-                                    child: Container(
-                                      width: 514.w,
-                                      height: 540.h,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(15.r)),
-                                      child: Column(
-                                        children: [
-                                          Image.network(
-                                            productModel[index].image,
-                                            width: 80.w,
-                                            height: 168.h,
-                                          ),
-                                          Text(productModel[index].title,
-                                              style: TextStyle(
-                                                fontSize: 20.sp,
-                                                fontWeight: FontWeight.w800,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis),
-                                          Text(
-                                              "SAR ${productModel[index].price}",
-                                              style: TextStyle(
-                                                fontSize: 20.sp,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis),
-                                          ElevatedButton.icon(
-                                            icon: Icon(Icons.shopping_cart),
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          MedicineDetailsScreen(
-                                                            productModel:
-                                                                productModel[
-                                                                    index],
-                                                          )));
-                                            },
-                                            label: const Text(ADD_TO_CARD),
-                                            style: ElevatedButton.styleFrom(
-                                                backgroundColor:buttonColor),
-                                          )
-                                        ],
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        width: 200.w,
+                                        height: 300.h,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(15.r)),
+                                        child: Column(
+                                          children: [
+                                            Image.network(
+                                              productModel[index].image,
+                                              width: 80.w,
+                                              height: 168.h,
+                                            ),
+                                            Text(productModel[index].title,
+                                                style: TextStyle(
+                                                  fontSize: 20.sp,
+                                                  fontWeight: FontWeight.w800,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis),
+                                            Text(
+                                                "SAR ${productModel[index].price}",
+                                                style: TextStyle(
+                                                  fontSize: 20.sp,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis),
+                                            ElevatedButton.icon(
+                                              icon: Icon(Icons.shopping_cart),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            MedicineDetailsScreen(
+                                                              productModel:
+                                                                  productModel[
+                                                                      index],
+                                                            )));
+                                              },
+                                              label: const Text(ADD_TO_CARD),
+                                              style: ElevatedButton.styleFrom(
+                                                  backgroundColor:buttonColor),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   );
@@ -141,7 +141,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                     .title
                                     .toString()
                                     .toLowerCase()
-                                    .startsWith(name.toLowerCase())) {
+                                    .contains(name.toLowerCase())) {
                                   return InkWell(
                                     onTap: () {
                                       Navigator.push(
@@ -197,8 +197,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                             },
                                             label: const Text(ADD_TO_CARD),
                                             style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    const Color(0xff30CA00)),
+                                                backgroundColor:Colors.red),
                                           )
                                         ],
                                       ),

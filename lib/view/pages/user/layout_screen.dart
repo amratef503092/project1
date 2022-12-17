@@ -146,13 +146,12 @@ class _LayoutScreenState extends State<LayoutScreen> {
                           title: const Text("Call Support"),
                           onTap: () async
                           {
-                            final Uri emailLaunchUri = Uri(
+                            final Uri call = Uri(
                               scheme: 'tel',
                               path: '+0512345678',
-
                             );
 
-                            launchUrl(emailLaunchUri);
+                            launchUrl(call);
                           },
                         ),
                         ListTile(
@@ -167,7 +166,6 @@ class _LayoutScreenState extends State<LayoutScreen> {
                             }).then((value) async {
                               userID = null;
                               await CacheHelper.removeData(key: 'id');
-
                               await FirebaseAuth.instance.signOut();
                             }).then((value) {
                               Navigator.pushAndRemoveUntil(

@@ -90,6 +90,9 @@ class _MyOrderListState extends State<MyOrderList> {
                                               quantity: orderCubit
                                                   .product[index].quantity,
                                             ).then((value) {
+                                              setState(() {
+
+                                              });
                                               if (kDebugMode) {
                                                 print("update");
                                               }
@@ -156,7 +159,11 @@ class _MyOrderListState extends State<MyOrderList> {
                                                     .product[index].id)
                                             .then((value) {
                                           orderCubit.product.removeAt(index);
+                                          setState(() {
+
+                                          });
                                           if (kDebugMode) {
+
                                             print("delete");
                                           }
                                         });
@@ -185,6 +192,10 @@ class _MyOrderListState extends State<MyOrderList> {
                 OrderCubit.get(context).sendData(context).whenComplete(() {
                   OrderCubit.get(context).product.clear();
                   OrderCubit.get(context).RemoveData();
+                  setState(() {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Your order has been sent successfully")));
+                  });
                 });
               },
               child: Container(

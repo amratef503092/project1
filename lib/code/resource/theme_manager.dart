@@ -4,17 +4,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:graduation_project/code/resource/color_mananger.dart';
 
 ThemeData getTheme() {
+  Color primaryColor =Colors.red;
   return ThemeData(
 
       scaffoldBackgroundColor: Color(0xffF2F3F7),
-      primaryColor: Color(0xff0099cc),
-      buttonColor:  Color(0xff0099cc),
+      primaryColor: Colors.red,
+      buttonColor:  primaryColor,
       appBarTheme: AppBarTheme(
-        backgroundColor:  Color(0xff0099cc)
+        backgroundColor:  primaryColor
       ),
       // text
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor:  Color(0xff0099cc),
+        backgroundColor:  primaryColor,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white.withOpacity(0.7),
       ),

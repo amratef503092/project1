@@ -17,18 +17,13 @@ class EditUserInfo extends StatefulWidget {
 }
 
 GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
 TextEditingController emailController = TextEditingController();
-
 TextEditingController passwordController = TextEditingController();
-
 TextEditingController nameController = TextEditingController();
-
 TextEditingController ageController = TextEditingController();
 TextEditingController addressController = TextEditingController();
 TextEditingController genderController = TextEditingController();
-TextEditingController bloodType = TextEditingController();
-
+TextEditingController bloodType =       TextEditingController();
 TextEditingController phoneController = TextEditingController();
 bool showPassword = false;
 bool enable = false;

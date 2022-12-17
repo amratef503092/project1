@@ -15,27 +15,29 @@ import 'package:graduation_project/view_model/bloc/services/services_cubit.dart'
 import 'package:graduation_project/view_model/bloc/user_cubit/user_cubit.dart';
 import 'package:graduation_project/view_model/database/local/cache_helper.dart';
 import 'package:graduation_project/view_model/database/local/sql_lite.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'code/BlocObserver.dart';
 import 'firebase_options.dart';
-
-void main() async {
+// main is Enter point of the app
+void main()
+async
+{
   WidgetsFlutterBinding.ensureInitialized();
+  // shard preferences
   await CacheHelper.init();
+  // sql lite
   await SQLHelper.initDb();
-
+  // init firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   Bloc.observer = MyBlocObserver();
-
+  // run app
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(

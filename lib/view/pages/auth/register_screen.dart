@@ -25,7 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       listener: (context, state) {
         // TODO: implement listener
         if (state is RegisterSuccessfulState) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Create Account Successful"),
             backgroundColor: Colors.green,
           ));

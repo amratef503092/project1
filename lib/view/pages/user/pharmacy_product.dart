@@ -31,7 +31,8 @@ class _PharmacyProductState extends State<PharmacyProduct> {
   void initState() {
     // TODO: implement initState
     PharmacyCubit.get(context).getPharmacySpecificProduct(
-        pharmacyID: LayoutCubit.get(context).pahrmacyModel!.id.toString());
+        pharmacyID: LayoutCubit.get(context).pahrmacyModel!.id.toString()
+    );
     super.initState();
   }
 
@@ -141,7 +142,16 @@ class _PharmacyProductState extends State<PharmacyProduct> {
                   onPressed: () {
                  showDialog(context: context, builder: (context) {
                    return AlertDialog(
-                     content: Text(LayoutCubit.get(context).pahrmacyModel!.description),
+                     title:  Text("Description" , style: TextStyle(color: Colors.black , fontSize: 30.sp , fontWeight: FontWeight.bold),),
+                     content: SingleChildScrollView(
+
+                       child: Column(
+                         children: [
+
+                           Text(LayoutCubit.get(context).pahrmacyModel!.description)
+                         ],
+                       ),
+                     ),
                    );
                  },);
                   },

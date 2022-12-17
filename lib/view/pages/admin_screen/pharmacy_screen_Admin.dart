@@ -162,8 +162,9 @@ class _PharmacyScreenAdminState extends State<PharmacyScreenAdmin> {
                                                               ),
                                                             ),
                                                             TextButton(
-                                                              onPressed: () {
-                                                                FirebaseFirestore
+                                                              onPressed: () async{
+                                                             await
+                                                             FirebaseFirestore
                                                                     .instance
                                                                     .collection(
                                                                         'users')
@@ -210,7 +211,7 @@ class _PharmacyScreenAdminState extends State<PharmacyScreenAdmin> {
                                                           path:
                                                               "+${authCubit.adminData[index].phone}"));
                                                     },
-                                                    icon: FaIcon(
+                                                    icon: const FaIcon(
                                                       FontAwesomeIcons.phone,
                                                     )),
                                                 IconButton(

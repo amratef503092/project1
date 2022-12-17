@@ -24,7 +24,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   @override
   void initState() {
     // TODO: implement initState
-
     AuthCubit.get(context).getAdmin();
     super.initState();
   }
@@ -127,7 +126,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                                   context: context,
                                                   builder: (ctx) => AlertDialog(
                                                     title: const Text(
-                                                        "You want Delete Account ?"),
+                                                        "You want Ban this Account ?"),
                                                     content: Column(
                                                       mainAxisSize:
                                                       MainAxisSize.min,
@@ -150,8 +149,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                                         ),
                                                       ),
                                                       TextButton(
-                                                        onPressed: () {
-                                                          FirebaseFirestore.instance
+                                                        onPressed: () async{
+                                                     await
+                                                     FirebaseFirestore.instance
                                                               .collection('users')
                                                               .doc(AuthCubit.get(
                                                               context)
