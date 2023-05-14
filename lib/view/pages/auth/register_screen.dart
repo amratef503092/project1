@@ -5,6 +5,7 @@ import 'package:graduation_project/view_model/bloc/auth/auth_cubit.dart';
 
 import '../../components/pharmacy_info.dart';
 import '../../components/user_info.dart';
+
 class RegisterScreen extends StatefulWidget {
   RegisterScreen({Key? key}) : super(key: key);
 
@@ -13,7 +14,6 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-
   var items = [
     'Customer',
     'Pharmacy',
@@ -86,7 +86,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           });
                         },
                       ),
-                      (dropdownvalue == 'Customer') ? const UserIfo() : const PharmacyInfo(),
+                      (dropdownvalue == 'Customer')
+                          ? const UserIfo()
+                          : const PharmacyInfo(),
                     ],
                   ),
                 ),
@@ -97,8 +99,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
       },
     );
   }
-
-
-
-
 }
